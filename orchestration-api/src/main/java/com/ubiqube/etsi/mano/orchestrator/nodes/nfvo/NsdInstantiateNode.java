@@ -18,6 +18,11 @@ package com.ubiqube.etsi.mano.orchestrator.nodes.nfvo;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
-public class NsdNode implements Node {
+/**
+ *
+ * @author Olivier Vignaud <ovi@ubiqube.com>
+ *
+ */
+public class NsdInstantiateNode implements Node {
 	// Nothing.
 }
