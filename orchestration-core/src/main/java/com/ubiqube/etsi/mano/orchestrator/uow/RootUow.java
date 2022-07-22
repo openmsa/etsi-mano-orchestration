@@ -16,7 +16,10 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.uow;
 
+import java.util.List;
+
 import com.ubiqube.etsi.mano.orchestrator.Context;
+import com.ubiqube.etsi.mano.orchestrator.NamedDependency;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
 
@@ -45,6 +48,16 @@ public class RootUow implements UnitOfWork<Object> {
 	@Override
 	public Class<? extends Node> getNode() {
 		return null;
+	}
+
+	@Override
+	public List<NamedDependency> getNameDependencies() {
+		return List.of();
+	}
+
+	@Override
+	public List<NamedDependency> getNamedProduced() {
+		return List.of();
 	}
 
 }

@@ -56,7 +56,7 @@ public class GraphTools {
 	}
 
 	public static <U> void dump(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g) {
-		g.vertexSet().forEach(x -> LOG.debug("v: {}", x.getTask().getName()));
+		g.vertexSet().forEach(x -> LOG.debug("v: {} of {}", x.getTask().getName(), x.getNode().getSimpleName()));
 		g.edgeSet().forEach(x -> LOG.debug("e: {} => {}", x.getSource().getTask().getName(), x.getTarget().getTask().getName()));
 	}
 

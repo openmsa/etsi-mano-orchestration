@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
@@ -64,7 +65,6 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 	private final ImplementationService implementationService;
 
 	public PlannerImpl(final List<PlanContributor> contributorRaw, final ImplementationService implementationService) {
-		super();
 		this.contributors = contributorRaw.stream()
 				.collect(Collectors.toMap(
 						PlanContributor::getNode,
@@ -143,32 +143,22 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 			final SystemBuilder<U> db = implementationService.getTargetSystem(x);
 			x.setSystemBuilder(db);
 			db.getVertex().forEach(ng::addVertex);
-			db.getEdges().forEach(y -> ng.addEdge(y.getSource(), y.getTarget()));
 		});
 		// Connect everything.
-		gf.edgeSet().forEach(x -> {
-			final SystemBuilder<U> ibSrc = x.getSource().getSystemBuilder();
-			final SystemBuilder<U> ibTgt = x.getTarget().getSystemBuilder();
-			linkTo(ng, ibSrc, ibTgt);
-		});
+		ng.vertexSet().stream().forEach(x -> x.getNameDependencies().forEach(y -> {
+			final Optional<UnitOfWork<U>> dep = findOutgoingOf(y, ng);
+			if (dep.isEmpty()) {
+				LOG.warn("Unable to find dependency {} for {}", y, x.getTask().getName());
+				return;
+			}
+			LOG.debug("Adding {} => {}", dep.get().getTask().getName(), x.getTask().getName());
+			ng.addEdge(dep.get(), x);
+		}));
 		return ng;
 	}
 
-	private static <U> void linkTo(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g, final SystemBuilder<U> ibSrc, final SystemBuilder<U> ibTgt) {
-		linkTo(g, ibSrc.getOutgoingVertex(), ibTgt.getIncomingVertex());
-		defnieSubGraph(g, ibSrc);
-		defnieSubGraph(g, ibTgt);
-	}
-
-	private static <U> void defnieSubGraph(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g, final SystemBuilder<U> systemBuilder) {
-		if (null != systemBuilder.getSingle()) {
-			return;
-		}
-		systemBuilder.getEdges().forEach(x -> g.addEdge(x.getSource(), x.getTarget()));
-	}
-
-	private static <U> void linkTo(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g, final List<UnitOfWork<U>> outgoingVertex, final List<UnitOfWork<U>> incomingVertex) {
-		outgoingVertex.forEach(x -> incomingVertex.forEach(y -> g.addEdge(x, y)));
+	private Optional<UnitOfWork<U>> findOutgoingOf(final NamedDependency y, final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> ng) {
+		return ng.vertexSet().stream().filter(x -> x.getNamedProduced().stream().anyMatch(z -> z.match(y))).findFirst();
 	}
 
 	private static <U> VirtualTask<U> findProducer(final NamedDependency namedDependency, final ListenableGraph<? extends VirtualTask<U>, VirtualTaskConnectivity<U>> gf) {
@@ -188,7 +178,7 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 			return finalDelete;
 		}
 		// Execute create.
-		exportGraph(impl.getCreateImplementation(), "vnf-added.dot");
+		exportGraph(impl.getCreateImplementation(), "orch-added.dot");
 		final ExecutionResults<UnitOfWork<U>, String> res = execCreate(impl.getCreateImplementation(), context, listener);
 		finalDelete.addAll(convertResults(res));
 		return finalDelete;

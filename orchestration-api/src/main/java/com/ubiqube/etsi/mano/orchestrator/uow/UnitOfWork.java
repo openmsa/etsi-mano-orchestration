@@ -16,7 +16,10 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.uow;
 
+import java.util.List;
+
 import com.ubiqube.etsi.mano.orchestrator.Context;
+import com.ubiqube.etsi.mano.orchestrator.NamedDependency;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
 
@@ -33,4 +36,8 @@ public interface UnitOfWork<U> {
 	String rollback(Context context);
 
 	Class<? extends Node> getNode();
+
+	List<NamedDependency> getNameDependencies();
+
+	List<NamedDependency> getNamedProduced();
 }

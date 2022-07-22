@@ -16,7 +16,10 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.uow;
 
+import java.util.List;
+
 import com.ubiqube.etsi.mano.orchestrator.Context;
+import com.ubiqube.etsi.mano.orchestrator.NamedDependency;
 import com.ubiqube.etsi.mano.orchestrator.Task;
 
 public class UnitB implements UnitOfWork<Object> {
@@ -45,4 +48,13 @@ public class UnitB implements UnitOfWork<Object> {
 		return null;
 	}
 
+	@Override
+	public List<NamedDependency> getNameDependencies() {
+		return List.of();
+	}
+
+	@Override
+	public List<NamedDependency> getNamedProduced() {
+		return List.of();
+	}
 }
