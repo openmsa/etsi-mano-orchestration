@@ -31,6 +31,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.DirectedAcyclicGraph;
+import org.jgrapht.nio.Attribute;
+import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.dot.DOTExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -220,7 +222,13 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 	}
 
 	public static <U> void exportGraph(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g, final String fileName) {
-		final DOTExporter<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> exporter = new DOTExporter<>(x -> "\"" + x.getTask().getName() + RandomStringUtils.random(5, true, true) + "\"");
+		final DOTExporter<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> exporter = new DOTExporter<>(x -> "\"" + x.getTask().getName() + "-" + RandomStringUtils.random(5, true, true) + "\"");
+		exporter.setVertexAttributeProvider(x -> {
+			final Map<String, Attribute> map = new LinkedHashMap<>();
+			map.put("label", DefaultAttribute.createAttribute(x.getTask().getAlias() + "\n(" + x.getTask().getClass().getSimpleName() + ")"));
+			map.put("fillcolor", DefaultAttribute.createAttribute("aliceblue"));
+			return map;
+		});
 		try (final FileOutputStream out = new FileOutputStream(fileName)) {
 			exporter.exportGraph(g, out);
 		} catch (final IOException e) {
