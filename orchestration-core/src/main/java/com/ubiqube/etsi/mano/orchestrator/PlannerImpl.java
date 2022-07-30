@@ -16,8 +16,6 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,19 +23,14 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.DirectedAcyclicGraph;
-import org.jgrapht.nio.Attribute;
-import org.jgrapht.nio.DefaultAttribute;
-import org.jgrapht.nio.dot.DOTExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.github.dexecutor.core.task.ExecutionResults;
-import com.github.dexecutor.core.task.TaskProvider;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.service.ImplementationService;
@@ -63,7 +56,10 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 
 	private final ManoExecutor<U> executorService;
 
-	public PlannerImpl(final List<PlanContributor> contributorRaw, final ImplementationService implementationService, final ManoExecutor<U> executorService) {
+	private final List<PostPlanRunner> postPlanRunner;
+
+	public PlannerImpl(final List<PlanContributor> contributorRaw, final ImplementationService implementationService, final ManoExecutor<U> executorService,
+			final List<PostPlanRunner> postPlanRunner) {
 		this.contributors = contributorRaw.stream()
 				.collect(Collectors.toMap(
 						PlanContributor::getNode,
@@ -72,6 +68,7 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 						LinkedHashMap::new));
 		this.implementationService = implementationService;
 		this.executorService = executorService;
+		this.postPlanRunner = postPlanRunner;
 	}
 
 	@Override
@@ -172,13 +169,15 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 	public OrchExecutionResults<U> execute(final ExecutionGraph implementation, final Context context, final OrchExecutionListener<U> listener) {
 		final ExecutionGraphImpl<U> impl = (ExecutionGraphImpl<U>) implementation;
 		// Execute delete.
+
+		postPlanRunner.forEach(x -> x.runDeletePost(impl.getDeleteImplementation()));
 		final ExecutionResults<UnitOfWork<U>, String> deleteRes = execDelete(impl.getDeleteImplementation(), context, listener);
 		final OrchExecutionResults<U> finalDelete = convertResults(deleteRes);
 		if (!deleteRes.getErrored().isEmpty()) {
 			return finalDelete;
 		}
 		// Execute create.
-		exportGraph(impl.getCreateImplementation(), "orch-added.dot");
+		postPlanRunner.forEach(x -> x.runCreatePost(impl.getCreateImplementation()));
 		final ExecutionResults<UnitOfWork<U>, String> res = execCreate(impl.getCreateImplementation(), context, listener);
 		finalDelete.addAll(convertResults(res));
 		return finalDelete;
@@ -190,26 +189,12 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 	}
 
 	private ExecutionResults<UnitOfWork<U>, String> execCreate(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g, final Context context, final OrchExecutionListener<U> listener) {
-		return executorService.execute(g, (TaskProvider<UnitOfWork<U>, String>) new CreateTaskProvider<>(context, listener));
+		return executorService.execute(g, new CreateTaskProvider<>(context, listener));
 	}
 
 	private ExecutionResults<UnitOfWork<U>, String> execDelete(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g, final Context context, final OrchExecutionListener<U> listener) {
 		final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> rev = GraphTools.revert(g);
-		return executorService.execute(rev, (TaskProvider<UnitOfWork<U>, String>) new DeleteTaskProvider<>(context, listener));
+		return executorService.execute(rev, new DeleteTaskProvider<>(context, listener));
 	}
 
-	public static <U> void exportGraph(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g, final String fileName) {
-		final DOTExporter<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> exporter = new DOTExporter<>(x -> "\"" + x.getTask().getName() + "-" + RandomStringUtils.random(5, true, true) + "\"");
-		exporter.setVertexAttributeProvider(x -> {
-			final Map<String, Attribute> map = new LinkedHashMap<>();
-			map.put("label", DefaultAttribute.createAttribute(x.getTask().getAlias() + "\n(" + x.getTask().getClass().getSimpleName() + ")"));
-			map.put("fillcolor", DefaultAttribute.createAttribute("aliceblue"));
-			return map;
-		});
-		try (final FileOutputStream out = new FileOutputStream(fileName)) {
-			exporter.exportGraph(g, out);
-		} catch (final IOException e) {
-			LOG.trace("Error in graph export", e);
-		}
-	}
 }
