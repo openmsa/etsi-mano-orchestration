@@ -63,12 +63,12 @@ class OrchestrationTest {
 
 	private Planner getPlanner() {
 		final List<System<?>> systems = Arrays.asList(new SysA(), new SysB());
-
+		final ManoDexcutorService<?> service = new ManoDexcutorService<>();
 		implementationService = new ImplementationService(systems, vimManager, null);
 		final List<PlanContributor> contributors = new ArrayList<>();
 		contributors.add(new ContributorA());
 		contributors.add(new ContributorB());
-		return new PlannerImpl(contributors, implementationService);
+		return new PlannerImpl(contributors, implementationService, service);
 	}
 
 	@Test
