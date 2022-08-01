@@ -16,6 +16,9 @@
  */
 package com.ubiqube.etsi.mano.service.graph;
 
+import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
+import com.ubiqube.etsi.mano.orchestrator.uow.Relation;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,8 +35,20 @@ public class Edge2d {
 
 	private Vertex2d target;
 
+	private Relation relation;
+
 	@Override
 	public String toString() {
-		return "";
+		if (null == relation) {
+			throw new OrchestrationException("Error: " + source + " <=> " + target);
+		}
+		return switch (relation) {
+		case ONE_TO_ONE -> "1:1";
+		case ONE_TO_MANY -> "1:*";
+		case MANY_TO_ONE -> "*:1";
+		case MULTI -> "***";
+		case NONE -> "><";
+		default -> throw new IllegalArgumentException("Unexpected value: " + relation);
+		};
 	}
 }
