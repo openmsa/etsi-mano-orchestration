@@ -16,7 +16,9 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.scale;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.graph.DefaultListenableGraph;
@@ -26,6 +28,7 @@ import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.uow.Relation;
 import com.ubiqube.etsi.mano.service.graph.Edge2d;
+import com.ubiqube.etsi.mano.service.graph.GraphListener2d;
 import com.ubiqube.etsi.mano.service.graph.Vertex2d;
 
 /**
@@ -42,29 +45,44 @@ public class ScalingEngine {
 		}
 		final Vertex2d orig = found.get(0);
 		final ListenableGraph<Vertex2d, Edge2d> d = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(Edge2d.class));
+		d.addGraphListener(new GraphListener2d());
 		d.addVertex(orig);
-		handleVertex(orig, g, d);
+		handleVertex(orig, g, d, new HashSet<>());
 		return d;
 	}
 
-	private void handleVertex(final Vertex2d orig, final ListenableGraph<Vertex2d, Edge2d> g, final ListenableGraph<Vertex2d, Edge2d> d) {
+	private void handleVertex(final Vertex2d orig, final ListenableGraph<Vertex2d, Edge2d> g, final ListenableGraph<Vertex2d, Edge2d> d, final HashSet<Vertex2d> cache) {
+		if (cache.contains(orig)) {
+			return;
+		}
+		cache.add(orig);
 		g.outgoingEdgesOf(orig).forEach(x -> {
 			final Vertex2d t = x.getTarget();
-			if ((t.getRelation() == Relation.ONE_TO_ONE) || (t.getRelation() == Relation.MULTI)) {
+			if ((x.getRelation() == Relation.ONE_TO_ONE) || (x.getRelation() == Relation.MULTI)) {
 				d.addVertex(t);
-				d.addEdge(orig, t);
+				System.out.println("Incoming Linking: " + vertex2Log(orig) + " -> " + vertex2Log(t));
+				Optional.ofNullable(d.addEdge(orig, t)).ifPresent(y -> y.setRelation(x.getRelation()));
+				handleVertex(t, g, d, cache);
+				cache.add(t);
 			} else {
-				System.out.println("Ignored: " + t + "=> " + t.getRelation());
+				System.out.println("Ignored: " + vertex2Log(t) + "=> " + x.getRelation());
 			}
 		});
 		g.incomingEdgesOf(orig).forEach(x -> {
 			final Vertex2d s = x.getSource();
-			if ((s.getRelation() == Relation.ONE_TO_ONE) || (s.getRelation() == Relation.MULTI)) {
+			if ((x.getRelation() == Relation.ONE_TO_ONE) || (x.getRelation() == Relation.MULTI)) {
 				d.addVertex(s);
-				d.addEdge(s, orig);
+				System.out.println("Incoming Linking: " + vertex2Log(s) + " -> " + vertex2Log(orig));
+				Optional.ofNullable(d.addEdge(s, orig)).ifPresent(y -> y.setRelation(x.getRelation()));
+				handleVertex(s, g, d, cache);
+				cache.add(s);
 			} else {
-				System.out.println("Ignored: " + s + "=> " + s.getRelation());
+				System.out.println("Ignored: " + vertex2Log(s) + "=> " + x.getRelation());
 			}
 		});
+	}
+
+	private static String vertex2Log(final Vertex2d v) {
+		return v.getName() + " " + v.getType().getSimpleName();
 	}
 }

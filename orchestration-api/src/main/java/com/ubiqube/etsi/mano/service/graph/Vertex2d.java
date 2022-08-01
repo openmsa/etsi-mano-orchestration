@@ -19,7 +19,6 @@ package com.ubiqube.etsi.mano.service.graph;
 import java.util.Objects;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
-import com.ubiqube.etsi.mano.orchestrator.uow.Relation;
 
 import lombok.Getter;
 
@@ -33,19 +32,17 @@ public class Vertex2d {
 
 	private final Class<? extends Node> type;
 	private final String name;
-	private final Relation relation;
 	private final Vertex2d parent;
 
-	public Vertex2d(final Class<? extends Node> class1, final String name, final Relation rel, final Vertex2d parent) {
+	public Vertex2d(final Class<? extends Node> class1, final String name, final Vertex2d parent) {
 		this.type = class1;
 		this.name = name;
-		this.relation = rel;
 		this.parent = parent;
 	}
 
 	public boolean match(final Class<? extends Node> inType, final String inName, final Vertex2d inParent) {
 		final boolean ret = ((inType == type) && inName.equals(name));
-		if ((null == inParent) || (relation == Relation.NONE) || (Relation.MULTI == relation)) {
+		if ((null == inParent)) {
 			return ret;
 		}
 		return ret && (inParent.equals(parent));
@@ -66,7 +63,7 @@ public class Vertex2d {
 
 	@Override
 	public Vertex2d clone() {
-		return new Vertex2d(type, name, relation, parent);
+		return new Vertex2d(type, name, parent);
 	}
 
 	@Override
