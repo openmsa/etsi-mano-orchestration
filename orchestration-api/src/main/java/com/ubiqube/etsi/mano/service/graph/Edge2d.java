@@ -14,25 +14,26 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.ubiqube.etsi.mano.orchestrator;
+package com.ubiqube.etsi.mano.service.graph;
 
-import java.util.List;
-
-import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
- * @author Olivier Vignaud <ovi@ubiqube.com>
+ * @author olivier
  *
- * @param <U>
- * @param <T>
- * @param <P>
  */
-public interface PlanContributor<U, T extends VirtualTask<U>, P> {
+@Getter
+@Setter
+public class Edge2d {
 
-	List<T> contribute(Bundle bundle, P parameters);
+	private Vertex2d source;
 
-	Class<? extends Node> getNode();
+	private Vertex2d target;
 
+	@Override
+	public String toString() {
+		return "";
+	}
 }

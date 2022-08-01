@@ -16,23 +16,30 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
-import java.util.List;
-
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
+import com.ubiqube.etsi.mano.orchestrator.uow.Relation;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
- * @author Olivier Vignaud <ovi@ubiqube.com>
+ * @author olivier
  *
- * @param <U>
- * @param <T>
- * @param <P>
  */
-public interface PlanContributor<U, T extends VirtualTask<U>, P> {
+@Getter
+@Setter
+public class NamedDependency2d extends NamedDependency {
+	private final Relation relation;
 
-	List<T> contribute(Bundle bundle, P parameters);
+	public NamedDependency2d(final Class<? extends Node> type, final String name, final Relation relation) {
+		super(type, name);
+		this.relation = relation;
+	}
 
-	Class<? extends Node> getNode();
+	@Override
+	public String toString() {
+		return "NamedDependency2d [relation=" + relation + "]";
+	}
 
 }

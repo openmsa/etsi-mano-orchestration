@@ -16,18 +16,22 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.model;
 
+import com.ubiqube.etsi.mano.orchestrator.uow.Relation;
+
 public class ScaleConnectivity {
 
 	private ScaleModel source;
 	private ScaleModel target;
+	private Relation relation;
 
 	public ScaleConnectivity() {
 		// Nothing.
 	}
 
-	public ScaleConnectivity(final ScaleModel source, final ScaleModel target) {
+	public ScaleConnectivity(final ScaleModel source, final ScaleModel target, final Relation relation) {
 		this.source = source;
 		this.target = target;
+		this.relation = relation;
 	}
 
 	public ScaleModel getSource() {
@@ -44,6 +48,14 @@ public class ScaleConnectivity {
 
 	public void setTarget(final ScaleModel target) {
 		this.target = target;
+	}
+
+	public Relation getRelation() {
+		return relation;
+	}
+
+	public void setRelation(final Relation relation) {
+		this.relation = relation;
 	}
 
 	@Override

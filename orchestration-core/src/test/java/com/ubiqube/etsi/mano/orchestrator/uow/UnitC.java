@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.ubiqube.etsi.mano.orchestrator.Context;
 import com.ubiqube.etsi.mano.orchestrator.NamedDependency;
+import com.ubiqube.etsi.mano.orchestrator.NamedDependency2d;
 import com.ubiqube.etsi.mano.orchestrator.Task;
 
 public class UnitC implements UnitOfWork<Object> {
@@ -55,6 +56,11 @@ public class UnitC implements UnitOfWork<Object> {
 
 	@Override
 	public List<NamedDependency> getNamedProduced() {
+		return List.of();
+	}
+
+	@Override
+	public List<NamedDependency2d> get2dDependencies() {
 		return List.of();
 	}
 }

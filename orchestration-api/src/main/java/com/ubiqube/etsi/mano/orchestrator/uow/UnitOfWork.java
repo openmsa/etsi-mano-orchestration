@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.ubiqube.etsi.mano.orchestrator.Context;
 import com.ubiqube.etsi.mano.orchestrator.NamedDependency;
+import com.ubiqube.etsi.mano.orchestrator.NamedDependency2d;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
 
@@ -40,4 +41,6 @@ public interface UnitOfWork<U> {
 	List<NamedDependency> getNameDependencies();
 
 	List<NamedDependency> getNamedProduced();
+
+	List<NamedDependency2d> get2dDependencies();
 }
