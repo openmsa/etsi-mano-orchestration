@@ -51,15 +51,15 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Compute;
  * @author Olivier Vignaud <ovi@ubiqube.com>
  *
  */
-class WrtingTest {
+class WritingTest {
 
-	private static final Logger LOG = LoggerFactory.getLogger(WrtingTest.class);
+	private static final Logger LOG = LoggerFactory.getLogger(WritingTest.class);
 
 	ListenableGraph<ScaleModel, ScaleConnectivity> g;
 
 	private final Map<ScaleModel, ScaleModel> cache;
 
-	public WrtingTest() {
+	public WritingTest() {
 		g = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(ScaleConnectivity.class));
 		g.addGraphListener(new ScaleListener());
 		final NetworkScale vl1 = new NetworkScale("vl_1");
