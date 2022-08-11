@@ -30,9 +30,13 @@ import lombok.Getter;
 @Getter
 public class Vertex2d {
 
-	private final Class<? extends Node> type;
-	private final String name;
-	private final Vertex2d parent;
+	private Class<? extends Node> type;
+	private String name;
+	private Vertex2d parent;
+
+	public Vertex2d() {
+		//
+	}
 
 	public Vertex2d(final Class<? extends Node> class1, final String name, final Vertex2d parent) {
 		this.type = class1;
