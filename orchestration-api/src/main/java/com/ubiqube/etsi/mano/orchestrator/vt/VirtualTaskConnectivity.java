@@ -16,10 +16,14 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.vt;
 
+import com.ubiqube.etsi.mano.orchestrator.uow.Relation;
+
 public class VirtualTaskConnectivity<U> {
 	private VirtualTask<U> source;
 
 	private VirtualTask<U> target;
+
+	private Relation relation;
 
 	public VirtualTaskConnectivity() {
 		// Nothing.
@@ -28,6 +32,12 @@ public class VirtualTaskConnectivity<U> {
 	public VirtualTaskConnectivity(final VirtualTask<U> source, final VirtualTask<U> target) {
 		this.source = source;
 		this.target = target;
+	}
+
+	public VirtualTaskConnectivity(final VirtualTask<U> source, final VirtualTask<U> target, final Relation relation) {
+		this.source = source;
+		this.target = target;
+		this.relation = relation;
 	}
 
 	public VirtualTask<U> getSource() {
@@ -44,6 +54,14 @@ public class VirtualTaskConnectivity<U> {
 
 	public void setTarget(final VirtualTask<U> target) {
 		this.target = target;
+	}
+
+	public Relation getRelation() {
+		return relation;
+	}
+
+	public void setRelation(final Relation relation) {
+		this.relation = relation;
 	}
 
 	@Override
