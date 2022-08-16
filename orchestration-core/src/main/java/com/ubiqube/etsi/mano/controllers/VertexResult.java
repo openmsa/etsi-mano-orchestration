@@ -14,15 +14,26 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.ubiqube.etsi.mano.orchestrator.nodes.nfvo;
+package com.ubiqube.etsi.mano.controllers;
 
-import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
+import java.util.List;
+import java.util.Set;
+
+import com.ubiqube.etsi.mano.service.graph.Vertex2d;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
- * @author Olivier Vignaud <ovi@ubiqube.com>
+ * @author olivier
  *
  */
-public interface VnffgPreNode extends Node {
-	// Nothing.
+@Getter
+@Setter
+public class VertexResult {
+
+	private Set<Vertex2d> vertices;
+
+	private List<JsonEdge> edges;
 }

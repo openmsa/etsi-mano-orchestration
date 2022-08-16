@@ -14,32 +14,48 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.ubiqube.etsi.mano.orchestrator;
+package com.ubiqube.etsi.mano.orchestrator.scale;
 
-import java.util.List;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
-import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  *
- * @author Olivier Vignaud <ovi@ubiqube.com>
+ * @author olivier
  *
+ * @param <U>
  */
-public interface SystemBuilder<U> {
-	List<ConnectivityEdge<UnitOfWork<U>>> getEdges();
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class ContextVt<U> implements VirtualTaskV3<U> {
 
-	UnitOfWork<U> getSingle();
+	private String vimConnectionId;
 
-	List<UnitOfWork<U>> getIncomingVertex();
+	private String name;
 
-	List<UnitOfWork<U>> getOutgoingVertex();
+	private Class<?> type;
 
-	void add(UnitOfWork<U> src, UnitOfWork<U> dest);
+	private String alias;
 
-	void add(UnitOfWorkV3<U> src, UnitOfWorkV3<U> dest);
+	private int rank;
 
-	List<UnitOfWork<U>> getVertex();
+	private U templateParameters;
+
+	private boolean delete;
+
+	private String resourceId;
+	
+	@Override
+	public boolean isDeleteTask() {
+		return delete;
+	}
 
 }

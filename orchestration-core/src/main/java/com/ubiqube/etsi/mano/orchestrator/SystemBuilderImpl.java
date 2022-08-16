@@ -23,6 +23,7 @@ import org.jgrapht.ListenableGraph;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 /**
  *
@@ -93,5 +94,10 @@ public class SystemBuilderImpl<U> implements SystemBuilder<U> {
 		g.addVertex(src);
 		g.addVertex(dest);
 		g.addEdge(src, dest);
+	}
+
+	@Override
+	public void add(final UnitOfWorkV3<U> src, final UnitOfWorkV3<U> dest) {
+		// Nothing ?
 	}
 }

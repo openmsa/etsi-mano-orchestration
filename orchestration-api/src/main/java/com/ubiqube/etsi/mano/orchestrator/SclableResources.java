@@ -16,30 +16,34 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
-import java.util.List;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
-import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
- * @author Olivier Vignaud <ovi@ubiqube.com>
+ * @author olivier
  *
  */
-public interface SystemBuilder<U> {
-	List<ConnectivityEdge<UnitOfWork<U>>> getEdges();
+@AllArgsConstructor
+@Getter
+@Setter
+public class SclableResources<U> {
+	private Class<? extends Node> type;
+	private String name;
+	private int have;
+	private int want;
+	private U templateParameter;
 
-	UnitOfWork<U> getSingle();
+	public static <U> SclableResources<U> of(final Class<? extends Node> type, final String name, final int have, final int want, final U param) {
+		return new SclableResources<>(type, name, have, want, param);
+	}
 
-	List<UnitOfWork<U>> getIncomingVertex();
-
-	List<UnitOfWork<U>> getOutgoingVertex();
-
-	void add(UnitOfWork<U> src, UnitOfWork<U> dest);
-
-	void add(UnitOfWorkV3<U> src, UnitOfWorkV3<U> dest);
-
-	List<UnitOfWork<U>> getVertex();
+	@Override
+	public String toString() {
+		return "SR(type=" + type.getSimpleName() + ", name=" + name + ", have=" + have + ", want=" + want + ")";
+	}
 
 }

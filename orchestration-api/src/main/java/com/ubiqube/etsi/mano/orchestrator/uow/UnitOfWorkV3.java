@@ -14,32 +14,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.ubiqube.etsi.mano.orchestrator;
+package com.ubiqube.etsi.mano.orchestrator.uow;
 
-import java.util.List;
-
-import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+import com.ubiqube.etsi.mano.orchestrator.Context3d;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 /**
  *
- * @author Olivier Vignaud <ovi@ubiqube.com>
+ * @author olivier
  *
  */
-public interface SystemBuilder<U> {
-	List<ConnectivityEdge<UnitOfWork<U>>> getEdges();
+public interface UnitOfWorkV3<U> {
+	VirtualTaskV3<U> getTask();
 
-	UnitOfWork<U> getSingle();
+	String execute(Context3d context);
 
-	List<UnitOfWork<U>> getIncomingVertex();
+	String rollback(Context3d context);
 
-	List<UnitOfWork<U>> getOutgoingVertex();
-
-	void add(UnitOfWork<U> src, UnitOfWork<U> dest);
-
-	void add(UnitOfWorkV3<U> src, UnitOfWorkV3<U> dest);
-
-	List<UnitOfWork<U>> getVertex();
+	Class<? extends Node> getType();
 
 }

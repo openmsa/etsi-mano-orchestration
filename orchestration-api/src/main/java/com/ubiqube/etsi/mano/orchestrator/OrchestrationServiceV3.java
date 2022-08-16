@@ -16,30 +16,16 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
-import java.util.List;
-
-import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
-/**
- *
- * @author Olivier Vignaud <ovi@ubiqube.com>
- *
- */
-public interface SystemBuilder<U> {
-	List<ConnectivityEdge<UnitOfWork<U>>> getEdges();
+public interface OrchestrationServiceV3<U> {
 
-	UnitOfWork<U> getSingle();
+	SystemBuilder<UnitOfWorkV3<U>> systemBuilderOf(UnitOfWorkV3<U> uow);
 
-	List<UnitOfWork<U>> getIncomingVertex();
+	SystemBuilder<UnitOfWorkV3<U>> systemBuilderOf(final UnitOfWorkV3<U> left, final UnitOfWorkV3<U> right);
 
-	List<UnitOfWork<U>> getOutgoingVertex();
+	SystemBuilder<UnitOfWorkV3<U>> createEmptySystemBuilder();
 
-	void add(UnitOfWork<U> src, UnitOfWork<U> dest);
-
-	void add(UnitOfWorkV3<U> src, UnitOfWorkV3<U> dest);
-
-	List<UnitOfWork<U>> getVertex();
+	Context3d createEmptyContext();
 
 }

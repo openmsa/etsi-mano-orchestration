@@ -1,0 +1,303 @@
+{
+    "vertices": [
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.AffinityRuleNode",
+            "name": "affinity_01",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network",
+            "name": "middleVl01",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.DnsZone",
+            "name": "middleVl01",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.SubNetwork",
+            "name": "middleVl01-vl01L2",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.SubNetwork",
+            "name": "middleVl01-vl01L2-bis",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network",
+            "name": "leftVl01",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.DnsZone",
+            "name": "leftVl01",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.SubNetwork",
+            "name": "leftVl01-vl01L2",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network",
+            "name": "rightVl01",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.DnsZone",
+            "name": "rightVl01",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.SubNetwork",
+            "name": "rightVl01-vl01L2",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Storage",
+            "name": "block01",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Compute",
+            "name": "rightVdu01",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Storage",
+            "name": "block01",
+            "parent": {
+                "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Compute",
+                "name": "rightVdu01",
+                "parent": null
+            }
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.AffinityRuleNode",
+            "name": "affinity_01",
+            "parent": {
+                "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Compute",
+                "name": "rightVdu01",
+                "parent": null
+            }
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.SecurityGroupNode",
+            "name": "security",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.VnfPortNode",
+            "name": "cpRc01",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.DnsHost",
+            "name": "rightVdu01-cpRc01",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.VnfPortNode",
+            "name": "cpRc02",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.DnsHost",
+            "name": "rightVdu01-cpRc02",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Compute",
+            "name": "leftVdu01",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Storage",
+            "name": "block01",
+            "parent": {
+                "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Compute",
+                "name": "leftVdu01",
+                "parent": null
+            }
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Monitoring",
+            "name": "name",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.VnfPortNode",
+            "name": "cpLc02",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.DnsHost",
+            "name": "leftVdu01-cpLc02",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.VnfPortNode",
+            "name": "cpLc01",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.DnsHost",
+            "name": "leftVdu01-cpLc01",
+            "parent": null
+        }
+    ],
+    "edges": [
+        {
+            "source": "middleVl01\nNetwork",
+            "target": "middleVl01\nDnsZone",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "middleVl01\nNetwork",
+            "target": "middleVl01-vl01L2\nSubNetwork",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "middleVl01\nNetwork",
+            "target": "middleVl01-vl01L2-bis\nSubNetwork",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "leftVl01\nNetwork",
+            "target": "leftVl01\nDnsZone",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "leftVl01\nNetwork",
+            "target": "leftVl01-vl01L2\nSubNetwork",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "rightVl01\nNetwork",
+            "target": "rightVl01\nDnsZone",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "rightVl01\nNetwork",
+            "target": "rightVl01-vl01L2\nSubNetwork",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "rightVdu01-block01\nStorage",
+            "target": "rightVdu01\nCompute",
+            "relation": "MULTI"
+        },
+        {
+            "source": "rightVdu01\nCompute",
+            "target": "rightVdu01-affinity_01\nAffinityRuleNode",
+            "relation": "NONE"
+        },
+        {
+            "source": "security\nSecurityGroupNode",
+            "target": "rightVdu01\nCompute",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "cpRc01\nVnfPortNode",
+            "target": "rightVdu01\nCompute",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "rightVl01-vl01L2\nSubNetwork",
+            "target": "cpRc01\nVnfPortNode",
+            "relation": "MANY_TO_ONE"
+        },
+        {
+            "source": "rightVdu01-cpRc01\nDnsHost",
+            "target": "cpRc01\nVnfPortNode",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "rightVl01\nDnsZone",
+            "target": "rightVdu01-cpRc01\nDnsHost",
+            "relation": "ONE_TO_MANY"
+        },
+        {
+            "source": "cpRc02\nVnfPortNode",
+            "target": "rightVdu01\nCompute",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "middleVl01-vl01L2\nSubNetwork",
+            "target": "cpRc02\nVnfPortNode",
+            "relation": "MANY_TO_ONE"
+        },
+        {
+            "source": "rightVdu01-cpRc02\nDnsHost",
+            "target": "cpRc02\nVnfPortNode",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "middleVl01\nDnsZone",
+            "target": "rightVdu01-cpRc02\nDnsHost",
+            "relation": "ONE_TO_MANY"
+        },
+        {
+            "source": "middleVl01-vl01L2-bis\nSubNetwork",
+            "target": "cpRc02\nVnfPortNode",
+            "relation": "MANY_TO_ONE"
+        },
+        {
+            "source": "leftVdu01-block01\nStorage",
+            "target": "leftVdu01\nCompute",
+            "relation": "MULTI"
+        },
+        {
+            "source": "leftVdu01\nCompute",
+            "target": "name\nMonitoring",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "cpLc02\nVnfPortNode",
+            "target": "leftVdu01\nCompute",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "middleVl01-vl01L2\nSubNetwork",
+            "target": "cpLc02\nVnfPortNode",
+            "relation": "MANY_TO_ONE"
+        },
+        {
+            "source": "leftVdu01-cpLc02\nDnsHost",
+            "target": "cpLc02\nVnfPortNode",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "middleVl01\nDnsZone",
+            "target": "leftVdu01-cpLc02\nDnsHost",
+            "relation": "ONE_TO_MANY"
+        },
+        {
+            "source": "middleVl01-vl01L2-bis\nSubNetwork",
+            "target": "cpLc02\nVnfPortNode",
+            "relation": "MANY_TO_ONE"
+        },
+        {
+            "source": "cpLc01\nVnfPortNode",
+            "target": "leftVdu01\nCompute",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "leftVl01-vl01L2\nSubNetwork",
+            "target": "cpLc01\nVnfPortNode",
+            "relation": "MANY_TO_ONE"
+        },
+        {
+            "source": "leftVdu01-cpLc01\nDnsHost",
+            "target": "cpLc01\nVnfPortNode",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "leftVl01\nDnsZone",
+            "target": "leftVdu01-cpLc01\nDnsHost",
+            "relation": "ONE_TO_MANY"
+        }
+    ]
+}

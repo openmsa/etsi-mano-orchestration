@@ -1,0 +1,176 @@
+{
+    "vertices": [
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network",
+            "name": "right_vl",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network",
+            "name": "ext_left_vl",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network",
+            "name": "left_vl",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network",
+            "name": "ext_right_vl",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.VnffgPostNode",
+            "name": "vnffg_1",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.VnffgLoadbalancerNode",
+            "name": "nfp_position_1",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.PortPairNode",
+            "name": "element_1",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.mec.VnfContextExtractorNode",
+            "name": "vnf_left",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.PortPairNode",
+            "name": "element_2",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.mec.VnfContextExtractorNode",
+            "name": "vnf_middle",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.PortPairNode",
+            "name": "element_3",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.mec.VnfContextExtractorNode",
+            "name": "vnf_right",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.VnfCreateNode",
+            "name": "vnf_middle",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.VnfInstantiateNode",
+            "name": "vnf_middle",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.VnfCreateNode",
+            "name": "vnf_left",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.VnfInstantiateNode",
+            "name": "vnf_left",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.VnfCreateNode",
+            "name": "vnf_right",
+            "parent": null
+        },
+        {
+            "type": "com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.VnfInstantiateNode",
+            "name": "vnf_right",
+            "parent": null
+        }
+    ],
+    "edges": [
+        {
+            "source": "nfp_position_1\nVnffgLoadbalancerNode",
+            "target": "vnffg_1\nVnffgPostNode",
+            "relation": "MANY_TO_ONE"
+        },
+        {
+            "source": "element_1\nPortPairNode",
+            "target": "nfp_position_1\nVnffgLoadbalancerNode",
+            "relation": "MANY_TO_ONE"
+        },
+        {
+            "source": "vnf_left\nVnfContextExtractorNode",
+            "target": "element_1\nPortPairNode",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "element_2\nPortPairNode",
+            "target": "nfp_position_1\nVnffgLoadbalancerNode",
+            "relation": "MANY_TO_ONE"
+        },
+        {
+            "source": "vnf_middle\nVnfContextExtractorNode",
+            "target": "element_2\nPortPairNode",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "element_3\nPortPairNode",
+            "target": "nfp_position_1\nVnffgLoadbalancerNode",
+            "relation": "MANY_TO_ONE"
+        },
+        {
+            "source": "vnf_right\nVnfContextExtractorNode",
+            "target": "element_3\nPortPairNode",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "vnf_middle\nVnfCreateNode",
+            "target": "vnf_middle\nVnfInstantiateNode",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "left_vl\nNetwork",
+            "target": "vnf_middle\nVnfCreateNode",
+            "relation": "ONE_TO_MANY"
+        },
+        {
+            "source": "vnf_middle\nVnfInstantiateNode",
+            "target": "vnf_middle\nVnfContextExtractorNode",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "vnf_left\nVnfCreateNode",
+            "target": "vnf_left\nVnfInstantiateNode",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "left_vl\nNetwork",
+            "target": "vnf_left\nVnfCreateNode",
+            "relation": "ONE_TO_MANY"
+        },
+        {
+            "source": "vnf_left\nVnfInstantiateNode",
+            "target": "vnf_left\nVnfContextExtractorNode",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "vnf_right\nVnfCreateNode",
+            "target": "vnf_right\nVnfInstantiateNode",
+            "relation": "ONE_TO_ONE"
+        },
+        {
+            "source": "left_vl\nNetwork",
+            "target": "vnf_right\nVnfCreateNode",
+            "relation": "ONE_TO_MANY"
+        },
+        {
+            "source": "vnf_right\nVnfInstantiateNode",
+            "target": "vnf_right\nVnfContextExtractorNode",
+            "relation": "ONE_TO_ONE"
+        }
+    ]
+}

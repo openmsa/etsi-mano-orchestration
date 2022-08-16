@@ -1,0 +1,131 @@
+/**
+ *     Copyright (C) 2019-2020 Ubiqube.
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.ubiqube.etsi.mano.orchestrator.scale;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
+import org.jgrapht.ListenableGraph;
+import org.jgrapht.graph.DefaultListenableGraph;
+import org.jgrapht.graph.DirectedAcyclicGraph;
+import org.jgrapht.nio.dot.DOTExporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
+import com.ubiqube.etsi.mano.orchestrator.uow.Relation;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV2;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskVertexListenerV2;
+import com.ubiqube.etsi.mano.service.graph.Edge2d;
+import com.ubiqube.etsi.mano.service.graph.Vertex2d;
+
+/**
+ *
+ * @author olivier
+ *
+ */
+public class PlanMerger {
+	private static final Logger LOG = LoggerFactory.getLogger(PlanMerger.class);
+
+	public <U> ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> merge(final ListenableGraph<Vertex2d, Edge2d> g, final List<ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>>> plans) {
+		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> d = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV2.class));
+		d.addGraphListener(new VirtualTaskVertexListenerV2<>());
+		plans.stream().flatMap(x -> x.vertexSet().stream()).forEach(x -> d.addVertex(x));
+		plans.stream().flatMap(x -> x.edgeSet().stream()).forEach(x -> d.addEdge(x.getSource(), x.getTarget()));
+		g.edgeSet().forEach(x -> {
+			if (x.getSource().getType() == Network.class) {
+				LOG.debug("HERE !!!");
+			}
+			final List<VirtualTaskV3<U>> srcs = getAll(d, x.getSource().getName(), x.getSource().getType(), List.of());
+			final List<VirtualTaskV3<U>> tgts = getAll(d, x.getTarget().getName(), x.getTarget().getType(), srcs);
+			if (x.getRelation() == Relation.ONE_TO_MANY) {
+				makeOneToMany(d, srcs, tgts);
+				return;
+			}
+			if (x.getRelation() == Relation.ONE_TO_ONE) {
+				makeOneToOne(d, x, srcs, tgts);
+				return;
+			}
+			if ((srcs.size() != 1) || (tgts.size() != 1)) {
+				System.out.println("::: " + srcs.size() + " = " + tgts.size() + " " + x.getRelation() + " / " + x.getSource() + " ||| " + x.getTarget());
+				System.out.println("Got " + x.getSource().getName() + " = " + srcs + " / " + x.getTarget().getName() + " = " + tgts);
+				System.out.println("====================");
+				return;
+			}
+			d.addEdge(srcs.get(0), tgts.get(0));
+		});
+		if (LOG.isDebugEnabled()) {
+			exportPlan(d, "post-plan-merget.dot");
+		}
+		return d;
+	}
+
+	private static <U> void exportPlan(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> d, final String filename) {
+		final DOTExporter<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> exporter = new DOTExporter<>(PlanMerger::toDotName);
+		try (final FileOutputStream out = new FileOutputStream(filename)) {
+			exporter.exportGraph(d, out);
+		} catch (final IOException e) {
+			LOG.trace("Error in graph export", e);
+		}
+	}
+
+	private static <U> String toDotName(final VirtualTaskV3<U> task) {
+		final String base = task.getType().getSimpleName() + "_" + task.getName();
+		return base.replace("/", "_").replace("-", "_");
+	}
+
+	private static <U> void makeOneToOne(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> d, final Edge2d edge, final List<VirtualTaskV3<U>> srcs, final List<VirtualTaskV3<U>> tgts) {
+		srcs.forEach(x -> {
+			final Optional<VirtualTaskV3<U>> res = find(x, edge, tgts);
+			if (res.isPresent()) {
+				d.addEdge(x, res.get());
+			} else {
+				LOG.warn("One to one of ({} / {} ) => Could not find: {} in {}", edge.getSource().toString().replace("\n", "/"), edge.getTarget().toString().replace("\n", "/"), x, tgts);
+			}
+		});
+	}
+
+	private static <U> Optional<VirtualTaskV3<U>> find(final VirtualTaskV3<U> src, final Edge2d edge, final List<VirtualTaskV3<U>> tgts) {
+		return tgts.stream()
+				.filter(x -> x.getType() == edge.getTarget().getType())
+				.filter(x -> x.getName().equals(edge.getTarget().getName()))
+				.filter(x -> x.getRank() == src.getRank())
+				.findFirst();
+
+	}
+
+	private static <U> void makeOneToMany(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> d, final List<VirtualTaskV3<U>> srcs, final List<VirtualTaskV3<U>> tgts) {
+		if (srcs.size() != 1) {
+			LOG.debug("ERROR: ONE TO MANY but src is {}", srcs.size());
+			return;
+		}
+		final VirtualTaskV3<U> src = srcs.get(0);
+		tgts.forEach(x -> d.addEdge(src, x));
+	}
+
+	private static <U> List<VirtualTaskV3<U>> getAll(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> d, final String name, final Class<?> type, final List<VirtualTaskV3<U>> exclude) {
+		return d.vertexSet().stream()
+				.filter(x -> !exclude.contains(x))
+				.filter(x -> x.getType() == type)
+				.filter(x -> x.getName().startsWith(name))
+				.toList();
+	}
+
+}

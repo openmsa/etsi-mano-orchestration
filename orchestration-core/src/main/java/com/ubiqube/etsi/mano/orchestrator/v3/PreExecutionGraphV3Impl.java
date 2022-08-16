@@ -1,0 +1,69 @@
+/**
+ *     Copyright (C) 2019-2020 Ubiqube.
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.ubiqube.etsi.mano.orchestrator.v3;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+
+import org.jgrapht.ListenableGraph;
+import org.jgrapht.nio.dot.DOTExporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV2;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
+
+/**
+ *
+ * @author olivier
+ *
+ * @param <U>
+ */
+public class PreExecutionGraphV3Impl<U> implements PreExecutionGraphV3<U> {
+	private static final Logger LOG = LoggerFactory.getLogger(PreExecutionGraphV3Impl.class);
+
+	private final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> network;
+
+	public PreExecutionGraphV3Impl(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> network) {
+		this.network = network;
+	}
+
+	public ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> getGraph() {
+		return network;
+	}
+
+	@Override
+	public List<VirtualTaskV3<U>> getPreTasks() {
+		return network.vertexSet().stream().toList();
+	}
+
+	@Override
+	public void toDotFile(final String filename) {
+		final DOTExporter<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> exporter = new DOTExporter<>(x -> toDotName(x));
+		try (final FileOutputStream out = new FileOutputStream(filename)) {
+			exporter.exportGraph(network, out);
+		} catch (final IOException e) {
+			LOG.trace("Error in graph export", e);
+		}
+	}
+
+	private String toDotName(final VirtualTaskV3<U> task) {
+		final String base = task.getType().getSimpleName() + "_" + task.getName();
+		return base.replace("/", "_").replace("-", "_");
+	}
+}

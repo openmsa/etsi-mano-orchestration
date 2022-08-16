@@ -16,30 +16,32 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
-import java.util.List;
+import org.springframework.stereotype.Service;
 
-import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
-/**
- *
- * @author Olivier Vignaud <ovi@ubiqube.com>
- *
- */
-public interface SystemBuilder<U> {
-	List<ConnectivityEdge<UnitOfWork<U>>> getEdges();
+@Service
+public class OrchestrationServiceV3Impl<U> implements OrchestrationServiceV3<U> {
 
-	UnitOfWork<U> getSingle();
+	@Override
+	public SystemBuilder<UnitOfWorkV3<U>> systemBuilderOf(final UnitOfWorkV3<U> uow) {
+		return null;// (SystemBuilder<UnitOfWorkV3<U>>) SystemBuilderImpl.of(uow);
+	}
 
-	List<UnitOfWork<U>> getIncomingVertex();
+	@Override
+	public SystemBuilder<UnitOfWorkV3<U>> systemBuilderOf(final UnitOfWorkV3<U> left, final UnitOfWorkV3<U> right) {
+		return null;
+		// SystemBuilderImpl.of(left, right);
+	}
 
-	List<UnitOfWork<U>> getOutgoingVertex();
+	@Override
+	public SystemBuilder<UnitOfWorkV3<U>> createEmptySystemBuilder() {
+		return new SystemBuilderImpl<>();
+	}
 
-	void add(UnitOfWork<U> src, UnitOfWork<U> dest);
-
-	void add(UnitOfWorkV3<U> src, UnitOfWorkV3<U> dest);
-
-	List<UnitOfWork<U>> getVertex();
+	@Override
+	public Context3d createEmptyContext() {
+		return new Context3dImpl();
+	}
 
 }

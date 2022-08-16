@@ -14,32 +14,18 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.ubiqube.etsi.mano.orchestrator;
+package com.ubiqube.etsi.mano.orchestrator.scale;
 
-import java.util.List;
-
-import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 /**
  *
- * @author Olivier Vignaud <ovi@ubiqube.com>
+ * @author olivier
  *
  */
-public interface SystemBuilder<U> {
-	List<ConnectivityEdge<UnitOfWork<U>>> getEdges();
+public interface ObjectFactory {
 
-	UnitOfWork<U> getSingle();
-
-	List<UnitOfWork<U>> getIncomingVertex();
-
-	List<UnitOfWork<U>> getOutgoingVertex();
-
-	void add(UnitOfWork<U> src, UnitOfWork<U> dest);
-
-	void add(UnitOfWorkV3<U> src, UnitOfWorkV3<U> dest);
-
-	List<UnitOfWork<U>> getVertex();
+	<U> VirtualTaskV3<U> create(Class<? extends Node> type, String taskName, String taskAlias, int i, boolean delete);
 
 }

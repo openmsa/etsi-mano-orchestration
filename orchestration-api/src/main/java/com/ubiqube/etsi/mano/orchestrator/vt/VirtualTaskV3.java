@@ -14,32 +14,36 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.ubiqube.etsi.mano.orchestrator;
-
-import java.util.List;
-
-import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+package com.ubiqube.etsi.mano.orchestrator.vt;
 
 /**
  *
- * @author Olivier Vignaud <ovi@ubiqube.com>
+ * @author olivier
  *
+ * @param U Type of the parameter class, can be a Task parameter.
  */
-public interface SystemBuilder<U> {
-	List<ConnectivityEdge<UnitOfWork<U>>> getEdges();
+public interface VirtualTaskV3<U> {
+	boolean isDeleteTask();
 
-	UnitOfWork<U> getSingle();
+	String getVimConnectionId();
 
-	List<UnitOfWork<U>> getIncomingVertex();
+	void setName(String name);
 
-	List<UnitOfWork<U>> getOutgoingVertex();
+	String getName();
 
-	void add(UnitOfWork<U> src, UnitOfWork<U> dest);
+	Class<?> getType();
 
-	void add(UnitOfWorkV3<U> src, UnitOfWorkV3<U> dest);
+	void setAlias(String alias);
 
-	List<UnitOfWork<U>> getVertex();
+	String getAlias();
 
+	int getRank();
+
+	void setRank(int rank);
+
+	U getTemplateParameters();
+
+	void setTemplateParameters(U u);
+
+	void setDelete(boolean del);
 }

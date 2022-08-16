@@ -18,28 +18,22 @@ package com.ubiqube.etsi.mano.orchestrator;
 
 import java.util.List;
 
-import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 /**
  *
- * @author Olivier Vignaud <ovi@ubiqube.com>
+ * @author olivier
  *
  */
-public interface SystemBuilder<U> {
-	List<ConnectivityEdge<UnitOfWork<U>>> getEdges();
+public interface Context3d {
 
-	UnitOfWork<U> getSingle();
+	<U> void add(UnitOfWork<U> uaow, String res);
 
-	List<UnitOfWork<U>> getIncomingVertex();
+	String get(Class<? extends Node> class1, String toscaName);
 
-	List<UnitOfWork<U>> getOutgoingVertex();
+	List<String> getParent(Class<? extends Node> class1, String toscaName);
 
-	void add(UnitOfWork<U> src, UnitOfWork<U> dest);
-
-	void add(UnitOfWorkV3<U> src, UnitOfWorkV3<U> dest);
-
-	List<UnitOfWork<U>> getVertex();
+	void add(Class<? extends Node> class1, String name, String resourceId);
 
 }

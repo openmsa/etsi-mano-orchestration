@@ -16,30 +16,30 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
-import java.util.List;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
-import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  *
- * @author Olivier Vignaud <ovi@ubiqube.com>
+ * @author olivier
  *
  */
-public interface SystemBuilder<U> {
-	List<ConnectivityEdge<UnitOfWork<U>>> getEdges();
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class ContextHolder {
 
-	UnitOfWork<U> getSingle();
+	private Class<? extends Node> type;
 
-	List<UnitOfWork<U>> getIncomingVertex();
+	private String name;
 
-	List<UnitOfWork<U>> getOutgoingVertex();
+	private int rank;
 
-	void add(UnitOfWork<U> src, UnitOfWork<U> dest);
-
-	void add(UnitOfWorkV3<U> src, UnitOfWorkV3<U> dest);
-
-	List<UnitOfWork<U>> getVertex();
+	private String resourceId;
 
 }
