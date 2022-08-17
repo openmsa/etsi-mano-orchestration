@@ -17,10 +17,14 @@
 package com.ubiqube.etsi.mano.service.sys;
 
 import com.ubiqube.etsi.mano.orchestrator.OrchestrationService;
+import com.ubiqube.etsi.mano.orchestrator.OrchestrationServiceV3;
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
 import com.ubiqube.etsi.mano.orchestrator.entities.SystemConnections;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 /**
  *
@@ -33,5 +37,10 @@ public interface System<U> {
 
 	String getProviderId();
 
+	Class<? extends Node> getType();
+
 	SystemBuilder<UnitOfWork<U>> getImplementation(OrchestrationService<U> orchestrationService, VirtualTask<U> virtualTask, SystemConnections vim);
+
+	SystemBuilder<UnitOfWorkV3<U>> getImplementation(OrchestrationServiceV3<U> orchestrationServicev3, VirtualTaskV3<U> virtualTask, SystemConnections vim);
+
 }

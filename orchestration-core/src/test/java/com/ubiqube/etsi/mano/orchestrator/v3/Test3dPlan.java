@@ -44,7 +44,7 @@ import com.ubiqube.etsi.mano.orchestrator.scale.ObjectFactory;
 import com.ubiqube.etsi.mano.orchestrator.scale.PlanMerger;
 import com.ubiqube.etsi.mano.orchestrator.scale.PlanMultiplier;
 import com.ubiqube.etsi.mano.orchestrator.scale.ScalingEngine;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV2;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 import com.ubiqube.etsi.mano.service.graph.Edge2d;
 import com.ubiqube.etsi.mano.service.graph.GraphListener2d;
@@ -90,7 +90,7 @@ class Test3dPlan {
 				SclableResources.of(Network.class, "leftVl01", 0, 1, null),
 				SclableResources.of(Network.class, "middleVl01", 0, 1, null),
 				SclableResources.of(Network.class, "leftVl01", 0, 1, null));
-		final List<ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV2<Object>>> plans = new ArrayList<>();
+		final List<ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>>> plans = new ArrayList<>();
 		scales.forEach(x -> {
 			final ListenableGraph<Vertex2d, Edge2d> s = se.scale(g, x.getType(), x.getName());
 			s.edgeSet().forEach(y -> {
@@ -98,7 +98,7 @@ class Test3dPlan {
 				assertNotNull(y.getTarget());
 			});
 			// exportGraph(g, "test-origin.dot");
-			final ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV2<Object>> np = pm.multiply(s, null, null, List.of(), List.of());
+			final ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>> np = pm.multiply(s, null, null, List.of(), List.of());
 			np.edgeSet().forEach(y -> {
 				assertNotNull(y.getSource());
 				assertNotNull(y.getTarget());
@@ -106,7 +106,7 @@ class Test3dPlan {
 			plans.add(np);
 		});
 		final PlanMerger pMerge = new PlanMerger();
-		final ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV2<Object>> ret = pMerge.merge(g, plans);
+		final ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>> ret = pMerge.merge(g, plans);
 		// exportGraph(ret, "test-scale.dot");
 	}
 

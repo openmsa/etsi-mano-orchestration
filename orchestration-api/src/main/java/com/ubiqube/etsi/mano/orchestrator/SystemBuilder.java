@@ -30,7 +30,7 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 public interface SystemBuilder<U> {
 	List<ConnectivityEdge<UnitOfWork<U>>> getEdges();
 
-	UnitOfWork<U> getSingle();
+	UnitOfWorkV3<U> getSingle();
 
 	List<UnitOfWork<U>> getIncomingVertex();
 
@@ -41,5 +41,7 @@ public interface SystemBuilder<U> {
 	void add(UnitOfWorkV3<U> src, UnitOfWorkV3<U> dest);
 
 	List<UnitOfWork<U>> getVertex();
+
+	List<UnitOfWorkV3<U>> getVertexV3();
 
 }

@@ -24,7 +24,9 @@ import org.slf4j.LoggerFactory;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkVertexListener;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkVertexListenerV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivity;
 
@@ -48,6 +50,13 @@ public class GraphTools {
 		return g;
 	}
 
+	public static <U> ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> createGraphV3() {
+		// Vertex everyThing
+		final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g = (ListenableGraph) (Object) new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(ConnectivityEdge.class));
+		g.addGraphListener(new UnitOfWorkVertexListenerV3<>());
+		return g;
+	}
+
 	public static <U> ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> revert(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g) {
 		final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> gNew = createGraph();
 		g.vertexSet().forEach(gNew::addVertex);
@@ -63,4 +72,10 @@ public class GraphTools {
 	public static <U> void dumpVt(final ListenableGraph<VirtualTask<U>, VirtualTaskConnectivity<U>> g) {
 		g.edgeSet().forEach(x -> LOG.debug("vt: {} => {}", x.getSource().getName(), x.getTarget().getName()));
 	}
+
+	public static <U> void dumpV3(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g) {
+		g.vertexSet().forEach(x -> LOG.debug("v: {} of {}", x.getTask().getAlias(), x.getType().getSimpleName()));
+		g.edgeSet().forEach(x -> LOG.debug("e: {} => {}", x.getSource().getTask().getAlias(), x.getTarget().getTask().getAlias()));
+	}
+
 }

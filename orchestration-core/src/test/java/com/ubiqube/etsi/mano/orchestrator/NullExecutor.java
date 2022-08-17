@@ -21,12 +21,12 @@ import org.jgrapht.ListenableGraph;
 import com.github.dexecutor.core.task.ExecutionResults;
 import com.github.dexecutor.core.task.TaskProvider;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 public class NullExecutor implements ManoExecutor<Object> {
 
 	@Override
-	public ExecutionResults<UnitOfWork<Object>, String> execute(final ListenableGraph<UnitOfWork<Object>, ConnectivityEdge<UnitOfWork<Object>>> g, final TaskProvider<UnitOfWork<Object>, String> uowTaskProvider) {
+	public ExecutionResults<UnitOfWorkV3<Object>, String> execute(final ListenableGraph<UnitOfWorkV3<Object>, ConnectivityEdge<UnitOfWorkV3<Object>>> g, final TaskProvider<UnitOfWorkV3<Object>, String> uowTaskProvider) {
 		return null;
 	}
 

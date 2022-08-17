@@ -25,30 +25,25 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
-/**
- *
- * @author Olivier Vignaud <ovi@ubiqube.com>
- *
- */
-public class SystemBuilderImpl<U> implements SystemBuilder<U> {
-	private final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g = GraphTools.createGraph();
-	private UnitOfWork<U> single = null;
+public class SystemBuilderV3Impl<U> implements SystemBuilder<U> {
+	private final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g = GraphTools.createGraphV3();
+	private UnitOfWorkV3<U> single = null;
 
-	public static <U> SystemBuilder<U> of(final UnitOfWork<U> vt) {
-		final SystemBuilderImpl<U> ib = new SystemBuilderImpl<>();
+	public static <U> SystemBuilder<U> of(final UnitOfWorkV3<U> vt) {
+		final SystemBuilderV3Impl<U> ib = new SystemBuilderV3Impl<>();
 		ib.single = vt;
 		return ib;
 	}
 
-	public static <U> SystemBuilder<U> of(final UnitOfWork<U> left, final UnitOfWork<U> right) {
-		final SystemBuilderImpl<U> ib = new SystemBuilderImpl<>();
+	public static <U> SystemBuilder<U> of(final UnitOfWorkV3<U> left, final UnitOfWorkV3<U> right) {
+		final SystemBuilderV3Impl<U> ib = new SystemBuilderV3Impl<>();
 		ib.g.addVertex(left);
 		ib.g.addVertex(right);
 		ib.g.addEdge(left, right);
 		return ib;
 	}
 
-	public SystemBuilder<U> edge(final UnitOfWork<U> left, final UnitOfWork<U> right) {
+	public SystemBuilder<U> edge(final UnitOfWorkV3<U> left, final UnitOfWorkV3<U> right) {
 		g.addVertex(left);
 		g.addVertex(right);
 		g.addEdge(left, right);
@@ -57,53 +52,60 @@ public class SystemBuilderImpl<U> implements SystemBuilder<U> {
 
 	@Override
 	public List<ConnectivityEdge<UnitOfWork<U>>> getEdges() {
-		return g.edgeSet().stream().toList();
+		return null;
 	}
 
 	@Override
 	public UnitOfWorkV3<U> getSingle() {
-		return null;// single;
+		return single;
 	}
 
 	@Override
 	public List<UnitOfWork<U>> getVertex() {
-		if (null != single) {
-			return Arrays.asList(single);
-		}
-		return g.vertexSet().stream().toList();
+		// if (null != single) {
+		// return Arrays.asList(single);
+		// }
+		return null;// g.vertexSet().stream().toList();
 	}
 
 	@Override
 	public List<UnitOfWork<U>> getIncomingVertex() {
-		if (null != single) {
-			return Arrays.asList(single);
-		}
-		return g.vertexSet().stream().filter(x -> g.incomingEdgesOf(x).isEmpty()).toList();
+//		if (null != single) {
+//			return Arrays.asList(single);
+//		}
+//		return g.vertexSet().stream().filter(x -> g.incomingEdgesOf(x).isEmpty()).toList();
+		return null;
 	}
 
 	@Override
 	public List<UnitOfWork<U>> getOutgoingVertex() {
-		if (null != single) {
-			return Arrays.asList(single);
-		}
-		return g.vertexSet().stream().filter(x -> g.outgoingEdgesOf(x).isEmpty()).toList();
+//		if (null != single) {
+//			return Arrays.asList(single);
+//		}
+//		return g.vertexSet().stream().filter(x -> g.outgoingEdgesOf(x).isEmpty()).toList();
+		return null;
 	}
 
 	@Override
 	public void add(final UnitOfWork<U> src, final UnitOfWork<U> dest) {
+//		g.addVertex(src);
+//		g.addVertex(dest);
+//		g.addEdge(src, dest);
+	}
+
+	@Override
+	public void add(final UnitOfWorkV3<U> src, final UnitOfWorkV3<U> dest) {
 		g.addVertex(src);
 		g.addVertex(dest);
 		g.addEdge(src, dest);
 	}
 
 	@Override
-	public void add(final UnitOfWorkV3<U> src, final UnitOfWorkV3<U> dest) {
-		// Nothing ?
+	public List<UnitOfWorkV3<U>> getVertexV3() {
+		if (null != single) {
+			return Arrays.asList(single);
+		}
+		return g.vertexSet().stream().toList();
 	}
 
-	@Override
-	public List<UnitOfWorkV3<U>> getVertexV3() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

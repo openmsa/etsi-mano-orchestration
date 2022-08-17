@@ -16,7 +16,7 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 /**
  *
@@ -28,7 +28,7 @@ public class UowExecCreateTask<U> extends DexecutorTask<U> {
 	/** Serial. */
 	private static final long serialVersionUID = 1L;
 
-	public UowExecCreateTask(final OrchExecutionListener<U> listener, final UnitOfWork<U> uaow, final Context context) {
+	public UowExecCreateTask(final OrchExecutionListener<U> listener, final UnitOfWorkV3<U> uaow, final Context3d context) {
 		super(listener, uaow, context, true);
 	}
 

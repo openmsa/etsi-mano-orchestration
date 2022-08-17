@@ -14,26 +14,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.ubiqube.etsi.mano.orchestrator;
+package com.ubiqube.etsi.mano.orchestrator.repository;
 
-import java.util.List;
+import java.util.UUID;
 
-import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
-import com.ubiqube.etsi.mano.orchestrator.v3.PreExecutionGraphV3;
+import org.springframework.data.repository.CrudRepository;
 
-/**
- *
- * @author Olivier Vignaud <ovi@ubiqube.com>
- * @param <P>
- *
- */
-public interface Planner<P, U, W> {
-	PreExecutionGraphV3<W> makePlan(final Bundle bundle, final List<Class<? extends Node>> planConstituent, P parameters);
+import com.ubiqube.etsi.mano.orchestrator.entities.Systems;
 
-	ExecutionGraph implement(final PreExecutionGraph<U> gf);
+public interface SystemJpa extends CrudRepository<Systems, UUID> {
 
-	ExecutionGraph implement(PreExecutionGraphV3<U> plan);
+	Systems findByVimId(String vimId);
 
-	OrchExecutionResults<U> execute(ExecutionGraph imp, Context3d context, final OrchExecutionListener<U> listener);
-
+	void deleteByVimOrigin(UUID id);
 }

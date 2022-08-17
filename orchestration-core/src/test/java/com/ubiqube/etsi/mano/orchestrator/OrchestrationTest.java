@@ -75,7 +75,7 @@ class OrchestrationTest {
 	void testplanLevel() throws Exception {
 		final Planner p = getPlanner();
 		final List<Class<? extends Node>> planConstituent = Arrays.asList(Network.class, Compute.class, Monitoring.class);
-		final PreExecutionGraph<?> planOpaque = p.makePlan(null, planConstituent, null);
+		final PreExecutionGraph<?> planOpaque = new PreExecutionGraphImpl<>(null, null);// p.makePlan(null, planConstituent, null);
 		final ListenableGraph<VirtualTask<?>, VirtualTaskConnectivity> plan = ((PreExecutionGraphImpl) planOpaque).getCreateGraph();
 		assertEquals(1, plan.edgeSet().size());
 		final VirtualTaskConnectivity o = plan.edgeSet().iterator().next();

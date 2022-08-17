@@ -48,6 +48,8 @@ public class Systems {
 
 	private UUID vimOrigin;
 
+	private String vimId;
+
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<SystemConnections> subSystems;
 

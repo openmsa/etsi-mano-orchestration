@@ -31,7 +31,7 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.scale.PlanMerger;
 import com.ubiqube.etsi.mano.orchestrator.scale.PlanMultiplier;
 import com.ubiqube.etsi.mano.orchestrator.scale.ScalingEngine;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV2;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 import com.ubiqube.etsi.mano.service.graph.Edge2d;
 import com.ubiqube.etsi.mano.service.graph.Vertex2d;
@@ -51,7 +51,7 @@ public class BlueprintBuilderImpl implements BlueprintBuilder {
 	@Override
 	public <U> PreExecutionGraphV3<U> buildPlan(final List<SclableResources<U>> scaleResources, final ListenableGraph<Vertex2d, Edge2d> g,
 			final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems, final List<Class<? extends Node>> masterVertex) {
-		final List<ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>>> plans = new ArrayList<>();
+		final List<ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>>> plans = new ArrayList<>();
 		final PlanMultiplier pm = new PlanMultiplier();
 		final List<SclableResources<U>> ttd = masterVertex.stream()
 				.map(x -> toThingsToDo(g, x, scaleResources))
@@ -60,11 +60,11 @@ public class BlueprintBuilderImpl implements BlueprintBuilder {
 		ttd.forEach(x -> {
 			LOG.debug("SR = {}/{}", x.getType().getSimpleName(), x.getName());
 			final ListenableGraph<Vertex2d, Edge2d> s = se.scale(g, x.getType(), x.getName());
-			final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> np = pm.multiply(s, x, converter, liveItems, scaleResources);
+			final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> np = pm.multiply(s, x, converter, liveItems, scaleResources);
 			plans.add(np);
 		});
 
-		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> ret = pMerge.merge(g, plans);
+		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> ret = pMerge.merge(g, plans);
 		return new PreExecutionGraphV3Impl(ret);
 	}
 

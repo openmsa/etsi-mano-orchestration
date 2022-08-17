@@ -16,33 +16,27 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jgrapht.ListenableGraph;
 
-import com.github.dexecutor.core.task.Task;
-import com.github.dexecutor.core.task.TaskProvider;
+import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
-/**
- *
- * @author Olivier Vignaud <ovi@ubiqube.com>
- *
- */
-public class CreateTaskProvider<U> implements TaskProvider<UnitOfWorkV3<U>, String> {
+public class ExecutionGraphImplV3<U> implements ExecutionGraph {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CreateTaskProvider.class);
-	private final Context3d context;
-	private final OrchExecutionListener<U> listener;
+	private final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g;
+	private final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> r;
 
-	public CreateTaskProvider(final Context3d context, final OrchExecutionListener<U> listener) {
-		this.context = context;
-		this.listener = listener;
+	public ExecutionGraphImplV3(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g, final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> nr) {
+		this.g = g;
+		this.r = nr;
 	}
 
-	@Override
-	public Task<UnitOfWorkV3<U>, String> provideTask(final UnitOfWorkV3<U> uaow) {
-		LOG.debug("Called with: {}", uaow);
-		return new UowExecCreateTask(listener, uaow, context);
+	public ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> getCreateImplementation() {
+		return g;
+	}
+
+	public ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> getDeleteImplementation() {
+		return r;
 	}
 
 }

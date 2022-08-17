@@ -25,7 +25,7 @@ public class OrchestrationServiceV3Impl<U> implements OrchestrationServiceV3<U> 
 
 	@Override
 	public SystemBuilder<UnitOfWorkV3<U>> systemBuilderOf(final UnitOfWorkV3<U> uow) {
-		return null;// (SystemBuilder<UnitOfWorkV3<U>>) SystemBuilderImpl.of(uow);
+		return (SystemBuilder<UnitOfWorkV3<U>>) SystemBuilderV3Impl.of(uow);
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class OrchestrationServiceV3Impl<U> implements OrchestrationServiceV3<U> 
 
 	@Override
 	public SystemBuilder<UnitOfWorkV3<U>> createEmptySystemBuilder() {
-		return new SystemBuilderImpl<>();
+		return new SystemBuilderV3Impl<>();
 	}
 
 	@Override

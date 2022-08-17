@@ -29,6 +29,7 @@ import com.github.dexecutor.core.task.ExecutionResults;
 import com.github.dexecutor.core.task.TaskProvider;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 /**
  *
@@ -39,20 +40,20 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
 public class ManoDexcutorService<U> implements ManoExecutor<U> {
 
 	@Override
-	public ExecutionResults<UnitOfWork<U>, String> execute(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g, final TaskProvider<UnitOfWork<U>, String> uowTaskProvider) {
+	public ExecutionResults<UnitOfWorkV3<U>, String> execute(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g, final TaskProvider<UnitOfWorkV3<U>, String> uowTaskProvider) {
 		final ExecutorService executorService = Executors.newFixedThreadPool(10);
-		final DexecutorConfig<UnitOfWork<U>, String> config = new DexecutorConfig<>(executorService, uowTaskProvider);
+		final DexecutorConfig<UnitOfWorkV3<U>, String> config = new DexecutorConfig<>(executorService, uowTaskProvider);
 		// What about config setExecutionListener.
-		final DefaultDexecutor<UnitOfWork<U>, String> executor = new DefaultDexecutor<>(config);
+		final DefaultDexecutor<UnitOfWorkV3<U>, String> executor = new DefaultDexecutor<>(config);
 		addRoot(g, executor);
 		g.edgeSet().forEach(x -> executor.addDependency(x.getSource(), x.getTarget()));
 
-		final ExecutionResults<UnitOfWork<U>, String> res = executor.execute(ExecutionConfig.TERMINATING);
+		final ExecutionResults<UnitOfWorkV3<U>, String> res = executor.execute(ExecutionConfig.TERMINATING);
 		executorService.shutdown();
 		return res;
 	}
 
-	private static <U> void addRoot(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g, final DefaultDexecutor<UnitOfWork<U>, String> executor) {
+	private static <U> void addRoot(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g, final DefaultDexecutor<UnitOfWorkV3<U>, String> executor) {
 		g.vertexSet().forEach(x -> {
 			if (g.incomingEdgesOf(x).isEmpty() && g.outgoingEdgesOf(x).isEmpty()) {
 				executor.addIndependent(x);

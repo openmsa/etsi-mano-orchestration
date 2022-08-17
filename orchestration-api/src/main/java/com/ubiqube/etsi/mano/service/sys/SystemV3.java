@@ -19,6 +19,7 @@ package com.ubiqube.etsi.mano.service.sys;
 import com.ubiqube.etsi.mano.orchestrator.OrchestrationServiceV3;
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
 import com.ubiqube.etsi.mano.orchestrator.entities.SystemConnections;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
@@ -30,6 +31,8 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 public interface SystemV3<U> {
 
 	String getVimType();
+
+	Class<? extends Node> getType();
 
 	SystemBuilder<UnitOfWorkV3<U>> getImplementation(OrchestrationServiceV3<U> orchestrationService, VirtualTaskV3<U> virtualTask, SystemConnections vim);
 }

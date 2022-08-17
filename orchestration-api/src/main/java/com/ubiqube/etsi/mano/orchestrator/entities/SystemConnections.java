@@ -54,6 +54,8 @@ public class SystemConnections {
 	@FullTextField
 	private String vimType;
 
+	private String moduleName;
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Map<String, String> interfaceInfo;
 

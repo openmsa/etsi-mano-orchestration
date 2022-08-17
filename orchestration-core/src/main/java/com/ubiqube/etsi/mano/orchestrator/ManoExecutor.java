@@ -22,6 +22,7 @@ import com.github.dexecutor.core.task.ExecutionResults;
 import com.github.dexecutor.core.task.TaskProvider;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 /**
  *
@@ -30,6 +31,6 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
  */
 public interface ManoExecutor<U> {
 
-	ExecutionResults<UnitOfWork<U>, String> execute(ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g, TaskProvider<UnitOfWork<U>, String> uowTaskProvider);
+	ExecutionResults<UnitOfWorkV3<U>, String> execute(ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g, TaskProvider<UnitOfWorkV3<U>, String> uowTaskProvider);
 
 }

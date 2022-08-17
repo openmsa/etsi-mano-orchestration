@@ -16,6 +16,7 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.v3;
 
+import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
@@ -90,6 +91,18 @@ public class TestVirtualTask implements VirtualTaskV3<Object> {
 	public void setDelete(final boolean del) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void setSystemBuilder(final SystemBuilder<Object> db) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public SystemBuilder<Object> getSystemBuilder() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

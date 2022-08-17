@@ -16,6 +16,8 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.vt;
 
+import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
+
 /**
  *
  * @author olivier
@@ -46,4 +48,8 @@ public interface VirtualTaskV3<U> {
 	void setTemplateParameters(U u);
 
 	void setDelete(boolean del);
+
+	void setSystemBuilder(SystemBuilder<U> db);
+
+	SystemBuilder<U> getSystemBuilder();
 }

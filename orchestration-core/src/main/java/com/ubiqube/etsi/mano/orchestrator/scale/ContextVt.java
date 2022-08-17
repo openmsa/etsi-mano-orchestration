@@ -16,6 +16,7 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.scale;
 
+import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 import lombok.AllArgsConstructor;
@@ -56,6 +57,18 @@ public class ContextVt<U> implements VirtualTaskV3<U> {
 	@Override
 	public boolean isDeleteTask() {
 		return delete;
+	}
+
+	@Override
+	public void setSystemBuilder(SystemBuilder<U> db) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public SystemBuilder<U> getSystemBuilder() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -30,7 +30,7 @@ import org.jgrapht.graph.DirectedAcyclicGraph;
 import com.ubiqube.etsi.mano.orchestrator.context.VertexContext;
 import com.ubiqube.etsi.mano.orchestrator.context.VertexContextEdge;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import com.ubiqube.etsi.mano.service.graph.Edge2d;
 import com.ubiqube.etsi.mano.service.graph.Vertex2d;
 
@@ -117,14 +117,14 @@ public class Context3dImpl implements Context3d {
 	}
 
 	@Override
-	public <U> void add(final UnitOfWork<U> uaow, final String res) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public String get(final Class<? extends Node> class1, final String toscaName) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public <U> void add(final UnitOfWorkV3<U> uaow, final String res) {
+		// TODO Auto-generated method stub
+
 	}
 }

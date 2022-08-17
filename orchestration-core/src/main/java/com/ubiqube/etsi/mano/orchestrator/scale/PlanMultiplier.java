@@ -31,9 +31,9 @@ import org.slf4j.LoggerFactory;
 import com.ubiqube.etsi.mano.orchestrator.ContextHolder;
 import com.ubiqube.etsi.mano.orchestrator.SclableResources;
 import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV2;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskVertexListenerV2;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskVertexListenerV3;
 import com.ubiqube.etsi.mano.service.graph.Edge2d;
 import com.ubiqube.etsi.mano.service.graph.Vertex2d;
 
@@ -45,10 +45,10 @@ import com.ubiqube.etsi.mano.service.graph.Vertex2d;
 public class PlanMultiplier {
 	private static final Logger LOG = LoggerFactory.getLogger(PlanMultiplier.class);
 
-	public <U> ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> multiply(final ListenableGraph<Vertex2d, Edge2d> plan, final SclableResources<U> sr,
+	public <U> ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> multiply(final ListenableGraph<Vertex2d, Edge2d> plan, final SclableResources<U> sr,
 			final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems, final List<SclableResources<U>> scaleResources) {
-		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> d = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV2.class));
-		d.addGraphListener(new VirtualTaskVertexListenerV2<>());
+		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
+		d.addGraphListener(new VirtualTaskVertexListenerV3<>());
 		if (sr.getWant() == sr.getHave()) {
 			return d;
 		}

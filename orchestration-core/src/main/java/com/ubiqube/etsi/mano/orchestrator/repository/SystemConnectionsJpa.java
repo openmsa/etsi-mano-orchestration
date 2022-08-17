@@ -30,4 +30,5 @@ import com.ubiqube.etsi.mano.orchestrator.entities.SystemConnections;
  */
 public interface SystemConnectionsJpa extends CrudRepository<SystemConnections, UUID> {
 	Optional<SystemConnections> findByVimIdAndVimType(String vimId, String vimType);
+
 }

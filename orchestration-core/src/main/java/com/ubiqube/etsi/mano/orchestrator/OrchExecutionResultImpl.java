@@ -16,7 +16,7 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,7 +29,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class OrchExecutionResultImpl<U> implements OrchExecutionResult<U> {
-	UnitOfWork<U> task;
+	UnitOfWorkV3<U> task;
 	ResultType result;
 	String message;
 }

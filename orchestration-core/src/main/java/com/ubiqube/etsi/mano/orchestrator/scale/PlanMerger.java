@@ -30,9 +30,9 @@ import org.slf4j.LoggerFactory;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
 import com.ubiqube.etsi.mano.orchestrator.uow.Relation;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV2;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskVertexListenerV2;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskVertexListenerV3;
 import com.ubiqube.etsi.mano.service.graph.Edge2d;
 import com.ubiqube.etsi.mano.service.graph.Vertex2d;
 
@@ -44,9 +44,9 @@ import com.ubiqube.etsi.mano.service.graph.Vertex2d;
 public class PlanMerger {
 	private static final Logger LOG = LoggerFactory.getLogger(PlanMerger.class);
 
-	public <U> ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> merge(final ListenableGraph<Vertex2d, Edge2d> g, final List<ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>>> plans) {
-		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> d = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV2.class));
-		d.addGraphListener(new VirtualTaskVertexListenerV2<>());
+	public <U> ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> merge(final ListenableGraph<Vertex2d, Edge2d> g, final List<ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>>> plans) {
+		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
+		d.addGraphListener(new VirtualTaskVertexListenerV3<>());
 		plans.stream().flatMap(x -> x.vertexSet().stream()).forEach(x -> d.addVertex(x));
 		plans.stream().flatMap(x -> x.edgeSet().stream()).forEach(x -> d.addEdge(x.getSource(), x.getTarget()));
 		g.edgeSet().forEach(x -> {
@@ -77,8 +77,8 @@ public class PlanMerger {
 		return d;
 	}
 
-	private static <U> void exportPlan(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> d, final String filename) {
-		final DOTExporter<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> exporter = new DOTExporter<>(PlanMerger::toDotName);
+	private static <U> void exportPlan(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d, final String filename) {
+		final DOTExporter<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> exporter = new DOTExporter<>(PlanMerger::toDotName);
 		try (final FileOutputStream out = new FileOutputStream(filename)) {
 			exporter.exportGraph(d, out);
 		} catch (final IOException e) {
@@ -91,7 +91,7 @@ public class PlanMerger {
 		return base.replace("/", "_").replace("-", "_");
 	}
 
-	private static <U> void makeOneToOne(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> d, final Edge2d edge, final List<VirtualTaskV3<U>> srcs, final List<VirtualTaskV3<U>> tgts) {
+	private static <U> void makeOneToOne(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d, final Edge2d edge, final List<VirtualTaskV3<U>> srcs, final List<VirtualTaskV3<U>> tgts) {
 		srcs.forEach(x -> {
 			final Optional<VirtualTaskV3<U>> res = find(x, edge, tgts);
 			if (res.isPresent()) {
@@ -111,7 +111,7 @@ public class PlanMerger {
 
 	}
 
-	private static <U> void makeOneToMany(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> d, final List<VirtualTaskV3<U>> srcs, final List<VirtualTaskV3<U>> tgts) {
+	private static <U> void makeOneToMany(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d, final List<VirtualTaskV3<U>> srcs, final List<VirtualTaskV3<U>> tgts) {
 		if (srcs.size() != 1) {
 			LOG.debug("ERROR: ONE TO MANY but src is {}", srcs.size());
 			return;
@@ -120,7 +120,7 @@ public class PlanMerger {
 		tgts.forEach(x -> d.addEdge(src, x));
 	}
 
-	private static <U> List<VirtualTaskV3<U>> getAll(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> d, final String name, final Class<?> type, final List<VirtualTaskV3<U>> exclude) {
+	private static <U> List<VirtualTaskV3<U>> getAll(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d, final String name, final Class<?> type, final List<VirtualTaskV3<U>> exclude) {
 		return d.vertexSet().stream()
 				.filter(x -> !exclude.contains(x))
 				.filter(x -> x.getType() == type)

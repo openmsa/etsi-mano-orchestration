@@ -21,29 +21,28 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dexecutor.core.task.Task;
 import com.github.dexecutor.core.task.TaskProvider;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 /**
  *
  * @author Olivier Vignaud <ovi@ubiqube.com>
  *
  */
-public class DeleteTaskProvider<U> implements TaskProvider<UnitOfWork<U>, String> {
+public class DeleteTaskProvider<U> implements TaskProvider<UnitOfWorkV3<U>, String> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DeleteTaskProvider.class);
-	private final Context context;
+	private final Context3d context;
 	private final OrchExecutionListener<U> listener;
 
-	public DeleteTaskProvider(final Context context, final OrchExecutionListener<U> listener) {
-		super();
+	public DeleteTaskProvider(final Context3d context, final OrchExecutionListener<U> listener) {
 		this.context = context;
 		this.listener = listener;
 	}
 
 	@Override
-	public Task<UnitOfWork<U>, String> provideTask(final UnitOfWork<U> uaow) {
+	public Task<UnitOfWorkV3<U>, String> provideTask(final UnitOfWorkV3<U> uaow) {
 		LOG.debug("Called with: {}", uaow);
-		return new UowExecDeleteTask<>(listener, uaow, context);
+		return new UowExecDeleteTask(listener, uaow, context);
 	}
 
 }

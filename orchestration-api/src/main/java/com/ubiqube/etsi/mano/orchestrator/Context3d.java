@@ -19,7 +19,7 @@ package com.ubiqube.etsi.mano.orchestrator;
 import java.util.List;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 /**
  *
@@ -28,7 +28,7 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
  */
 public interface Context3d {
 
-	<U> void add(UnitOfWork<U> uaow, String res);
+	<U> void add(UnitOfWorkV3<U> uaow, String res);
 
 	String get(Class<? extends Node> class1, String toscaName);
 

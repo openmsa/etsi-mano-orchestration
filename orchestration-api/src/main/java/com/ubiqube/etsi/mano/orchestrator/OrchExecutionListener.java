@@ -16,8 +16,8 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 /**
  *
@@ -30,7 +30,7 @@ public interface OrchExecutionListener<U> {
 
 	void onError(Task<U> task, Exception exception);
 
-	void onStart(VirtualTask<U> virtualTask);
+	void onStart(VirtualTaskV3<U> virtualTask);
 
-	void onTerminate(UnitOfWork<U> uaow, String res);
+	void onTerminate(UnitOfWorkV3<U> uaow, String res);
 }

@@ -25,7 +25,9 @@ import org.jgrapht.nio.dot.DOTExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV2;
+import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 /**
@@ -37,13 +39,13 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 public class PreExecutionGraphV3Impl<U> implements PreExecutionGraphV3<U> {
 	private static final Logger LOG = LoggerFactory.getLogger(PreExecutionGraphV3Impl.class);
 
-	private final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> network;
+	private final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> network;
 
-	public PreExecutionGraphV3Impl(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> network) {
+	public PreExecutionGraphV3Impl(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> network) {
 		this.network = network;
 	}
 
-	public ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> getGraph() {
+	public ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> getGraph() {
 		return network;
 	}
 
@@ -54,7 +56,7 @@ public class PreExecutionGraphV3Impl<U> implements PreExecutionGraphV3<U> {
 
 	@Override
 	public void toDotFile(final String filename) {
-		final DOTExporter<VirtualTaskV3<U>, VirtualTaskConnectivityV2<U>> exporter = new DOTExporter<>(x -> toDotName(x));
+		final DOTExporter<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> exporter = new DOTExporter<>(x -> toDotName(x));
 		try (final FileOutputStream out = new FileOutputStream(filename)) {
 			exporter.exportGraph(network, out);
 		} catch (final IOException e) {
@@ -65,5 +67,15 @@ public class PreExecutionGraphV3Impl<U> implements PreExecutionGraphV3<U> {
 	private String toDotName(final VirtualTaskV3<U> task) {
 		final String base = task.getType().getSimpleName() + "_" + task.getName();
 		return base.replace("/", "_").replace("-", "_");
+	}
+
+	public ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> getDeleteImplementation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> getCreateImplementation() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -35,10 +35,14 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.service.ImplementationService;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkVertexListener;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkVertexListenerV3;
+import com.ubiqube.etsi.mano.orchestrator.v3.PreExecutionGraphV3;
+import com.ubiqube.etsi.mano.orchestrator.v3.PreExecutionGraphV3Impl;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivity;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskVertexListener;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 /**
  *
@@ -72,38 +76,8 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 	}
 
 	@Override
-	public PreExecutionGraph<W> makePlan(final Bundle bundle, final List<Class<? extends Node>> planConstituent, final P parameters) {
-		final ListenableGraph<VirtualTask<U>, VirtualTaskConnectivity<U>> createGraph = (ListenableGraph) (Object) new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(VirtualTaskConnectivity.class));
-		final ListenableGraph<VirtualTask<U>, VirtualTaskConnectivity<U>> deleteGraph = (ListenableGraph) (Object) new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(VirtualTaskConnectivity.class));
-		createGraph.addGraphListener(new VirtualTaskVertexListener<>());
-		deleteGraph.addGraphListener(new VirtualTaskVertexListener<>());
-		planConstituent.forEach(x -> {
-			final PlanContributor conts = contributors.get(x);
-			if (null == conts) {
-				LOG.warn("Unable to find contributor for {}.", x.getSimpleName());
-			} else {
-				final List<? extends VirtualTask<U>> tasks = conts.contribute(bundle, parameters);
-				tasks.forEach(y -> {
-					if (y.isDeleteTask()) {
-						LOG.debug("Deleting: {}", y);
-						deleteGraph.addVertex(y);
-					} else {
-						LOG.debug("Adding: {}", y);
-						createGraph.addVertex(y);
-					}
-				});
-			}
-		});
-		// Rebuild connectivity.
-		rebuildConnectivity(createGraph);
-		rebuildConnectivity(deleteGraph);
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Create graph:");
-			GraphTools.dumpVt(createGraph);
-			LOG.debug("Remove graph:");
-			GraphTools.dumpVt(deleteGraph);
-		}
-		return new PreExecutionGraphImpl(createGraph, deleteGraph);
+	public PreExecutionGraphV3<W> makePlan(final Bundle bundle, final List<Class<? extends Node>> planConstituent, final P parameters) {
+		return null;
 	}
 
 	private void rebuildConnectivity(final ListenableGraph<VirtualTask<U>, VirtualTaskConnectivity<U>> graph) {
@@ -120,38 +94,44 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 	}
 
 	@Override
-	public ExecutionGraph implement(final PreExecutionGraph<U> g) {
-		final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> ng = createImplementation(((PreExecutionGraphImpl) g).getCreateGraph());
-		final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> nr = createImplementation(((PreExecutionGraphImpl) g).getDeleteGraph());
+	public ExecutionGraph implement(final PreExecutionGraphV3<U> g) {
+		final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> ng = createImplementation(((PreExecutionGraphV3Impl) g).getGraph());
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Create graph:");
-			GraphTools.dump(ng);
-			LOG.debug("Remove graph:");
-			GraphTools.dump(nr);
+			GraphTools.dumpV3(ng);
 		}
-		return new ExecutionGraphImpl<>(ng, nr);
+		return new ExecutionGraphImplV3(ng, null);
 	}
 
-	private ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> createImplementation(final ListenableGraph<VirtualTask<U>, VirtualTaskConnectivity<U>> gf) {
-		final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> ng = (ListenableGraph) (Object) new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(ConnectivityEdge.class));
-		ng.addGraphListener(new UnitOfWorkVertexListener<>());
+	private ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> createImplementation(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> gf) {
+		final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> ng = (ListenableGraph) (Object) new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(ConnectivityEdge.class));
+		ng.addGraphListener(new UnitOfWorkVertexListenerV3<>());
 		// First resolve implementation.
 		gf.vertexSet().forEach(x -> {
 			final SystemBuilder<U> db = implementationService.getTargetSystem(x);
 			x.setSystemBuilder(db);
-			db.getVertex().forEach(ng::addVertex);
+			LOG.debug("Implementing {}", db);
+			db.getVertexV3().forEach(ng::addVertex);
 		});
 		// Connect everything.
-		ng.vertexSet().stream().forEach(x -> x.getNameDependencies().forEach(y -> {
-			final Optional<UnitOfWork<U>> dep = findOutgoingOf(y, ng);
-			if (dep.isEmpty()) {
-				LOG.warn("Unable to find dependency {} for {}", y, x.getTask().getName());
-				return;
-			}
-			LOG.debug("Adding {} => {}", dep.get().getTask().getName(), x.getTask().getName());
-			ng.addEdge(dep.get(), x);
-		}));
+		gf.edgeSet().forEach(x -> {
+			final VirtualTaskV3<U> src = x.getSource();
+			final SystemBuilder<U> vsrc = src.getSystemBuilder();
+			final VirtualTaskV3<U> dst = x.getTarget();
+			final SystemBuilder<U> vdst = dst.getSystemBuilder();
+			vsrc.getVertexV3().forEach(y -> {
+				final UnitOfWorkV3<U> newSrc = find(ng, y);
+				vdst.getVertexV3().forEach(z -> {
+					final UnitOfWorkV3<U> newDst = find(ng, z);
+					ng.addEdge(newSrc, newDst);
+				});
+			});
+		});
 		return ng;
+	}
+
+	private UnitOfWorkV3<U> find(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> ng, final UnitOfWorkV3<U> y) {
+		return ng.vertexSet().stream().filter(x -> x == y).findFirst().orElseThrow();
 	}
 
 	private Optional<UnitOfWork<U>> findOutgoingOf(final NamedDependency y, final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> ng) {
@@ -166,35 +146,50 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 	}
 
 	@Override
-	public OrchExecutionResults<U> execute(final ExecutionGraph implementation, final Context context, final OrchExecutionListener<U> listener) {
-		final ExecutionGraphImpl<U> impl = (ExecutionGraphImpl<U>) implementation;
+	public OrchExecutionResults<U> execute(final ExecutionGraph implementation, final Context3d context, final OrchExecutionListener<U> listener) {
+		final ExecutionGraphImplV3<U> impl = (ExecutionGraphImplV3<U>) implementation;
 		// Execute delete.
 
-		postPlanRunner.forEach(x -> x.runDeletePost(impl.getDeleteImplementation()));
-		final ExecutionResults<UnitOfWork<U>, String> deleteRes = execDelete(impl.getDeleteImplementation(), context, listener);
-		final OrchExecutionResults<U> finalDelete = convertResults(deleteRes);
-		if (!deleteRes.getErrored().isEmpty()) {
-			return finalDelete;
-		}
+//		postPlanRunner.forEach(x -> x.runDeletePost(impl.getDeleteImplementation()));
+//		final ExecutionResults<UnitOfWorkV3<U>, String> deleteRes = execDelete(impl.getDeleteImplementation(), context, listener);
+//		final OrchExecutionResults<U> finalDelete = convertResults(deleteRes);
+//		if (!deleteRes.getErrored().isEmpty()) {
+//			return finalDelete;
+//		}
 		// Execute create.
 		postPlanRunner.forEach(x -> x.runCreatePost(impl.getCreateImplementation()));
-		final ExecutionResults<UnitOfWork<U>, String> res = execCreate(impl.getCreateImplementation(), context, listener);
-		finalDelete.addAll(convertResults(res));
-		return finalDelete;
+		final ExecutionResults<UnitOfWorkV3<U>, String> res = execCreate(impl.getCreateImplementation(), context, listener);
+//		finalDelete.addAll(convertResults(res));
+		return convertResults(res);
 	}
 
-	private OrchExecutionResults<U> convertResults(final ExecutionResults<UnitOfWork<U>, String> res) {
-		final List<OrchExecutionResultImpl<U>> all = res.getAll().stream().map(x -> new OrchExecutionResultImpl<>(x.getId(), ResultType.valueOf(x.getStatus().toString()), x.getResult())).toList();
-		return new OrchExecutionResultsImpl<>(all);
+	private ExecutionResults<UnitOfWorkV3<U>, String> execDelete(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> deleteImplementation, final Context3d context, final OrchExecutionListener<U> listener) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	private ExecutionResults<UnitOfWork<U>, String> execCreate(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g, final Context context, final OrchExecutionListener<U> listener) {
+	private ExecutionResults<UnitOfWorkV3<U>, String> execCreate(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g, final Context3d context, final OrchExecutionListener<U> listener) {
 		return executorService.execute(g, new CreateTaskProvider<>(context, listener));
 	}
 
-	private ExecutionResults<UnitOfWork<U>, String> execDelete(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g, final Context context, final OrchExecutionListener<U> listener) {
-		final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> rev = GraphTools.revert(g);
-		return executorService.execute(rev, new DeleteTaskProvider<>(context, listener));
+	private OrchExecutionResults<U> convertResults(final ExecutionResults<UnitOfWorkV3<U>, String> res) {
+		final List<OrchExecutionResultImpl<U>> all = res.getAll().stream().map(x -> new OrchExecutionResultImpl<>(x.getId(), ResultType.valueOf(x.getStatus().toString()), x.getResult())).toList();
+		return new OrchExecutionResultsImpl<>(all);
+	}
+//
+//	private ExecutionResults<UnitOfWork<U>, String> execCreate(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g, final Context context, final OrchExecutionListener<U> listener) {
+//		return executorService.execute(g, new CreateTaskProvider<>(context, listener));
+//	}
+//
+//	private ExecutionResults<UnitOfWork<U>, String> execDelete(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g, final Context context, final OrchExecutionListener<U> listener) {
+//		final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> rev = GraphTools.revert(g);
+//		return executorService.execute(rev, new DeleteTaskProvider<>(context, listener));
+//	}
+
+	@Override
+	public ExecutionGraph implement(final PreExecutionGraph<U> gf) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -16,7 +16,7 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 /**
  *
@@ -25,7 +25,7 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
  */
 public interface OrchExecutionResult<U> {
 
-	UnitOfWork<U> getTask();
+	UnitOfWorkV3<U> getTask();
 
 	ResultType getResult();
 

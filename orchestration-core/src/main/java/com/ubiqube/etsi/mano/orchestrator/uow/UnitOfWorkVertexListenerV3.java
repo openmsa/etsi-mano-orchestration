@@ -14,38 +14,36 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.ubiqube.etsi.mano.orchestrator.vt;
+package com.ubiqube.etsi.mano.orchestrator.uow;
 
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphListener;
 import org.jgrapht.event.GraphVertexChangeEvent;
 
-/**
- *
- * @author olivier
- *
- */
-public class VirtualTaskVertexListenerV2<V> implements GraphListener<VirtualTaskV3<V>, VirtualTaskConnectivityV2<V>> {
+import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
+
+public class UnitOfWorkVertexListenerV3<U> implements GraphListener<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> {
 
 	@Override
-	public void vertexAdded(final GraphVertexChangeEvent<VirtualTaskV3<V>> e) {
+	public void vertexAdded(final GraphVertexChangeEvent<UnitOfWorkV3<U>> e) {
 		// Nothing.
 	}
 
 	@Override
-	public void vertexRemoved(final GraphVertexChangeEvent<VirtualTaskV3<V>> e) {
+	public void vertexRemoved(final GraphVertexChangeEvent<UnitOfWorkV3<U>> e) {
 		// Nothing.
+
 	}
 
 	@Override
-	public void edgeAdded(final GraphEdgeChangeEvent<VirtualTaskV3<V>, VirtualTaskConnectivityV2<V>> e) {
-		final VirtualTaskConnectivityV2<V> edge = e.getEdge();
+	public void edgeAdded(final GraphEdgeChangeEvent<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> e) {
+		final ConnectivityEdge<UnitOfWorkV3<U>> edge = e.getEdge();
 		edge.setSource(e.getEdgeSource());
 		edge.setTarget(e.getEdgeTarget());
 	}
 
 	@Override
-	public void edgeRemoved(final GraphEdgeChangeEvent<VirtualTaskV3<V>, VirtualTaskConnectivityV2<V>> e) {
+	public void edgeRemoved(final GraphEdgeChangeEvent<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> e) {
 		// Nothing.
 	}
 

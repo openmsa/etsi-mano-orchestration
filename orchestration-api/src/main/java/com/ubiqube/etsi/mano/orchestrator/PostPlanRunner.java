@@ -19,7 +19,7 @@ package com.ubiqube.etsi.mano.orchestrator;
 import org.jgrapht.ListenableGraph;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 /**
  *
@@ -28,8 +28,8 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
  */
 public interface PostPlanRunner<U> {
 
-	void runCreatePost(ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> createImplementation);
+	void runCreatePost(ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> createImplementation);
 
-	void runDeletePost(ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> deleteImplementation);
+	void runDeletePost(ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> deleteImplementation);
 
 }
