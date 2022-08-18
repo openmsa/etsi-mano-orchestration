@@ -23,6 +23,6 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
  * @author olivier
  *
  */
-public interface NsdContextExtractorNode extends Node {
+public interface NsdExtractorNode extends Node {
 	// Nothing.
 }

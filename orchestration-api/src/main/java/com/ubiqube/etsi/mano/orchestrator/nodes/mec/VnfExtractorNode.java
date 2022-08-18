@@ -23,6 +23,6 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
  * @author Olivier Vignaud <ovi@ubiqube.com>
  *
  */
-public interface VnfContextExtractorNode extends Node {
+public interface VnfExtractorNode extends Node {
 	// Nothing.
 }
