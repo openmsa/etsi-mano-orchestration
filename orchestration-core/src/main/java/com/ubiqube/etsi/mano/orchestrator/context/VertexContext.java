@@ -16,7 +16,7 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.context;
 
-import com.ubiqube.etsi.mano.service.graph.Vertex2d;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -28,18 +28,18 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class VertexContext {
+public class VertexContext<U> {
 	/**
 	 * Origin plan vertex.
 	 */
-	private Vertex2d orig;
+	private VirtualTaskV3<U> orig;
 
 	/**
 	 * The VIM resource.
 	 */
 	private String resource;
 
-	public VertexContext(final Vertex2d orig) {
+	public VertexContext(final VirtualTaskV3<U> orig) {
 		this.orig = orig;
 	}
 }

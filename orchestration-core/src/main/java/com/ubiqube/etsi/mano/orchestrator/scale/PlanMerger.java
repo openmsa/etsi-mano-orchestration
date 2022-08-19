@@ -28,7 +28,6 @@ import org.jgrapht.nio.dot.DOTExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
 import com.ubiqube.etsi.mano.orchestrator.uow.Relation;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
@@ -47,12 +46,9 @@ public class PlanMerger {
 	public <U> ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> merge(final ListenableGraph<Vertex2d, Edge2d> g, final List<ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>>> plans) {
 		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
 		d.addGraphListener(new VirtualTaskVertexListenerV3<>());
-		plans.stream().flatMap(x -> x.vertexSet().stream()).forEach(x -> d.addVertex(x));
+		plans.stream().flatMap(x -> x.vertexSet().stream()).forEach(d::addVertex);
 		plans.stream().flatMap(x -> x.edgeSet().stream()).forEach(x -> d.addEdge(x.getSource(), x.getTarget()));
 		g.edgeSet().forEach(x -> {
-			if (x.getSource().getType() == Network.class) {
-				LOG.debug("HERE !!!");
-			}
 			final List<VirtualTaskV3<U>> srcs = getAll(d, x.getSource().getName(), x.getSource().getType(), List.of());
 			final List<VirtualTaskV3<U>> tgts = getAll(d, x.getTarget().getName(), x.getTarget().getType(), srcs);
 			if (x.getRelation() == Relation.ONE_TO_MANY) {

@@ -14,29 +14,46 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.ubiqube.etsi.mano.orchestrator;
+package com.ubiqube.etsi.mano.orchestrator.uow;
 
-import org.springframework.stereotype.Service;
+import com.ubiqube.etsi.mano.orchestrator.Context3d;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+public class ContextUow<U> implements UnitOfWorkV3<U> {
 
-@Service
-public class OrchestrationServiceV3Impl<U> implements OrchestrationServiceV3<U> {
+	private final VirtualTaskV3<U> vt;
+	private String setResource;
 
-	@Override
-	public SystemBuilder<UnitOfWorkV3<U>> systemBuilderOf(final UnitOfWorkV3<U> uow) {
-		return (SystemBuilder<UnitOfWorkV3<U>>) SystemBuilderV3Impl.of(uow);
+	public ContextUow(final VirtualTaskV3<U> vt) {
+		this.vt = vt;
 	}
 
 	@Override
-	public SystemBuilder<UnitOfWorkV3<U>> systemBuilderOf(final UnitOfWorkV3<U> left, final UnitOfWorkV3<U> right) {
+	public String execute(final Context3d context) {
+		// Nothing.
 		return null;
-		// SystemBuilderImpl.of(left, right);
 	}
 
 	@Override
-	public SystemBuilder<UnitOfWorkV3<U>> createEmptySystemBuilder() {
-		return new SystemBuilderV3Impl<>();
+	public String rollback(final Context3d context) {
+		// Nothing.
+		return null;
+	}
+
+	@Override
+	public Class<? extends Node> getType() {
+		return vt.getType();
+	}
+
+	@Override
+	public VirtualTaskV3<U> getTask() {
+		return vt;
+	}
+
+	@Override
+	public void setResource(final String resource) {
+		this.setResource = resource;
 	}
 
 }

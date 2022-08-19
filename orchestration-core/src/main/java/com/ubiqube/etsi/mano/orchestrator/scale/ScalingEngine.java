@@ -23,6 +23,8 @@ import java.util.Optional;
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.DirectedAcyclicGraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
@@ -37,6 +39,7 @@ import com.ubiqube.etsi.mano.service.graph.Vertex2d;
  *
  */
 public class ScalingEngine {
+	private static final Logger LOG = LoggerFactory.getLogger(ScalingEngine.class);
 
 	public ListenableGraph<Vertex2d, Edge2d> scale(final ListenableGraph<Vertex2d, Edge2d> g, final Class<? extends Node> clazz, final String name) {
 		final List<Vertex2d> found = g.vertexSet().stream().filter(x -> (x.getType() == clazz) && (x.getName().equals(name))).toList();
@@ -60,24 +63,22 @@ public class ScalingEngine {
 			final Vertex2d t = x.getTarget();
 			if ((x.getRelation() == Relation.ONE_TO_ONE) || (x.getRelation() == Relation.MULTI)) {
 				d.addVertex(t);
-				System.out.println("Incoming Linking: " + vertex2Log(orig) + " -> " + vertex2Log(t));
 				Optional.ofNullable(d.addEdge(orig, t)).ifPresent(y -> y.setRelation(x.getRelation()));
 				handleVertex(t, g, d, cache);
 				cache.add(t);
 			} else {
-				System.out.println("Ignored: " + vertex2Log(t) + "=> " + x.getRelation());
+				LOG.trace("Ignored: {} => {}", vertex2Log(t), x.getRelation());
 			}
 		});
 		g.incomingEdgesOf(orig).forEach(x -> {
 			final Vertex2d s = x.getSource();
 			if ((x.getRelation() == Relation.ONE_TO_ONE) || (x.getRelation() == Relation.MULTI)) {
 				d.addVertex(s);
-				System.out.println("Incoming Linking: " + vertex2Log(s) + " -> " + vertex2Log(orig));
 				Optional.ofNullable(d.addEdge(s, orig)).ifPresent(y -> y.setRelation(x.getRelation()));
 				handleVertex(s, g, d, cache);
 				cache.add(s);
 			} else {
-				System.out.println("Ignored: " + vertex2Log(s) + "=> " + x.getRelation());
+				LOG.trace("Ignored: {} => {}", vertex2Log(s), x.getRelation());
 			}
 		});
 	}

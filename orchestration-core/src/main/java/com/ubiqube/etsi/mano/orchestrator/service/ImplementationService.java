@@ -26,8 +26,11 @@ import org.springframework.stereotype.Service;
 import com.ubiqube.etsi.mano.orchestrator.OrchestrationService;
 import com.ubiqube.etsi.mano.orchestrator.OrchestrationServiceV3;
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
+import com.ubiqube.etsi.mano.orchestrator.SystemBuilderV3Impl;
 import com.ubiqube.etsi.mano.orchestrator.entities.SystemConnections;
 import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
+import com.ubiqube.etsi.mano.orchestrator.scale.ContextVt;
+import com.ubiqube.etsi.mano.orchestrator.uow.ContextUow;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
@@ -71,6 +74,9 @@ public class ImplementationService<U> {
 	}
 
 	public SystemBuilder<UnitOfWorkV3<U>> getTargetSystem(final VirtualTaskV3<U> virtualTask) {
+		if (virtualTask instanceof final ContextVt<U> cvt) {
+			return SystemBuilderV3Impl.of(new ContextUow(cvt));
+		}
 		final String connectionId = virtualTask.getVimConnectionId();
 		if (null == connectionId) {
 			throw new OrchestrationException("Unable to find VimId: " + virtualTask.getVimConnectionId() + ", for task: " + virtualTask.getName());

@@ -34,4 +34,6 @@ public interface UnitOfWorkV3<U> {
 
 	Class<? extends Node> getType();
 
+	void setResource(String res);
+
 }

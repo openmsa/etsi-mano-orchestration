@@ -19,6 +19,7 @@ package com.ubiqube.etsi.mano.orchestrator;
 import java.util.function.Function;
 
 import com.github.dexecutor.core.task.Task;
+import com.ubiqube.etsi.mano.orchestrator.context.SimplifiedContextImpl;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 public class DexecutorTask<P> extends Task<UnitOfWorkV3<P>, String> {
@@ -31,17 +32,19 @@ public class DexecutorTask<P> extends Task<UnitOfWorkV3<P>, String> {
 
 	private transient OrchExecutionListener<P> listener;
 
-	private Context3d context;
+	private Context3dNetFlow context;
 
-	public DexecutorTask(final OrchExecutionListener<P> listener, final UnitOfWorkV3<P> uaow, final Context3d context, final boolean create) {
+	public DexecutorTask(final OrchExecutionListener<P> listener, final UnitOfWorkV3<P> uaow, final Context3dNetFlow context, final boolean create) {
 		this.uaow = uaow;
 		this.listener = listener;
 		this.context = context;
-		if (create) {
+		if (!(uaow.getTask().isDeleteTask() ^ create)) {
+			function = x -> null;
+		} else if (create) {
 			function = x -> {
 				final String res = uaow.execute(x);
 				if (null != res) {
-					x.add(uaow, res);
+					uaow.setResource(res);
 				}
 				return res;
 			};
@@ -53,7 +56,8 @@ public class DexecutorTask<P> extends Task<UnitOfWorkV3<P>, String> {
 	@Override
 	public String execute() {
 		listener.onStart(uaow.getTask());
-		final String res = function.apply(context);
+		final Context3d ctx = new SimplifiedContextImpl<>(uaow, context);
+		final String res = function.apply(ctx);
 		listener.onTerminate(uaow, res);
 		return res;
 	}

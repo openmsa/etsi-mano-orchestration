@@ -16,6 +16,8 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.v3;
 
+import java.util.UUID;
+
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
@@ -102,6 +104,29 @@ public class TestVirtualTask implements VirtualTaskV3<Object> {
 	@Override
 	public SystemBuilder<Object> getSystemBuilder() {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getVimResourceId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setVimResourceId(final String res) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setRemovedLiveInstanceId(final UUID liveInstanceId) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getToscaName() {
 		return null;
 	}
 

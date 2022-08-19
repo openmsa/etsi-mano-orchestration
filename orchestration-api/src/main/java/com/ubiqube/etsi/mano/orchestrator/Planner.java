@@ -34,6 +34,6 @@ public interface Planner<P, U, W> {
 
 	ExecutionGraph implement(PreExecutionGraphV3<U> plan);
 
-	OrchExecutionResults<U> execute(ExecutionGraph imp, Context3d context, final OrchExecutionListener<U> listener);
+	OrchExecutionResults<U> execute(ExecutionGraph imp, final OrchExecutionListener<U> listener);
 
 }

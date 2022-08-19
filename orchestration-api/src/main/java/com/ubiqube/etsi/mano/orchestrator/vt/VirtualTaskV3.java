@@ -16,7 +16,10 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.vt;
 
+import java.util.UUID;
+
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
 /**
  *
@@ -33,7 +36,7 @@ public interface VirtualTaskV3<U> {
 
 	String getName();
 
-	Class<?> getType();
+	Class<? extends Node> getType();
 
 	void setAlias(String alias);
 
@@ -52,4 +55,12 @@ public interface VirtualTaskV3<U> {
 	void setSystemBuilder(SystemBuilder<U> db);
 
 	SystemBuilder<U> getSystemBuilder();
+
+	String getVimResourceId();
+
+	void setVimResourceId(String res);
+
+	void setRemovedLiveInstanceId(UUID liveInstanceId);
+
+	String getToscaName();
 }

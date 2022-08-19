@@ -16,6 +16,8 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
+import java.util.UUID;
+
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
 import lombok.AllArgsConstructor;
@@ -33,6 +35,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContextHolder {
+	/**
+	 * Live instance ID
+	 */
+	private UUID liveInstanceId;
 
 	private Class<? extends Node> type;
 

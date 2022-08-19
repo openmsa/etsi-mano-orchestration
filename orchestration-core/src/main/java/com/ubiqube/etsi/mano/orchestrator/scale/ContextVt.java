@@ -16,7 +16,10 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.scale;
 
+import java.util.UUID;
+
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 import lombok.AllArgsConstructor;
@@ -42,8 +45,6 @@ public class ContextVt<U> implements VirtualTaskV3<U> {
 
 	private String name;
 
-	private Class<?> type;
-
 	private String alias;
 
 	private int rank;
@@ -52,23 +53,34 @@ public class ContextVt<U> implements VirtualTaskV3<U> {
 
 	private boolean delete;
 
-	private String resourceId;
+	private String vimResourceId;
 	
+	private Class<? extends Node> parent;
+	
+	private SystemBuilder<U> systemBuilder;
+
+	private UUID removedLiveInstanceId;
+
+	public ContextVt(Class<? extends Node> clazz, String name, String vimResourceId) {
+		this.parent = clazz;
+		this.name = name;
+		this.vimResourceId = vimResourceId;
+	}
 	@Override
 	public boolean isDeleteTask() {
 		return delete;
 	}
 
 	@Override
-	public void setSystemBuilder(SystemBuilder<U> db) {
-		// TODO Auto-generated method stub
-		
+	public Class<? extends Node> getType() {
+		return parent;
 	}
-
 	@Override
-	public SystemBuilder<U> getSystemBuilder() {
-		// TODO Auto-generated method stub
-		return null;
+	public void setRemovedLiveInstanceId(UUID liveInstanceId) {
+		removedLiveInstanceId = liveInstanceId;
 	}
-
+	@Override
+	public String getToscaName() {
+		return name;
+	}
 }

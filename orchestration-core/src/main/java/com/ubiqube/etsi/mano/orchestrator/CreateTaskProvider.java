@@ -31,10 +31,10 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 public class CreateTaskProvider<U> implements TaskProvider<UnitOfWorkV3<U>, String> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CreateTaskProvider.class);
-	private final Context3d context;
+	private final Context3dNetFlow context;
 	private final OrchExecutionListener<U> listener;
 
-	public CreateTaskProvider(final Context3d context, final OrchExecutionListener<U> listener) {
+	public CreateTaskProvider(final Context3dNetFlow context, final OrchExecutionListener<U> listener) {
 		this.context = context;
 		this.listener = listener;
 	}

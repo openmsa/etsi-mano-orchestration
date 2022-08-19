@@ -26,6 +26,4 @@ public interface OrchestrationServiceV3<U> {
 
 	SystemBuilder<UnitOfWorkV3<U>> createEmptySystemBuilder();
 
-	Context3d createEmptyContext();
-
 }

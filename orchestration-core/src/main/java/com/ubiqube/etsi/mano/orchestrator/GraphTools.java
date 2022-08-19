@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkVertexListener;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkVertexListenerV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivity;
@@ -43,10 +42,10 @@ public class GraphTools {
 		// Nothing.
 	}
 
-	public static <U> ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> createGraph() {
+	public static <U> ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> createGraph() {
 		// Vertex everyThing
-		final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g = (ListenableGraph) (Object) new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(ConnectivityEdge.class));
-		g.addGraphListener(new UnitOfWorkVertexListener<>());
+		final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g = (ListenableGraph) (Object) new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(ConnectivityEdge.class));
+		g.addGraphListener(new UnitOfWorkVertexListenerV3<>());
 		return g;
 	}
 
@@ -57,8 +56,8 @@ public class GraphTools {
 		return g;
 	}
 
-	public static <U> ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> revert(final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> g) {
-		final ListenableGraph<UnitOfWork<U>, ConnectivityEdge<UnitOfWork<U>>> gNew = createGraph();
+	public static <U> ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> revert(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g) {
+		final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> gNew = createGraph();
 		g.vertexSet().forEach(gNew::addVertex);
 		g.edgeSet().forEach(x -> gNew.addEdge(x.getTarget(), x.getSource()));
 		return gNew;

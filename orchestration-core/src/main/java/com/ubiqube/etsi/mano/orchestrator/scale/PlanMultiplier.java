@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import com.ubiqube.etsi.mano.orchestrator.ContextHolder;
 import com.ubiqube.etsi.mano.orchestrator.SclableResources;
 import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskVertexListenerV3;
@@ -54,13 +55,24 @@ public class PlanMultiplier {
 		}
 		final boolean delete = (sr.getWant() - sr.getHave()) < 0;
 		final Map<String, VirtualTaskV3<U>> hash = new HashMap<>();
-		for (int i = sr.getHave(); i < sr.getWant(); i++) {
+		/**
+		 * Have = 1 , want = 2 => +1 have = 1 , want = 0 => -1
+		 */
+		int have = sr.getHave();
+		int want = sr.getWant();
+		if (delete) {
+			have = sr.getWant();
+			want = sr.getHave();
+		}
+		LOG.debug("SR: {}", sr);
+		for (int i = have; i < want; i++) {
 			final int ii = i;
 			plan.edgeSet().forEach(x -> {
 				final String uniqIdSrc = getUniqId(x.getSource(), ii);
 				final VirtualTaskV3<U> src = hash.computeIfAbsent(uniqIdSrc, y -> {
 					final SclableResources<U> templSr = findTemplate(scaleResources, x.getSource());
 					final VirtualTaskV3<U> t = createTask(templSr, converter, liveItems, uniqIdSrc, x.getSource(), ii, delete);
+					LOG.debug("Add VT {}", t.getAlias());
 					d.addVertex(t);
 					return t;
 				});
@@ -68,6 +80,7 @@ public class PlanMultiplier {
 				final VirtualTaskV3<U> dst = hash.computeIfAbsent(uniqIdDst, y -> {
 					final SclableResources<U> templSr = findTemplate(scaleResources, x.getTarget());
 					final VirtualTaskV3<U> t = createTask(templSr, converter, liveItems, uniqIdDst, x.getTarget(), ii, delete);
+					LOG.debug("Add VT {}", t.getAlias());
 					d.addVertex(t);
 					return t;
 				});
@@ -78,6 +91,7 @@ public class PlanMultiplier {
 				hash.computeIfAbsent(uniqIdSrc, y -> {
 					final SclableResources<U> templSr = findTemplate(scaleResources, x);
 					final VirtualTaskV3<U> t = createTask(templSr, converter, liveItems, uniqIdSrc, x, ii, delete);
+					LOG.debug("Add VT {}", t.getAlias());
 					d.addVertex(t);
 					return t;
 				});
@@ -97,43 +111,74 @@ public class PlanMultiplier {
 		if (l.isEmpty()) {
 			throw new OrchestrationException("No match for vertex " + target);
 		}
-		LOG.debug("Found {}", l.get(0));
+		LOG.trace("Found {}", l.get(0));
 		return l.get(0);
 	}
 
+	/**
+	 * Create Task When :
+	 *
+	 * <ul>
+	 * <li>A live instance exist and delete is enable => Create Task</li>
+	 * <li>A live instance exist and delete is disable => Create Context dummy
+	 * task</li>
+	 * <li>A live instance does not exist and delete is enable => Create dummy
+	 * task</li>
+	 * <li>A live instance does not exist and delete is disable => Create Task</li>
+	 * </ul>
+	 *
+	 * @param <U>
+	 * @param sr
+	 * @param converter
+	 * @param liveItems
+	 * @param uniqIdSrc
+	 * @param x
+	 * @param ii
+	 * @param delete
+	 * @return
+	 */
 	private static <U> VirtualTaskV3<U> createTask(final SclableResources<U> sr, final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems, final String uniqIdSrc, final Vertex2d x, final int ii, final boolean delete) {
-		final Optional<ContextHolder> ctx = findInContect(liveItems, uniqIdSrc, x, ii);
-		VirtualTaskV3<U> t;
+		final Optional<ContextHolder> ctx = findInContext(liveItems, uniqIdSrc, x, ii);
+		VirtualTaskV3<U> t = createTask(uniqIdSrc, x, ii, delete, sr.getTemplateParameter(), converter);
 		if (ctx.isPresent()) {
-			t = createContext(uniqIdSrc, x, ii, delete, sr.getTemplateParameter(), ctx.get().getResourceId());
+			if (!delete) {
+				t = createContext(uniqIdSrc, x, ii, delete, sr.getTemplateParameter(), ctx.get().getResourceId(), t.getType());
+			} else {
+				t.setVimResourceId(ctx.get().getResourceId());
+				t.setRemovedLiveInstanceId(ctx.get().getLiveInstanceId());
+			}
 		} else {
-			LOG.debug("creating task: {}/{}", x.getType().getSimpleName(), x.getName());
-			t = createTask(uniqIdSrc, x, ii, delete, sr.getTemplateParameter(), converter);
+			if (delete) {
+				t = createContext(uniqIdSrc, x, ii, delete, sr.getTemplateParameter(), null, t.getType());
+			}
+			LOG.trace("creating task: {}/{}", x.getType().getSimpleName(), x.getName());
 		}
 		return t;
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <U> VirtualTaskV3<U> createContext(final String uniqIdSrc, final Vertex2d source, final int i, final boolean delete, final U templateParameter, final String resourceId) {
+	private static <U> VirtualTaskV3<U> createContext(final String uniqIdSrc, final Vertex2d source, final int i, final boolean delete,
+			final U u, final String resourceId, final Class<? extends Node> class1) {
 		return (VirtualTaskV3<U>) ContextVt.builder()
 				.alias(uniqIdSrc)
 				.delete(delete)
 				.name(source.getName())
 				.rank(i)
-				.templateParameters(templateParameter)
-				.resourceId(resourceId)
+				.templateParameters(u)
+				.vimResourceId(resourceId)
 				.vimConnectionId(null)
+				.parent(class1)
 				.build();
 	}
 
-	private static Optional<ContextHolder> findInContect(final List<ContextHolder> liveItems, final String uniqIdSrc, final Vertex2d source, final int i) {
+	private static Optional<ContextHolder> findInContext(final List<ContextHolder> liveItems, final String uniqIdSrc, final Vertex2d source, final int i) {
 		final List<ContextHolder> lst = liveItems.stream()
 				.filter(x -> x.getType() == source.getType())
 				.filter(x -> x.getName().equals(source.getName()))
 				.filter(x -> x.getRank() == i)
 				.toList();
 		if (lst.size() > 1) {
-			throw new OrchestrationException("List is more than 1");
+			LOG.warn("List is more than 1 for {}-{}", source.getType().getSimpleName(), source.getName());
 		}
 		return Optional.ofNullable(lst).filter(x -> !lst.isEmpty()).map(x -> x.get(0));
 	}
@@ -141,9 +186,9 @@ public class PlanMultiplier {
 	private static String getUniqId(final Vertex2d source, final int i) {
 		final StringBuilder sb = new StringBuilder(source.getName());
 		if (null != source.getParent()) {
-			sb.append("/").append(source.getParent());
+			sb.append("-").append(source.getParent());
 		}
-		sb.append("/").append(source.getType().getSimpleName());
+		sb.append("-").append(source.getType().getSimpleName());
 		sb.append("-").append(String.format("%04d", i));
 		return sb.toString();
 	}

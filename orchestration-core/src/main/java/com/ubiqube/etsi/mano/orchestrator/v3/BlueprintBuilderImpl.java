@@ -58,7 +58,7 @@ public class BlueprintBuilderImpl implements BlueprintBuilder {
 				.flatMap(List::stream)
 				.toList();
 		ttd.forEach(x -> {
-			LOG.debug("SR = {}/{}", x.getType().getSimpleName(), x.getName());
+			LOG.trace("SR = {}/{}", x.getType().getSimpleName(), x.getName());
 			final ListenableGraph<Vertex2d, Edge2d> s = se.scale(g, x.getType(), x.getName());
 			final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> np = pm.multiply(s, x, converter, liveItems, scaleResources);
 			plans.add(np);
