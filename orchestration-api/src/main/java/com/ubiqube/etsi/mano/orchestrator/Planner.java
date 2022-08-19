@@ -30,8 +30,6 @@ import com.ubiqube.etsi.mano.orchestrator.v3.PreExecutionGraphV3;
 public interface Planner<P, U, W> {
 	PreExecutionGraphV3<W> makePlan(final Bundle bundle, final List<Class<? extends Node>> planConstituent, P parameters);
 
-	ExecutionGraph implement(final PreExecutionGraph<U> gf);
-
 	ExecutionGraph implement(PreExecutionGraphV3<U> plan);
 
 	OrchExecutionResults<U> execute(ExecutionGraph imp, final OrchExecutionListener<U> listener);

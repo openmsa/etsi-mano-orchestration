@@ -16,11 +16,7 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.graph.DefaultListenableGraph;
@@ -50,22 +46,13 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PlannerImpl.class);
 
-	private final Map<Class<? extends Node>, PlanContributor> contributors;
-
-	private final ImplementationService implementationService;
+	private final ImplementationService<U> implementationService;
 
 	private final ManoExecutor<U> executorService;
 
-	private final List<PostPlanRunner> postPlanRunner;
+	private final List<PostPlanRunner<U>> postPlanRunner;
 
-	public PlannerImpl(final List<PlanContributor> contributorRaw, final ImplementationService implementationService, final ManoExecutor<U> executorService,
-			final List<PostPlanRunner> postPlanRunner) {
-		this.contributors = contributorRaw.stream()
-				.collect(Collectors.toMap(
-						PlanContributor::getNode,
-						Function.identity(),
-						(u, v) -> v,
-						LinkedHashMap::new));
+	public PlannerImpl(final ImplementationService<U> implementationService, final ManoExecutor<U> executorService, final List<PostPlanRunner<U>> postPlanRunner) {
 		this.implementationService = implementationService;
 		this.executorService = executorService;
 		this.postPlanRunner = postPlanRunner;
@@ -83,7 +70,7 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 			LOG.debug("Create graph:");
 			GraphTools.dumpV3(ng);
 		}
-		return new ExecutionGraphImplV3(ng, null);
+		return new ExecutionGraphImplV3(ng);
 	}
 
 	private ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> createImplementation(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> gf) {
@@ -91,7 +78,7 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 		ng.addGraphListener(new UnitOfWorkVertexListenerV3<>());
 		// First resolve implementation.
 		gf.vertexSet().forEach(x -> {
-			final SystemBuilder<U> db = implementationService.getTargetSystem(x);
+			final SystemBuilder<U> db = (SystemBuilder<U>) implementationService.getTargetSystem(x);
 			x.setSystemBuilder(db);
 			db.getVertexV3().forEach(ng::addVertex);
 		});
@@ -118,42 +105,36 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 
 	@Override
 	public OrchExecutionResults<U> execute(final ExecutionGraph implementation, final OrchExecutionListener<U> listener) {
+		@SuppressWarnings("unchecked")
 		final ExecutionGraphImplV3<U> impl = (ExecutionGraphImplV3<U>) implementation;
 		// Execute delete.
-		postPlanRunner.forEach(x -> x.runDeletePost(impl.getDeleteImplementation()));
-		final Context3dNetFlow context = new Context3dNetFlow<>(impl.getCreateImplementation());
-		final ExecutionResults<UnitOfWorkV3<U>, String> deleteRes = execDelete(impl.getCreateImplementation(), listener);
+		postPlanRunner.forEach(x -> x.runDeletePost(impl.getGraph()));
+		final ExecutionResults<UnitOfWorkV3<U>, String> deleteRes = execDelete(impl.getGraph(), listener);
 		final OrchExecutionResults<U> finalDelete = convertResults(deleteRes);
 		if (!deleteRes.getErrored().isEmpty()) {
 			return finalDelete;
 		}
 		// Execute create.
-		postPlanRunner.forEach(x -> x.runCreatePost(impl.getCreateImplementation()));
-		final ExecutionResults<UnitOfWorkV3<U>, String> res = execCreate(impl.getCreateImplementation(), listener);
+		postPlanRunner.forEach(x -> x.runCreatePost(impl.getGraph()));
+		final ExecutionResults<UnitOfWorkV3<U>, String> res = execCreate(impl.getGraph(), listener);
 		finalDelete.addAll(convertResults(res));
 		return convertResults(res);
 	}
 
 	private ExecutionResults<UnitOfWorkV3<U>, String> execDelete(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g, final OrchExecutionListener<U> listener) {
 		final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> rev = GraphTools.revert(g);
-		final Context3dNetFlow context = new Context3dNetFlow<>(rev);
+		final Context3dNetFlow<U> context = new Context3dNetFlow<>(rev);
 		return executorService.execute(rev, new DeleteTaskProvider<>(context, listener));
 	}
 
 	private ExecutionResults<UnitOfWorkV3<U>, String> execCreate(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g, final OrchExecutionListener<U> listener) {
-		final Context3dNetFlow context = new Context3dNetFlow<>(g);
+		final Context3dNetFlow<U> context = new Context3dNetFlow<>(g);
 		return executorService.execute(g, new CreateTaskProvider<>(context, listener));
 	}
 
 	private OrchExecutionResults<U> convertResults(final ExecutionResults<UnitOfWorkV3<U>, String> res) {
 		final List<OrchExecutionResultImpl<U>> all = res.getAll().stream().map(x -> new OrchExecutionResultImpl<>(x.getId(), ResultType.valueOf(x.getStatus().toString()), x.getResult())).toList();
 		return new OrchExecutionResultsImpl<>(all);
-	}
-
-	@Override
-	public ExecutionGraph implement(final PreExecutionGraph<U> gf) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

@@ -26,10 +26,6 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
  */
 public interface OrchExecutionListener<U> {
 
-	void onSuccess(Task<U> task);
-
-	void onError(Task<U> task, Exception exception);
-
 	void onStart(VirtualTaskV3<U> virtualTask);
 
 	void onTerminate(UnitOfWorkV3<U> uaow, String res);

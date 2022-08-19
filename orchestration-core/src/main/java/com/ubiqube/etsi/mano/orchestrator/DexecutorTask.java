@@ -28,13 +28,13 @@ public class DexecutorTask<P> extends Task<UnitOfWorkV3<P>, String> {
 
 	private final transient UnitOfWorkV3<P> uaow;
 
-	private final transient Function<Context3d, String> function;
+	private final transient Function<Context3d<P>, String> function;
 
 	private transient OrchExecutionListener<P> listener;
 
-	private Context3dNetFlow context;
+	private Context3dNetFlow<P> context;
 
-	public DexecutorTask(final OrchExecutionListener<P> listener, final UnitOfWorkV3<P> uaow, final Context3dNetFlow context, final boolean create) {
+	public DexecutorTask(final OrchExecutionListener<P> listener, final UnitOfWorkV3<P> uaow, final Context3dNetFlow<P> context, final boolean create) {
 		this.uaow = uaow;
 		this.listener = listener;
 		this.context = context;
@@ -56,7 +56,7 @@ public class DexecutorTask<P> extends Task<UnitOfWorkV3<P>, String> {
 	@Override
 	public String execute() {
 		listener.onStart(uaow.getTask());
-		final Context3d ctx = new SimplifiedContextImpl<>(uaow, context);
+		final Context3d<P> ctx = new SimplifiedContextImpl<>(uaow, context);
 		final String res = function.apply(ctx);
 		listener.onTerminate(uaow, res);
 		return res;

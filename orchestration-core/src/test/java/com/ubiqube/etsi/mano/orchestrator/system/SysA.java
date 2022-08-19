@@ -16,28 +16,20 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.system;
 
-import com.ubiqube.etsi.mano.orchestrator.OrchestrationService;
 import com.ubiqube.etsi.mano.orchestrator.OrchestrationServiceV3;
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
-import com.ubiqube.etsi.mano.orchestrator.SystemBuilderImpl;
+import com.ubiqube.etsi.mano.orchestrator.SystemBuilderV3Impl;
 import com.ubiqube.etsi.mano.orchestrator.entities.SystemConnections;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitA;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
-import com.ubiqube.etsi.mano.service.sys.System;
+import com.ubiqube.etsi.mano.service.sys.SystemV3;
 
-public class SysA implements System<Object> {
-
-	@Override
-	public String getProviderId() {
-		return "PROVA";
-	}
+public class SysA implements SystemV3<Object> {
 
 	@Override
 	public SystemBuilder getImplementation(final OrchestrationServiceV3 orchestrationService, final VirtualTaskV3 virtualTask, final SystemConnections vim) {
-		return SystemBuilderImpl.of(new UnitA());
+		return SystemBuilderV3Impl.of(new UnitA());
 	}
 
 	@Override
@@ -47,7 +39,7 @@ public class SysA implements System<Object> {
 	}
 
 	@Override
-	public SystemBuilder<UnitOfWork<Object>> getImplementation(final OrchestrationService<Object> orchestrationService, final VirtualTask<Object> virtualTask, final SystemConnections vim) {
+	public String getVimType() {
 		// TODO Auto-generated method stub
 		return null;
 	}

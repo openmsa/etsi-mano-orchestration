@@ -18,12 +18,10 @@ package com.ubiqube.etsi.mano.orchestrator.service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.ubiqube.etsi.mano.orchestrator.OrchestrationService;
 import com.ubiqube.etsi.mano.orchestrator.OrchestrationServiceV3;
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilderV3Impl;
@@ -31,11 +29,8 @@ import com.ubiqube.etsi.mano.orchestrator.entities.SystemConnections;
 import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
 import com.ubiqube.etsi.mano.orchestrator.scale.ContextVt;
 import com.ubiqube.etsi.mano.orchestrator.uow.ContextUow;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
-import com.ubiqube.etsi.mano.service.sys.System;
 import com.ubiqube.etsi.mano.service.sys.SystemV3;
 
 /**
@@ -45,32 +40,14 @@ import com.ubiqube.etsi.mano.service.sys.SystemV3;
  */
 @Service
 public class ImplementationService<U> {
-	private final Map<String, System> systems;
 	private final Map<String, List<SystemV3<U>>> systemsV3;
 	private final SystemManager vimManager;
-	private final OrchestrationService<U> orchestrationService;
 	private final OrchestrationServiceV3<U> orchestrationServicev3;
 
-	public ImplementationService(final List<System> systems, final SystemManager vimManager, final OrchestrationService<U> orchestrationService,
-			final OrchestrationServiceV3<U> orchestrationServicev3, final List<SystemV3<U>> systemsv3) {
-		this.systems = systems.stream().collect(Collectors.toMap(System::getProviderId, Function.identity()));
+	public ImplementationService(final SystemManager vimManager, final OrchestrationServiceV3<U> orchestrationServicev3, final List<SystemV3<U>> systemsv3) {
 		systemsV3 = systemsv3.stream().collect(Collectors.groupingBy(this::buildKey, Collectors.toList()));
 		this.vimManager = vimManager;
-		this.orchestrationService = orchestrationService;
 		this.orchestrationServicev3 = orchestrationServicev3;
-	}
-
-	public SystemBuilder<UnitOfWork<U>> getTargetSystem(final VirtualTask<U> virtualTask) {
-		final String connectionId = virtualTask.getVimConnectionId();
-		if (null == connectionId) {
-			throw new OrchestrationException("Unable to find VimId: " + virtualTask.getVimConnectionId() + ", for task: " + virtualTask.getName());
-		}
-		final SystemConnections vim = vimManager.findVimByVimIdAndProviderId(connectionId, virtualTask.getVimProviderId());
-		final System<U> sys = systems.get(virtualTask.getFactoryProviderId());
-		if (null == sys) {
-			throw new OrchestrationException("Unable to find system matching: " + vim.getVimType() + "/" + connectionId + " / " + virtualTask.getFactoryProviderId());
-		}
-		return sys.getImplementation(orchestrationService, virtualTask, vim);
 	}
 
 	public SystemBuilder<UnitOfWorkV3<U>> getTargetSystem(final VirtualTaskV3<U> virtualTask) {

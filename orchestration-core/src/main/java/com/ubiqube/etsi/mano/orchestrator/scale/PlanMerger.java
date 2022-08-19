@@ -60,9 +60,9 @@ public class PlanMerger {
 				return;
 			}
 			if ((srcs.size() != 1) || (tgts.size() != 1)) {
-				System.out.println("::: " + srcs.size() + " = " + tgts.size() + " " + x.getRelation() + " / " + x.getSource() + " ||| " + x.getTarget());
-				System.out.println("Got " + x.getSource().getName() + " = " + srcs + " / " + x.getTarget().getName() + " = " + tgts);
-				System.out.println("====================");
+				LOG.trace("::: {} = {} {} / {} ||| {}", srcs.size(), tgts.size(), x.getRelation(), x.getSource(), x.getTarget());
+				LOG.trace("Got {} = {} / {} = {}", x.getSource().getName(), srcs, x.getTarget().getName(), tgts);
+				LOG.trace("====================");
 				return;
 			}
 			d.addEdge(srcs.get(0), tgts.get(0));

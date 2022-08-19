@@ -24,10 +24,11 @@ import lombok.Setter;
 /**
  *
  * @author Olivier Vignaud <ovi@ubiqube.com>
- *
+ * @deprecated Use {@link NamedDependency2d}
  */
 @Setter
 @Getter
+@Deprecated(forRemoval = true)
 public class NamedDependency {
 	private final String name;
 	private final Class<? extends Node> type;

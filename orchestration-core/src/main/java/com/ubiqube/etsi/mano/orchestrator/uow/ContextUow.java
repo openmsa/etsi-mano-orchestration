@@ -23,20 +23,20 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 public class ContextUow<U> implements UnitOfWorkV3<U> {
 
 	private final VirtualTaskV3<U> vt;
-	private String setResource;
+	private String resource;
 
 	public ContextUow(final VirtualTaskV3<U> vt) {
 		this.vt = vt;
 	}
 
 	@Override
-	public String execute(final Context3d context) {
+	public String execute(final Context3d<U> context) {
 		// Nothing.
 		return null;
 	}
 
 	@Override
-	public String rollback(final Context3d context) {
+	public String rollback(final Context3d<U> context) {
 		// Nothing.
 		return null;
 	}
@@ -53,7 +53,11 @@ public class ContextUow<U> implements UnitOfWorkV3<U> {
 
 	@Override
 	public void setResource(final String resource) {
-		this.setResource = resource;
+		this.resource = resource;
+	}
+
+	public String getResource() {
+		return resource;
 	}
 
 }

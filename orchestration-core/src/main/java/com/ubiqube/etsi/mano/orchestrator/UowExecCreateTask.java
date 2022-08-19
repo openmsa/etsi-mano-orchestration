@@ -28,7 +28,7 @@ public class UowExecCreateTask<U> extends DexecutorTask<U> {
 	/** Serial. */
 	private static final long serialVersionUID = 1L;
 
-	public UowExecCreateTask(final OrchExecutionListener<U> listener, final UnitOfWorkV3<U> uaow, final Context3dNetFlow context) {
+	public UowExecCreateTask(final OrchExecutionListener<U> listener, final UnitOfWorkV3<U> uaow, final Context3dNetFlow<U> context) {
 		super(listener, uaow, context, true);
 	}
 

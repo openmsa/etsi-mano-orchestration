@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import com.ubiqube.etsi.mano.orchestrator.cont.ContributorA;
 import com.ubiqube.etsi.mano.orchestrator.cont.ContributorB;
+import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Compute;
 import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Monitoring;
@@ -44,13 +45,14 @@ import com.ubiqube.etsi.mano.orchestrator.system.SysA;
 import com.ubiqube.etsi.mano.orchestrator.system.SysB;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitA;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitB;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkConnectivity;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+import com.ubiqube.etsi.mano.orchestrator.v3.PreExecutionGraphV3;
+import com.ubiqube.etsi.mano.orchestrator.v3.PreExecutionGraphV3Impl;
 import com.ubiqube.etsi.mano.orchestrator.vt.ProvAVt;
 import com.ubiqube.etsi.mano.orchestrator.vt.ProvBVt;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivity;
-import com.ubiqube.etsi.mano.service.sys.System;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
+import com.ubiqube.etsi.mano.service.sys.SystemV3;
 
 @ExtendWith(MockitoExtension.class)
 class OrchestrationTest {
@@ -62,23 +64,23 @@ class OrchestrationTest {
 	private ImplementationService implementationService;
 
 	private Planner getPlanner() {
-		final List<System<?>> systems = Arrays.asList(new SysA(), new SysB());
+		final List<SystemV3<?>> systems = Arrays.asList(new SysA(), new SysB());
 		final ManoDexcutorService<?> service = new ManoDexcutorService<>();
 		final List<PlanContributor> contributors = new ArrayList<>();
 		contributors.add(new ContributorA());
 		contributors.add(new ContributorB());
 		final ManoExecutor nullExec = new NullExecutor();
-		return new PlannerImpl(contributors, implementationService, nullExec, List.of());
+		return new PlannerImpl(implementationService, nullExec, List.of());
 	}
 
 	@Test
 	void testplanLevel() throws Exception {
 		final Planner p = getPlanner();
 		final List<Class<? extends Node>> planConstituent = Arrays.asList(Network.class, Compute.class, Monitoring.class);
-		final PreExecutionGraph<?> planOpaque = new PreExecutionGraphImpl<>(null, null);// p.makePlan(null, planConstituent, null);
-		final ListenableGraph<VirtualTask<?>, VirtualTaskConnectivity> plan = ((PreExecutionGraphImpl) planOpaque).getCreateGraph();
+		final PreExecutionGraphV3<?> planOpaque = new PreExecutionGraphV3Impl<>(null);// p.makePlan(null, planConstituent, null);
+		final ListenableGraph<VirtualTaskV3, VirtualTaskConnectivityV3> plan = ((PreExecutionGraphV3Impl) planOpaque).getGraph();
 		assertEquals(1, plan.edgeSet().size());
-		final VirtualTaskConnectivity o = plan.edgeSet().iterator().next();
+		final VirtualTaskConnectivityV3 o = plan.edgeSet().iterator().next();
 		assertNotNull(o.getSource());
 		assertNotNull(o.getTarget());
 		assertEquals(o.getSource().getClass(), ProvAVt.class);
@@ -87,9 +89,9 @@ class OrchestrationTest {
 		Mockito.lenient().when(vimManager.findVimByVimIdAndProviderId("PROVA", "")).thenReturn(TestFactory.createVimConnectionA());
 		Mockito.lenient().when(vimManager.findVimByVimIdAndProviderId("PROVB", "")).thenReturn(TestFactory.createVimConnectionB());
 		final ExecutionGraph rOpaq = p.implement(planOpaque);
-		final ListenableGraph<UnitOfWork<?>, UnitOfWorkConnectivity> r = ((ExecutionGraphImpl) rOpaq).getCreateImplementation();
+		final ListenableGraph<UnitOfWorkV3<?>, ConnectivityEdge> r = ((ExecutionGraphImplV3) rOpaq).getGraph();
 		assertEquals(1, r.edgeSet().size());
-		final UnitOfWorkConnectivity e = r.edgeSet().iterator().next();
+		final ConnectivityEdge e = r.edgeSet().iterator().next();
 		assertNotNull(e.getSource());
 		assertNotNull(e.getTarget());
 		assertEquals(e.getSource().getClass(), UnitA.class);

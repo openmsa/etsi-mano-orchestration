@@ -16,51 +16,39 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.uow;
 
-import java.util.List;
+import com.ubiqube.etsi.mano.orchestrator.Context3d;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
-import com.ubiqube.etsi.mano.orchestrator.Context;
-import com.ubiqube.etsi.mano.orchestrator.NamedDependency;
-import com.ubiqube.etsi.mano.orchestrator.NamedDependency2d;
-import com.ubiqube.etsi.mano.orchestrator.Task;
-
-public class UnitB implements UnitOfWork<Object> {
+public class UnitB implements UnitOfWorkV3<Object> {
 
 	@Override
-	public Task getTask() {
+	public String execute(final Context3d context) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String execute(final Context context) {
+	public String rollback(final Context3d context) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String rollback(final Context context) {
+	public VirtualTaskV3<Object> getTask() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Class getNode() {
+	public Class<? extends Node> getType() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<NamedDependency> getNameDependencies() {
-		return List.of();
-	}
+	public void setResource(final String res) {
+		// TODO Auto-generated method stub
 
-	@Override
-	public List<NamedDependency> getNamedProduced() {
-		return List.of();
-	}
-
-	@Override
-	public List<NamedDependency2d> get2dDependencies() {
-		return List.of();
 	}
 }

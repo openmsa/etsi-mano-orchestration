@@ -22,7 +22,6 @@ import java.util.List;
 import org.jgrapht.ListenableGraph;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWork;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 public class SystemBuilderV3Impl<U> implements SystemBuilder<U> {
@@ -51,46 +50,8 @@ public class SystemBuilderV3Impl<U> implements SystemBuilder<U> {
 	}
 
 	@Override
-	public List<ConnectivityEdge<UnitOfWork<U>>> getEdges() {
-		return null;
-	}
-
-	@Override
 	public UnitOfWorkV3<U> getSingle() {
 		return single;
-	}
-
-	@Override
-	public List<UnitOfWork<U>> getVertex() {
-		// if (null != single) {
-		// return Arrays.asList(single);
-		// }
-		return null;// g.vertexSet().stream().toList();
-	}
-
-	@Override
-	public List<UnitOfWork<U>> getIncomingVertex() {
-//		if (null != single) {
-//			return Arrays.asList(single);
-//		}
-//		return g.vertexSet().stream().filter(x -> g.incomingEdgesOf(x).isEmpty()).toList();
-		return null;
-	}
-
-	@Override
-	public List<UnitOfWork<U>> getOutgoingVertex() {
-//		if (null != single) {
-//			return Arrays.asList(single);
-//		}
-//		return g.vertexSet().stream().filter(x -> g.outgoingEdgesOf(x).isEmpty()).toList();
-		return null;
-	}
-
-	@Override
-	public void add(final UnitOfWork<U> src, final UnitOfWork<U> dest) {
-//		g.addVertex(src);
-//		g.addVertex(dest);
-//		g.addEdge(src, dest);
 	}
 
 	@Override

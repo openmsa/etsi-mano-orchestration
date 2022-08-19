@@ -28,9 +28,9 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 public interface UnitOfWorkV3<U> {
 	VirtualTaskV3<U> getTask();
 
-	String execute(Context3d context);
+	String execute(Context3d<U> context);
 
-	String rollback(Context3d context);
+	String rollback(Context3d<U> context);
 
 	Class<? extends Node> getType();
 

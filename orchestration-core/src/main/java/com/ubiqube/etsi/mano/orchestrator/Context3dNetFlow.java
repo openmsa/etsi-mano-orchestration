@@ -26,8 +26,6 @@ import org.jgrapht.ListenableGraph;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.DirectedAcyclicGraph;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
@@ -44,7 +42,6 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
  *
  */
 public class Context3dNetFlow<U> {
-	private static final Logger LOG = LoggerFactory.getLogger(Context3dNetFlow.class);
 	private final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> d;
 	private ContextUow<U> root;
 
@@ -117,7 +114,7 @@ public class Context3dNetFlow<U> {
 		return l.get(0);
 	}
 
-	public <U> void add(final UnitOfWorkV3<U> uaow, final String res) {
+	public void add(final UnitOfWorkV3<U> uaow, final String res) {
 		throw new IllegalAccessError();
 	}
 

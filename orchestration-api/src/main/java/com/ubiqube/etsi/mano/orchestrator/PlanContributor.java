@@ -19,7 +19,7 @@ package com.ubiqube.etsi.mano.orchestrator;
 import java.util.List;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 /**
  *
@@ -28,8 +28,10 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTask;
  * @param <U>
  * @param <T>
  * @param <P>
+ * @deprecated Contributor role as this one defined, doesn't exist any more.
  */
-public interface PlanContributor<U, T extends VirtualTask<U>, P> {
+@Deprecated(forRemoval = true)
+public interface PlanContributor<U, T extends VirtualTaskV3<U>, P> {
 
 	List<T> contribute(Bundle bundle, P parameters);
 

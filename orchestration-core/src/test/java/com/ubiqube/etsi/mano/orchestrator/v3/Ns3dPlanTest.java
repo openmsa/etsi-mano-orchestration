@@ -42,7 +42,6 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.VnfCreateNode;
 import com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.VnffgLoadbalancerNode;
 import com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.VnffgPostNode;
 import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
-import com.ubiqube.etsi.mano.orchestrator.scale.ObjectFactory;
 import com.ubiqube.etsi.mano.orchestrator.scale.PlanMerger;
 import com.ubiqube.etsi.mano.orchestrator.scale.PlanMultiplier;
 import com.ubiqube.etsi.mano.orchestrator.scale.ScalingEngine;
@@ -82,7 +81,6 @@ class Ns3dPlanTest {
 
 	@Test
 	void testNs() throws Exception {
-		final ObjectFactory of = new TestObjectFactory();
 		final PlanMultiplier pm = new PlanMultiplier();
 		final ScalingEngine se = new ScalingEngine();
 

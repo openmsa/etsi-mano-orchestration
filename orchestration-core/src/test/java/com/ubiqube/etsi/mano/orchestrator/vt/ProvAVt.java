@@ -16,47 +16,17 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.vt;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.UUID;
 
-import com.ubiqube.etsi.mano.orchestrator.AbstractVirtualTask;
-import com.ubiqube.etsi.mano.orchestrator.NamedDependency;
+import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
 import com.ubiqube.etsi.mano.orchestrator.TestParameters;
-import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
-public class ProvAVt extends AbstractVirtualTask<TestParameters> {
-
-	@Override
-	public List<NamedDependency> getNameDependencies() {
-		return new ArrayList<>();
-	}
-
-	@Override
-	public TestParameters getParameters() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getFactoryProviderId() {
-		return "PROVA";
-	}
-
-	@Override
-	public List<NamedDependency> getNamedProduced() {
-		return Arrays.asList(new NamedDependency(Network.class, "vl01"));
-	}
+public class ProvAVt implements VirtualTaskV3<TestParameters> {
 
 	@Override
 	public boolean isDeleteTask() {
 		return false;
-	}
-
-	@Override
-	public void setParameters(final TestParameters u) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -78,7 +48,87 @@ public class ProvAVt extends AbstractVirtualTask<TestParameters> {
 	}
 
 	@Override
-	public String getVimProviderId() {
-		return "COMPUTE";
+	public void setName(final String name) {
+		// TODO Auto-generated method stub
+
 	}
+
+	@Override
+	public Class<? extends Node> getType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setAlias(final String alias) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public int getRank() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setRank(final int rank) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public TestParameters getTemplateParameters() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTemplateParameters(final TestParameters u) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setDelete(final boolean del) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setSystemBuilder(final SystemBuilder<TestParameters> db) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public SystemBuilder<TestParameters> getSystemBuilder() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getVimResourceId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setVimResourceId(final String res) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setRemovedLiveInstanceId(final UUID liveInstanceId) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getToscaName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

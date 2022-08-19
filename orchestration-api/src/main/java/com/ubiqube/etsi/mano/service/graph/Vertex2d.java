@@ -66,11 +66,6 @@ public class Vertex2d {
 	}
 
 	@Override
-	public Vertex2d clone() {
-		return new Vertex2d(type, name, parent);
-	}
-
-	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;

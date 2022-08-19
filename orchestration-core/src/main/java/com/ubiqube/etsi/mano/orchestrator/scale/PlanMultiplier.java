@@ -44,6 +44,7 @@ import com.ubiqube.etsi.mano.service.graph.Vertex2d;
  *
  */
 public class PlanMultiplier {
+	private static final String ADD_VT = "Add VT {}";
 	private static final Logger LOG = LoggerFactory.getLogger(PlanMultiplier.class);
 
 	public <U> ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> multiply(final ListenableGraph<Vertex2d, Edge2d> plan, final SclableResources<U> sr,
@@ -72,7 +73,7 @@ public class PlanMultiplier {
 				final VirtualTaskV3<U> src = hash.computeIfAbsent(uniqIdSrc, y -> {
 					final SclableResources<U> templSr = findTemplate(scaleResources, x.getSource());
 					final VirtualTaskV3<U> t = createTask(templSr, converter, liveItems, uniqIdSrc, x.getSource(), ii, delete);
-					LOG.debug("Add VT {}", t.getAlias());
+					LOG.debug(ADD_VT, t.getAlias());
 					d.addVertex(t);
 					return t;
 				});
@@ -80,7 +81,7 @@ public class PlanMultiplier {
 				final VirtualTaskV3<U> dst = hash.computeIfAbsent(uniqIdDst, y -> {
 					final SclableResources<U> templSr = findTemplate(scaleResources, x.getTarget());
 					final VirtualTaskV3<U> t = createTask(templSr, converter, liveItems, uniqIdDst, x.getTarget(), ii, delete);
-					LOG.debug("Add VT {}", t.getAlias());
+					LOG.debug(ADD_VT, t.getAlias());
 					d.addVertex(t);
 					return t;
 				});
@@ -91,7 +92,7 @@ public class PlanMultiplier {
 				hash.computeIfAbsent(uniqIdSrc, y -> {
 					final SclableResources<U> templSr = findTemplate(scaleResources, x);
 					final VirtualTaskV3<U> t = createTask(templSr, converter, liveItems, uniqIdSrc, x, ii, delete);
-					LOG.debug("Add VT {}", t.getAlias());
+					LOG.debug(ADD_VT, t.getAlias());
 					d.addVertex(t);
 					return t;
 				});

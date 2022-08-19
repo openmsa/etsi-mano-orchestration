@@ -54,7 +54,7 @@ public class BlueprintBuilderImpl implements BlueprintBuilder {
 		final List<ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>>> plans = new ArrayList<>();
 		final PlanMultiplier pm = new PlanMultiplier();
 		final List<SclableResources<U>> ttd = masterVertex.stream()
-				.map(x -> toThingsToDo(g, x, scaleResources))
+				.map(x -> toThingsToDo(x, scaleResources))
 				.flatMap(List::stream)
 				.toList();
 		ttd.forEach(x -> {
@@ -68,7 +68,7 @@ public class BlueprintBuilderImpl implements BlueprintBuilder {
 		return new PreExecutionGraphV3Impl(ret);
 	}
 
-	private static <U> List<SclableResources<U>> toThingsToDo(final ListenableGraph<Vertex2d, Edge2d> g, final Class<? extends Node> inNode, final List<SclableResources<U>> scaleResources) {
+	private static <U> List<SclableResources<U>> toThingsToDo(final Class<? extends Node> inNode, final List<SclableResources<U>> scaleResources) {
 		return scaleResources.stream()
 				.filter(x -> x.getType() == inNode)
 				.filter(x -> (x.getHave() != x.getWant()))

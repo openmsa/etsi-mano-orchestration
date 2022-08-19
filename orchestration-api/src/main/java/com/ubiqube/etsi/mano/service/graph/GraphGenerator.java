@@ -30,7 +30,10 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxStyleUtils;
 
 public class GraphGenerator {
-	
+	private GraphGenerator() {
+		// Nothing.
+	}
+
 	public static <V, E> BufferedImage drawGraph(final Graph<V, E> graph) {
 		final JGraphXAdapter<V, E> graphAdapter = new JGraphXAdapter<>(graph);
 		final mxIGraphLayout layout = new mxHierarchicalLayout(graphAdapter);

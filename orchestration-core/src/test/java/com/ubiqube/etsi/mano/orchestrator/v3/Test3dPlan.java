@@ -40,7 +40,6 @@ import com.ubiqube.etsi.mano.orchestrator.SclableResources;
 import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
 import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Compute;
 import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
-import com.ubiqube.etsi.mano.orchestrator.scale.ObjectFactory;
 import com.ubiqube.etsi.mano.orchestrator.scale.PlanMerger;
 import com.ubiqube.etsi.mano.orchestrator.scale.PlanMultiplier;
 import com.ubiqube.etsi.mano.orchestrator.scale.ScalingEngine;
@@ -80,7 +79,6 @@ class Test3dPlan {
 
 	@Test
 	void testVnf() throws Exception {
-		final ObjectFactory of = new TestObjectFactory();
 		final PlanMultiplier pm = new PlanMultiplier();
 		final ScalingEngine se = new ScalingEngine();
 
