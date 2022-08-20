@@ -8,19 +8,19 @@
 	<description>ETSI MANO Database Model.</description>
 	<parent>
 		<groupId>com.ubiqube.mano</groupId>
-		<artifactId>mano-super-pom</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-		<relativePath/>
+		<artifactId>mano-orchestration-aggregator</artifactId>
+		<version>3.0.0-SNAPSHOT</version>
+		<relativePath>..</relativePath>
 	</parent>
 
 	<distributionManagement>
 		<snapshotRepository>
 			<id>nexus-snapshots</id>
-			<url>http://nexus2.ubiqube.com:8081/repository/maven-snapshots/</url>
+			<url>http://nexus.ubiqube.com:8081/repository/maven-snapshots/</url>
 		</snapshotRepository>
 		<repository>
 			<id>nexus-releases</id>
-			<url>http://nexus2.ubiqube.com:8081/repository/maven-releases/</url>
+			<url>http://nexus.ubiqube.com:8081/repository/maven-releases/</url>
 		</repository>
 	</distributionManagement>
 	<dependencies>
