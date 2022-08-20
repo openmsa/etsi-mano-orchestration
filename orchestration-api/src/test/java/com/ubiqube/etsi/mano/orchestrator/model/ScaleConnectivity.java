@@ -16,7 +16,7 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.model;
 
-import com.ubiqube.etsi.mano.orchestrator.uow.Relation;
+import com.ubiqube.etsi.mano.service.graph.Relation;
 
 public class ScaleConnectivity {
 

@@ -16,7 +16,7 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.vt;
 
-import com.ubiqube.etsi.mano.orchestrator.uow.Relation;
+import com.ubiqube.etsi.mano.service.graph.Relation;
 
 public class VirtualTaskConnectivityV3<U> {
 	private VirtualTaskV3<U> source;

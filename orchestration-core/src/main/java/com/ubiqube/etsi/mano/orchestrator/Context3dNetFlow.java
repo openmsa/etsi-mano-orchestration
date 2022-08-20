@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.ListenableGraph;
@@ -116,6 +117,20 @@ public class Context3dNetFlow<U> {
 
 	public void add(final UnitOfWorkV3<U> uaow, final String res) {
 		throw new IllegalAccessError();
+	}
+
+	public List<String> getParent(final UnitOfWorkV3<U> actual, final Class<? extends Node> class1) {
+		Objects.requireNonNull(actual, "actual could not be null");
+		final AllDirectedPaths<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> path = new AllDirectedPaths<>(d);
+		final List<GraphPath<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>>> paths = path.getAllPaths(root, actual, true, 1000);
+		return paths.stream()
+				.flatMap(x -> x.getVertexList().stream())
+				.filter(x -> x.getType() == class1)
+				.map(UnitOfWorkV3::getTask)
+				.map(VirtualTaskV3::getVimResourceId)
+				.collect(Collectors.toSet())
+				.stream()
+				.toList();
 	}
 
 }

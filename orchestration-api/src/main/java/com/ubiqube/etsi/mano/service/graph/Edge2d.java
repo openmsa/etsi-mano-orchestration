@@ -17,7 +17,6 @@
 package com.ubiqube.etsi.mano.service.graph;
 
 import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
-import com.ubiqube.etsi.mano.orchestrator.uow.Relation;
 
 import lombok.Getter;
 import lombok.Setter;

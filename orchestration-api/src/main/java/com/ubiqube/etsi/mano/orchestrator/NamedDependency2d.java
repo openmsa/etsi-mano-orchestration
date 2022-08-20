@@ -17,7 +17,7 @@
 package com.ubiqube.etsi.mano.orchestrator;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
-import com.ubiqube.etsi.mano.orchestrator.uow.Relation;
+import com.ubiqube.etsi.mano.service.graph.Relation;
 
 import lombok.Getter;
 import lombok.Setter;

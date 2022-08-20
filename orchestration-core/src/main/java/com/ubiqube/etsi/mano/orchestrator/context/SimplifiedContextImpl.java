@@ -26,7 +26,7 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
-public class SimplifiedContextImpl<U> implements Context3d<U> {
+public class SimplifiedContextImpl<U> implements Context3d {
 
 	private final Context3dNetFlow<U> flow;
 	private final UnitOfWorkV3<U> actual;
@@ -36,7 +36,7 @@ public class SimplifiedContextImpl<U> implements Context3d<U> {
 		this.actual = actual;
 	}
 
-	public SimplifiedContextImpl(final UnitOfWorkV3<U> actual, final Context3dNetFlow flow) {
+	public SimplifiedContextImpl(final UnitOfWorkV3<U> actual, final Context3dNetFlow<U> flow) {
 		this.flow = flow;
 		this.actual = actual;
 	}
@@ -54,6 +54,11 @@ public class SimplifiedContextImpl<U> implements Context3d<U> {
 	@Override
 	public void add(final Class<? extends Node> class1, final String name, final String resourceId) {
 		flow.add(actual, class1, name, resourceId);
+	}
+
+	@Override
+	public List<String> get(final Class<? extends Node> class1) {
+		return flow.getParent(actual, class1);
 	}
 
 }

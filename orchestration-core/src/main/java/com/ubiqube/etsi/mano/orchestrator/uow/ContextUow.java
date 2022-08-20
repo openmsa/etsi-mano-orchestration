@@ -30,13 +30,13 @@ public class ContextUow<U> implements UnitOfWorkV3<U> {
 	}
 
 	@Override
-	public String execute(final Context3d<U> context) {
+	public String execute(final Context3d context) {
 		// Nothing.
 		return null;
 	}
 
 	@Override
-	public String rollback(final Context3d<U> context) {
+	public String rollback(final Context3d context) {
 		// Nothing.
 		return null;
 	}

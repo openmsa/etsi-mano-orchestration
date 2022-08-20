@@ -28,11 +28,11 @@ import org.jgrapht.nio.dot.DOTExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ubiqube.etsi.mano.orchestrator.uow.Relation;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskVertexListenerV3;
 import com.ubiqube.etsi.mano.service.graph.Edge2d;
+import com.ubiqube.etsi.mano.service.graph.Relation;
 import com.ubiqube.etsi.mano.service.graph.Vertex2d;
 
 /**

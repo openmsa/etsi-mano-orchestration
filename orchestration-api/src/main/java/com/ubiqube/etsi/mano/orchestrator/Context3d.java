@@ -25,12 +25,14 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
  * @author olivier
  *
  */
-public interface Context3d<U> {
+public interface Context3d {
 
 	String get(Class<? extends Node> class1, String toscaName);
 
 	List<String> getParent(Class<? extends Node> class1, String toscaName);
 
 	void add(Class<? extends Node> class1, String name, String resourceId);
+
+	List<String> get(Class<? extends Node> class1);
 
 }
