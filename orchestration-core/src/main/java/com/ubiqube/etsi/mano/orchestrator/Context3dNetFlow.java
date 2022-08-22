@@ -133,4 +133,15 @@ public class Context3dNetFlow<U> {
 				.toList();
 	}
 
+	public String getOptional(final UnitOfWorkV3<U> actual, final Class<? extends Node> class1, final String toscaName) {
+		final List<String> l = getParent(actual, class1, toscaName);
+		if (l.size() > 1) {
+			throw new OrchestrationException("Get Optional failed for " + toscaName + " #" + l.size());
+		}
+		if (l.isEmpty()) {
+			return null;
+		}
+		return l.get(0);
+	}
+
 }

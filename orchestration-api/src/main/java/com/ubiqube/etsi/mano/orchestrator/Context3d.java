@@ -35,4 +35,6 @@ public interface Context3d {
 
 	List<String> get(Class<? extends Node> class1);
 
+	String getOptional(Class<? extends Node> class1, String parentToscaName);
+
 }

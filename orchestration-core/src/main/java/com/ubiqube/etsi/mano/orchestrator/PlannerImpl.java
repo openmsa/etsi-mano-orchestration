@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 
 import com.github.dexecutor.core.task.ExecutionResults;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
-import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.service.ImplementationService;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkVertexListenerV3;
@@ -56,11 +55,6 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 		this.implementationService = implementationService;
 		this.executorService = executorService;
 		this.postPlanRunner = postPlanRunner;
-	}
-
-	@Override
-	public PreExecutionGraphV3<W> makePlan(final Bundle bundle, final List<Class<? extends Node>> planConstituent, final P parameters) {
-		return null;
 	}
 
 	@Override

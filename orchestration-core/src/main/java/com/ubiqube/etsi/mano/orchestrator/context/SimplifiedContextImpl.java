@@ -61,4 +61,9 @@ public class SimplifiedContextImpl<U> implements Context3d {
 		return flow.getParent(actual, class1);
 	}
 
+	@Override
+	public String getOptional(final Class<? extends Node> class1, final String toscaName) {
+		return flow.getOptional(actual, class1, toscaName);
+	}
+
 }

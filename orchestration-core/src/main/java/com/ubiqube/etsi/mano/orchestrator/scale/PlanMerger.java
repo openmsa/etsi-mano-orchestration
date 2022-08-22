@@ -48,6 +48,9 @@ public class PlanMerger {
 		d.addGraphListener(new VirtualTaskVertexListenerV3<>());
 		plans.stream().flatMap(x -> x.vertexSet().stream()).forEach(d::addVertex);
 		plans.stream().flatMap(x -> x.edgeSet().stream()).forEach(x -> d.addEdge(x.getSource(), x.getTarget()));
+		if (LOG.isDebugEnabled()) {
+			dumpVertex(d);
+		}
 		g.edgeSet().forEach(x -> {
 			final List<VirtualTaskV3<U>> srcs = getAll(d, x.getSource().getName(), x.getSource().getType(), List.of());
 			final List<VirtualTaskV3<U>> tgts = getAll(d, x.getTarget().getName(), x.getTarget().getType(), srcs);
@@ -73,6 +76,10 @@ public class PlanMerger {
 		return d;
 	}
 
+	private static <U> void dumpVertex(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d) {
+		d.vertexSet().forEach(x -> LOG.debug("v: {}-{}", x.getType().getSimpleName(), x.getName()));
+	}
+
 	private static <U> void exportPlan(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d, final String filename) {
 		final DOTExporter<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> exporter = new DOTExporter<>(PlanMerger::toDotName);
 		try (final FileOutputStream out = new FileOutputStream(filename)) {
@@ -84,7 +91,7 @@ public class PlanMerger {
 
 	private static <U> String toDotName(final VirtualTaskV3<U> task) {
 		final String base = task.getType().getSimpleName() + "_" + task.getName();
-		return base.replace("/", "_").replace("-", "_");
+		return base.replace("/", "_").replace("-", "_").replace("\n", "_").replace(",", "_").replace("(", "_").replace(")", "_");
 	}
 
 	private static <U> void makeOneToOne(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d, final Edge2d edge, final List<VirtualTaskV3<U>> srcs, final List<VirtualTaskV3<U>> tgts) {
@@ -93,7 +100,7 @@ public class PlanMerger {
 			if (res.isPresent()) {
 				d.addEdge(x, res.get());
 			} else {
-				LOG.warn("One to one of ({} / {} ) => Could not find: {} in {}", edge.getSource().toString().replace("\n", "/"), edge.getTarget().toString().replace("\n", "/"), x, tgts);
+				LOG.warn("One to one of ({} / {} ) => Could not find: {} in {}", namedVertex(edge.getSource()), namedVertex(edge.getTarget()), x, tgts);
 			}
 		});
 	}
@@ -124,4 +131,7 @@ public class PlanMerger {
 				.toList();
 	}
 
+	private static String namedVertex(final Vertex2d v) {
+		return v.getType().getSimpleName() + "-" + v.getName();
+	}
 }

@@ -16,9 +16,6 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
-import java.util.List;
-
-import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.v3.PreExecutionGraphV3;
 
 /**
@@ -28,7 +25,6 @@ import com.ubiqube.etsi.mano.orchestrator.v3.PreExecutionGraphV3;
  *
  */
 public interface Planner<P, U, W> {
-	PreExecutionGraphV3<W> makePlan(final Bundle bundle, final List<Class<? extends Node>> planConstituent, P parameters);
 
 	ExecutionGraph implement(PreExecutionGraphV3<U> plan);
 

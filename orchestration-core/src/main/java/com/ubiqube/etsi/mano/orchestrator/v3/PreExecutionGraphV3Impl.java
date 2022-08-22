@@ -64,6 +64,6 @@ public class PreExecutionGraphV3Impl<U> implements PreExecutionGraphV3<U> {
 
 	private String toDotName(final VirtualTaskV3<U> task) {
 		final String base = task.getType().getSimpleName() + "_" + task.getName();
-		return base.replace("/", "_").replace("-", "_");
+		return base.replace("/", "_").replace("-", "_").replace("\n", "_").replace(",", "_").replace("(", "_").replace(")", "_");
 	}
 }

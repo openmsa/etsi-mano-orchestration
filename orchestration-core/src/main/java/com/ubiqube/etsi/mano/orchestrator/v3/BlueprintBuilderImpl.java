@@ -63,7 +63,6 @@ public class BlueprintBuilderImpl implements BlueprintBuilder {
 			final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> np = pm.multiply(s, x, converter, liveItems, scaleResources);
 			plans.add(np);
 		});
-
 		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> ret = pMerge.merge(g, plans);
 		return new PreExecutionGraphV3Impl(ret);
 	}
@@ -71,7 +70,7 @@ public class BlueprintBuilderImpl implements BlueprintBuilder {
 	private static <U> List<SclableResources<U>> toThingsToDo(final Class<? extends Node> inNode, final List<SclableResources<U>> scaleResources) {
 		return scaleResources.stream()
 				.filter(x -> x.getType() == inNode)
-				.filter(x -> (x.getHave() != x.getWant()))
+				// .filter(x -> (x.getHave() != x.getWant()))
 				.toList();
 	}
 
