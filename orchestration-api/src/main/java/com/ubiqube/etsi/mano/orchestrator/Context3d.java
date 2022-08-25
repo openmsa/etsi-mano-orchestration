@@ -18,6 +18,9 @@ package com.ubiqube.etsi.mano.orchestrator;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
 /**
@@ -27,6 +30,7 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
  */
 public interface Context3d {
 
+	@NotNull
 	String get(Class<? extends Node> class1, String toscaName);
 
 	List<String> getParent(Class<? extends Node> class1, String toscaName);
@@ -35,6 +39,7 @@ public interface Context3d {
 
 	List<String> get(Class<? extends Node> class1);
 
+	@Nullable
 	String getOptional(Class<? extends Node> class1, String parentToscaName);
 
 }

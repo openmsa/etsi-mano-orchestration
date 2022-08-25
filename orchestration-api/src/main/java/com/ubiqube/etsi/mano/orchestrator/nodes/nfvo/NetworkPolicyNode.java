@@ -14,44 +14,15 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.ubiqube.etsi.mano.orchestrator.model;
+package com.ubiqube.etsi.mano.orchestrator.nodes.nfvo;
 
-import java.util.List;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
-import com.ubiqube.etsi.mano.orchestrator.NamedDependency;
-
-public class PortPairGroupScale implements ScaleModel {
-	private final String name;
-
-	public PortPairGroupScale(final String name) {
-		this.name = name;
-	}
-
-	@Override
-	public boolean isSingleNode() {
-		return true;
-	}
-
-	@Override
-	public List<NamedDependency> getDependencies() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int wantedInstance() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public ScaleModel clone(final int i) {
-		return new PortPairGroupScale(name + i);
-	}
-
+/**
+ *
+ * @author Olivier Vignaud <ovi@ubiqube.com>
+ *
+ */
+public interface NetworkPolicyNode extends Node {
+	// Nothing.
 }

@@ -14,26 +14,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.ubiqube.etsi.mano.orchestrator.model;
+package com.ubiqube.etsi.mano.orchestrator.nodes.contrail;
 
-import java.util.List;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
-import com.ubiqube.etsi.mano.orchestrator.NamedDependency;
+public interface ServiceInstanceNode extends Node {
 
-/**
- *
- * @author Olivier Vignaud <ovi@ubiqube.com>
- *
- */
-public interface ScaleModel {
-
-	boolean isSingleNode();
-
-	List<NamedDependency> getDependencies();
-
-	int wantedInstance();
-
-	ScaleModel clone(int i);
-
-	String getName();
 }

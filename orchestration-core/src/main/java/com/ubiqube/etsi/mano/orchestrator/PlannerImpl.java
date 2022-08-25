@@ -117,7 +117,7 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 
 	private ExecutionResults<UnitOfWorkV3<U>, String> execDelete(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g, final OrchExecutionListener<U> listener) {
 		final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> rev = GraphTools.revert(g);
-		final Context3dNetFlow<U> context = new Context3dNetFlow<>(rev);
+		final Context3dNetFlow<U> context = new Context3dNetFlow<>(g);
 		return executorService.execute(rev, new DeleteTaskProvider<>(context, listener));
 	}
 

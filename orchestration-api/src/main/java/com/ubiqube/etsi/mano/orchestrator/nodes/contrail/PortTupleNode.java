@@ -14,37 +14,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.ubiqube.etsi.mano.orchestrator;
+package com.ubiqube.etsi.mano.orchestrator.nodes.contrail;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- *
- * @author Olivier Vignaud <ovi@ubiqube.com>
- * @deprecated Use {@link NamedDependency2d}
- */
-@Setter
-@Getter
-@Deprecated(forRemoval = true)
-public class NamedDependency {
-	private final String name;
-	private final Class<? extends Node> type;
-
-	public NamedDependency(final Class<? extends Node> type, final String name) {
-		this.name = name;
-		this.type = type;
-	}
-
-	public boolean match(final NamedDependency y) {
-		return ((y.getType() == type) && y.getName().equals(name));
-	}
-
-	@Override
-	public String toString() {
-		return "NamedDependency [name=" + name + ", type=" + type.getSimpleName() + "]";
-	}
+public interface PortTupleNode extends Node {
 
 }

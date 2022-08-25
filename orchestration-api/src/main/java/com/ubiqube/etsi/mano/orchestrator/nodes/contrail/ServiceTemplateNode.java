@@ -14,32 +14,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.ubiqube.etsi.mano.orchestrator;
+package com.ubiqube.etsi.mano.orchestrator.nodes.contrail;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
-import com.ubiqube.etsi.mano.service.graph.Relation;
 
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- *
- * @author olivier
- *
- */
-@Getter
-@Setter
-public class NamedDependency2d extends NamedDependency {
-	private final Relation relation;
-
-	public NamedDependency2d(final Class<? extends Node> type, final String name, final Relation relation) {
-		super(type, name);
-		this.relation = relation;
-	}
-
-	@Override
-	public String toString() {
-		return "NamedDependency2d [relation=" + relation + "]";
-	}
+public interface ServiceTemplateNode extends Node {
 
 }
