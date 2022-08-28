@@ -54,9 +54,9 @@ public class ContextVt<U> implements VirtualTaskV3<U> {
 	private boolean delete;
 
 	private String vimResourceId;
-	
+
 	private Class<? extends Node> parent;
-	
+
 	private SystemBuilder<U> systemBuilder;
 
 	private UUID removedLiveInstanceId;
@@ -75,12 +75,19 @@ public class ContextVt<U> implements VirtualTaskV3<U> {
 	public Class<? extends Node> getType() {
 		return parent;
 	}
+
 	@Override
 	public void setRemovedLiveInstanceId(UUID liveInstanceId) {
 		removedLiveInstanceId = liveInstanceId;
 	}
+
 	@Override
 	public String getToscaName() {
 		return name;
+	}
+
+	@Override
+	public String toString() {
+		return alias;
 	}
 }
