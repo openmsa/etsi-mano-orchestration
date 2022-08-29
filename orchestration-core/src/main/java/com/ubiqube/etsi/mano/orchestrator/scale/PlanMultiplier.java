@@ -19,6 +19,7 @@ package com.ubiqube.etsi.mano.orchestrator.scale;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -51,22 +52,14 @@ public class PlanMultiplier {
 			final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems, final List<SclableResources<U>> scaleResources) {
 		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
 		d.addGraphListener(new VirtualTaskVertexListenerV3<>());
-		if (sr.getWant() == sr.getHave()) {
-			return d;
-		}
-		final boolean delete = (sr.getWant() - sr.getHave()) < 0;
 		final Map<String, VirtualTaskV3<U>> hash = new HashMap<>();
 		/**
 		 * Have = 1 , want = 2 => +1 have = 1 , want = 0 => -1
 		 */
-		int have = sr.getHave();
-		int want = sr.getWant();
-		if (delete) {
-			have = sr.getWant();
-			want = sr.getHave();
-		}
+		final int max = Math.max(sr.getHave(), sr.getWant());
 		LOG.debug("SR: {}", sr);
-		for (int i = have; i < want; i++) {
+		for (int i = 0; i < max; i++) {
+			final boolean delete = i >= sr.getWant();
 			final int ii = i;
 			plan.edgeSet().forEach(x -> {
 				final String uniqIdSrc = getUniqId(x.getSource(), ii);
@@ -136,21 +129,26 @@ public class PlanMultiplier {
 	 * @param x
 	 * @param ii
 	 * @param delete
+	 * @param vimConnectionId
 	 * @return
 	 */
 	private static <U> VirtualTaskV3<U> createTask(final SclableResources<U> sr, final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems, final String uniqIdSrc, final Vertex2d x, final int ii, final boolean delete) {
-		final Optional<ContextHolder> ctx = findInContext(liveItems, uniqIdSrc, x, ii);
+		final Optional<ContextHolder> ctx = findInContext(liveItems, x, ii);
 		VirtualTaskV3<U> t = createTask(uniqIdSrc, x, ii, delete, sr.getTemplateParameter(), converter);
 		if (ctx.isPresent()) {
 			if (!delete) {
-				t = createContext(uniqIdSrc, x, ii, delete, sr.getTemplateParameter(), ctx.get().getResourceId(), t.getType());
+				t = createContext(uniqIdSrc, x, ii, delete, sr.getTemplateParameter(), ctx.get().getResourceId(), t.getType(), ctx.get().getVimConnectionId());
 			} else {
 				t.setVimResourceId(ctx.get().getResourceId());
-				t.setRemovedLiveInstanceId(ctx.get().getLiveInstanceId());
+				t.setVimConnectionId(ctx.get().getVimConnectionId());
+				t.setRemovedLiveInstanceId(Objects.requireNonNull(ctx.get().getLiveInstanceId()));
 			}
 		} else {
 			if (delete) {
-				t = createContext(uniqIdSrc, x, ii, delete, sr.getTemplateParameter(), null, t.getType());
+				if ((sr.getHave() != 0) || (sr.getWant() != 0)) {
+					LOG.warn("Deleting {} but not found in context.", uniqIdSrc);
+				}
+				t = createContext(uniqIdSrc, x, ii, delete, sr.getTemplateParameter(), null, t.getType(), null);
 			}
 			LOG.trace("creating task: {}/{}", x.getType().getSimpleName(), x.getName());
 		}
@@ -159,7 +157,7 @@ public class PlanMultiplier {
 
 	@SuppressWarnings("unchecked")
 	private static <U> VirtualTaskV3<U> createContext(final String uniqIdSrc, final Vertex2d source, final int i, final boolean delete,
-			final U u, final String resourceId, final Class<? extends Node> class1) {
+			final U u, final String resourceId, final Class<? extends Node> class1, final String vimConnectionId) {
 		return (VirtualTaskV3<U>) ContextVt.builder()
 				.alias(uniqIdSrc)
 				.delete(delete)
@@ -167,12 +165,12 @@ public class PlanMultiplier {
 				.rank(i)
 				.templateParameters(u)
 				.vimResourceId(resourceId)
-				.vimConnectionId(null)
+				.vimConnectionId(vimConnectionId)
 				.parent(class1)
 				.build();
 	}
 
-	private static Optional<ContextHolder> findInContext(final List<ContextHolder> liveItems, final String uniqIdSrc, final Vertex2d source, final int i) {
+	private static Optional<ContextHolder> findInContext(final List<ContextHolder> liveItems, final Vertex2d source, final int i) {
 		final List<ContextHolder> lst = liveItems.stream()
 				.filter(x -> x.getType() == source.getType())
 				.filter(x -> x.getName().equals(source.getName()))

@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.github.dexecutor.core.task.ExecutionResult;
 import com.github.dexecutor.core.task.ExecutionResults;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.service.ImplementationService;
@@ -127,8 +128,14 @@ public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
 	}
 
 	private OrchExecutionResults<U> convertResults(final ExecutionResults<UnitOfWorkV3<U>, String> res) {
-		final List<OrchExecutionResultImpl<U>> all = res.getAll().stream().map(x -> new OrchExecutionResultImpl<>(x.getId(), ResultType.valueOf(x.getStatus().toString()), x.getResult())).toList();
+		final List<OrchExecutionResultImpl<U>> all = res.getAll().stream().map(this::convert).toList();
 		return new OrchExecutionResultsImpl<>(all);
+	}
+
+	private OrchExecutionResultImpl<U> convert(final ExecutionResult<UnitOfWorkV3<U>, String> res) {
+		final VirtualTaskV3<U> t = res.getId().getTask();
+		t.getStatus();
+		return new OrchExecutionResultImpl<>(res.getId(), t.getStatus(), res.getResult());
 	}
 
 }

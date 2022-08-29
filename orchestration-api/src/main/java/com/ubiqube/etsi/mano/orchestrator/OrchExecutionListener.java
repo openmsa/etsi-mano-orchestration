@@ -29,4 +29,6 @@ public interface OrchExecutionListener<U> {
 	void onStart(VirtualTaskV3<U> virtualTask);
 
 	void onTerminate(UnitOfWorkV3<U> uaow, String res);
+
+	void onError(UnitOfWorkV3<U> uaow, RuntimeException e);
 }

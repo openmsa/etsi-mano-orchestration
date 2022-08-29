@@ -48,4 +48,6 @@ public class ContextHolder {
 
 	private String resourceId;
 
+	private String vimConnectionId;
+
 }

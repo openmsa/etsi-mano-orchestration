@@ -17,6 +17,7 @@
 package com.ubiqube.etsi.mano.orchestrator;
 
 public enum ResultType {
+	NOT_STARTED,
 	SUCCESS,
 	ERRORED,
 	SKIPPED

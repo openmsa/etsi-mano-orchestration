@@ -18,6 +18,7 @@ package com.ubiqube.etsi.mano.orchestrator.vt;
 
 import java.util.UUID;
 
+import com.ubiqube.etsi.mano.orchestrator.ResultType;
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
@@ -31,6 +32,8 @@ public interface VirtualTaskV3<U> {
 	boolean isDeleteTask();
 
 	String getVimConnectionId();
+
+	void setVimConnectionId(String conn);
 
 	void setName(String name);
 
@@ -63,4 +66,6 @@ public interface VirtualTaskV3<U> {
 	void setRemovedLiveInstanceId(UUID liveInstanceId);
 
 	String getToscaName();
+
+	ResultType getStatus();
 }

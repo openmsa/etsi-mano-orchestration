@@ -30,6 +30,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class OrchExecutionResultImpl<U> implements OrchExecutionResult<U> {
 	UnitOfWorkV3<U> task;
-	ResultType result;
+	ResultType result = ResultType.NOT_STARTED;
 	String message;
 }

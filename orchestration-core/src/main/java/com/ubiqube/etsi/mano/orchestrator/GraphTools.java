@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkVertexListenerV3;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 /**
  *
@@ -65,4 +66,17 @@ public class GraphTools {
 		g.edgeSet().forEach(x -> LOG.debug("e: {} => {}", x.getSource().getTask().getAlias(), x.getTarget().getTask().getAlias()));
 	}
 
+	public static String toDotName(final UnitOfWorkV3<?> task) {
+		final String base = task.getType().getSimpleName() + "_" + task.getTask().getName();
+		return cleanup(base);
+	}
+
+	private static String cleanup(final String base) {
+		return base.replace("/", "_").replace("-", "_").replace("\n", "_").replace(",", "_").replace("(", "_").replace(")", "_").replace(" ", "_");
+	}
+
+	public static String toDotName(final VirtualTaskV3<?> task) {
+		final String base = task.getType().getSimpleName() + "_" + task.getName();
+		return cleanup(base);
+	}
 }

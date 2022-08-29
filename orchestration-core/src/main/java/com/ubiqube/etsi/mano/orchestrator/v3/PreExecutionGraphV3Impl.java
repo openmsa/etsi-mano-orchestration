@@ -25,6 +25,7 @@ import org.jgrapht.nio.dot.DOTExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ubiqube.etsi.mano.orchestrator.GraphTools;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
@@ -54,16 +55,11 @@ public class PreExecutionGraphV3Impl<U> implements PreExecutionGraphV3<U> {
 
 	@Override
 	public void toDotFile(final String filename) {
-		final DOTExporter<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> exporter = new DOTExporter<>(this::toDotName);
+		final DOTExporter<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> exporter = new DOTExporter<>(GraphTools::toDotName);
 		try (final FileOutputStream out = new FileOutputStream(filename)) {
 			exporter.exportGraph(network, out);
 		} catch (final IOException e) {
 			LOG.trace("Error in graph export", e);
 		}
-	}
-
-	private String toDotName(final VirtualTaskV3<U> task) {
-		final String base = task.getType().getSimpleName() + "_" + task.getName();
-		return base.replace("/", "_").replace("-", "_").replace("\n", "_").replace(",", "_").replace("(", "_").replace(")", "_");
 	}
 }

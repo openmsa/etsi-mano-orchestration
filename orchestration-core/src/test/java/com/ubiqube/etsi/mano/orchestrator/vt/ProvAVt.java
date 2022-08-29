@@ -18,6 +18,7 @@ package com.ubiqube.etsi.mano.orchestrator.vt;
 
 import java.util.UUID;
 
+import com.ubiqube.etsi.mano.orchestrator.ResultType;
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
 import com.ubiqube.etsi.mano.orchestrator.TestParameters;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
@@ -127,6 +128,18 @@ public class ProvAVt implements VirtualTaskV3<TestParameters> {
 
 	@Override
 	public String getToscaName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setVimConnectionId(final String conn) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public ResultType getStatus() {
 		// TODO Auto-generated method stub
 		return null;
 	}

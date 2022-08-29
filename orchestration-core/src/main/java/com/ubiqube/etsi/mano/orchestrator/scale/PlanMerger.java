@@ -28,6 +28,7 @@ import org.jgrapht.nio.dot.DOTExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ubiqube.etsi.mano.orchestrator.GraphTools;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskVertexListenerV3;
@@ -48,9 +49,6 @@ public class PlanMerger {
 		d.addGraphListener(new VirtualTaskVertexListenerV3<>());
 		plans.stream().flatMap(x -> x.vertexSet().stream()).forEach(d::addVertex);
 		plans.stream().flatMap(x -> x.edgeSet().stream()).forEach(x -> d.addEdge(x.getSource(), x.getTarget()));
-		if (LOG.isDebugEnabled()) {
-			dumpVertex(d);
-		}
 		g.edgeSet().forEach(x -> {
 			final List<VirtualTaskV3<U>> srcs = getAll(d, x.getSource().getName(), x.getSource().getType(), List.of());
 			final List<VirtualTaskV3<U>> tgts = getAll(d, x.getTarget().getName(), x.getTarget().getType(), srcs);
@@ -63,7 +61,7 @@ public class PlanMerger {
 				return;
 			}
 			if ((srcs.size() != 1) || (tgts.size() != 1)) {
-				LOG.trace("::: {} = {} {} / {} ||| {}", srcs.size(), tgts.size(), x.getRelation(), x.getSource(), x.getTarget());
+				LOG.warn("::: {} = {} {} / {} ||| {}", srcs.size(), tgts.size(), x.getRelation(), x.getSource(), x.getTarget());
 				LOG.trace("Got {} = {} / {} = {}", x.getSource().getName(), srcs, x.getTarget().getName(), tgts);
 				LOG.trace("====================");
 				return;
@@ -76,12 +74,8 @@ public class PlanMerger {
 		return d;
 	}
 
-	private static <U> void dumpVertex(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d) {
-		d.vertexSet().forEach(x -> LOG.debug("v: {}-{}", x.getType().getSimpleName(), x.getName()));
-	}
-
 	private static <U> void exportPlan(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d, final String filename) {
-		final DOTExporter<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> exporter = new DOTExporter<>(PlanMerger::toDotName);
+		final DOTExporter<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> exporter = new DOTExporter<>(GraphTools::toDotName);
 		try (final FileOutputStream out = new FileOutputStream(filename)) {
 			exporter.exportGraph(d, out);
 		} catch (final IOException e) {
@@ -90,8 +84,13 @@ public class PlanMerger {
 	}
 
 	private static <U> String toDotName(final VirtualTaskV3<U> task) {
-		final String base = task.getType().getSimpleName() + "_" + task.getName();
-		return base.replace("/", "_").replace("-", "_").replace("\n", "_").replace(",", "_").replace("(", "_").replace(")", "_");
+		final String base = task.getType().getSimpleName() + "_" + task.getName() + String.format("-%04d", task.getRank());
+		final String str = base.replace("/", "_").replace("-", "_").replace("\n", "_").replace(",", "_")
+				.replace("(", "_")
+				.replace(" ", "_")
+				.replace(")", "_");
+		LOG.debug(" {}", str);
+		return str;
 	}
 
 	private static <U> void makeOneToOne(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d, final Edge2d edge, final List<VirtualTaskV3<U>> srcs, final List<VirtualTaskV3<U>> tgts) {
@@ -111,7 +110,6 @@ public class PlanMerger {
 				.filter(x -> x.getName().equals(edge.getTarget().getName()))
 				.filter(x -> x.getRank() == src.getRank())
 				.findFirst();
-
 	}
 
 	private static <U> void makeOneToMany(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d, final List<VirtualTaskV3<U>> srcs, final List<VirtualTaskV3<U>> tgts) {

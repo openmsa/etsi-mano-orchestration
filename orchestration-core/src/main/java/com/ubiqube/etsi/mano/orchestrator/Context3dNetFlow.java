@@ -16,8 +16,6 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -32,9 +30,6 @@ import org.jgrapht.ListenableGraph;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.DirectedAcyclicGraph;
-import org.jgrapht.nio.dot.DOTExporter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
@@ -51,7 +46,6 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
  *
  */
 public class Context3dNetFlow<U> {
-	private static final Logger LOG = LoggerFactory.getLogger(Context3dNetFlow.class);
 	private final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> d;
 	private ContextUow<U> root;
 
@@ -98,12 +92,6 @@ public class Context3dNetFlow<U> {
 		Objects.requireNonNull(actual, "actual could not be null");
 		final AllDirectedPaths<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> path = new AllDirectedPaths<>(d);
 		final List<GraphPath<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>>> paths = path.getAllPaths(root, actual, true, 1000);
-		final DOTExporter<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> exporter = new DOTExporter<>(this::toDotName);
-		try (final FileOutputStream out = new FileOutputStream("context.dot")) {
-			exporter.exportGraph(d, out);
-		} catch (final IOException e) {
-			LOG.trace("Error in graph export", e);
-		}
 		/*-
 		 * Here we can have a schema like that:
 		 * A
@@ -141,10 +129,6 @@ public class Context3dNetFlow<U> {
 		return l.get(0);
 	}
 
-	public void add(final UnitOfWorkV3<U> uaow, final String res) {
-		throw new IllegalAccessError();
-	}
-
 	public List<String> getParent(final UnitOfWorkV3<U> actual, final Class<? extends Node> class1) {
 		Objects.requireNonNull(actual, "actual could not be null");
 		final AllDirectedPaths<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> path = new AllDirectedPaths<>(d);
@@ -169,10 +153,5 @@ public class Context3dNetFlow<U> {
 			return null;
 		}
 		return l.get(0);
-	}
-
-	private String toDotName(final UnitOfWorkV3<U> task) {
-		final String base = task.getType().getSimpleName() + "_" + task.getTask().getName();
-		return base.replace("/", "_").replace("-", "_").replace("\n", "_").replace(",", "_").replace("(", "_").replace(")", "_");
 	}
 }

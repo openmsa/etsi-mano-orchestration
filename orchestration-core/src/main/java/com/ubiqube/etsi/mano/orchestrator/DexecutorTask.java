@@ -20,6 +20,7 @@ import java.util.function.Function;
 
 import com.github.dexecutor.core.task.Task;
 import com.ubiqube.etsi.mano.orchestrator.context.SimplifiedContextImpl;
+import com.ubiqube.etsi.mano.orchestrator.uow.ContextUow;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 public class DexecutorTask<P> extends Task<UnitOfWorkV3<P>, String> {
@@ -32,7 +33,7 @@ public class DexecutorTask<P> extends Task<UnitOfWorkV3<P>, String> {
 
 	private transient OrchExecutionListener<P> listener;
 
-	private Context3dNetFlow<P> context;
+	private transient Context3dNetFlow<P> context;
 
 	public DexecutorTask(final OrchExecutionListener<P> listener, final UnitOfWorkV3<P> uaow, final Context3dNetFlow<P> context, final boolean create) {
 		this.uaow = uaow;
@@ -55,11 +56,21 @@ public class DexecutorTask<P> extends Task<UnitOfWorkV3<P>, String> {
 
 	@Override
 	public String execute() {
+		if (uaow instanceof ContextUow) {
+			return null;
+		}
 		listener.onStart(uaow.getTask());
 		final Context3d ctx = new SimplifiedContextImpl<>(uaow, context);
-		final String res = function.apply(ctx);
-		listener.onTerminate(uaow, res);
-		return res;
+		final String res;
+		try {
+			res = function.apply(ctx);
+			listener.onTerminate(uaow, res);
+			return res;
+		} catch (final RuntimeException e) {
+			listener.onError(uaow, e);
+			throw e;
+		}
+
 	}
 
 }

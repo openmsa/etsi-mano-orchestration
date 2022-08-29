@@ -18,6 +18,7 @@ package com.ubiqube.etsi.mano.orchestrator.scale;
 
 import java.util.UUID;
 
+import com.ubiqube.etsi.mano.orchestrator.ResultType;
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
@@ -89,5 +90,9 @@ public class ContextVt<U> implements VirtualTaskV3<U> {
 	@Override
 	public String toString() {
 		return alias;
+	}
+	@Override
+	public ResultType getStatus() {
+		return ResultType.NOT_STARTED;
 	}
 }
