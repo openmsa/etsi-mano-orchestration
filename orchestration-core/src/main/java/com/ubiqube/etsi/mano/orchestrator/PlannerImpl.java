@@ -42,7 +42,7 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
  *
  */
 @Service
-public class PlannerImpl<P, U, W> implements Planner<P, U, W> {
+public class PlannerImpl<U> implements Planner<U> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PlannerImpl.class);
 

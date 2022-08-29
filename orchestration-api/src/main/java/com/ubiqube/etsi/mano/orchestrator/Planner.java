@@ -24,7 +24,7 @@ import com.ubiqube.etsi.mano.orchestrator.v3.PreExecutionGraphV3;
  * @param <P>
  *
  */
-public interface Planner<P, U, W> {
+public interface Planner<U> {
 
 	ExecutionGraph implement(PreExecutionGraphV3<U> plan);
 

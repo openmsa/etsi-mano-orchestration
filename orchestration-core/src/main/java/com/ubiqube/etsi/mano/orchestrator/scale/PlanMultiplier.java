@@ -48,8 +48,9 @@ public class PlanMultiplier {
 	private static final String ADD_VT = "Add VT {}";
 	private static final Logger LOG = LoggerFactory.getLogger(PlanMultiplier.class);
 
-	public <U> ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> multiply(final ListenableGraph<Vertex2d, Edge2d> plan, final SclableResources<U> sr,
-			final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems, final List<SclableResources<U>> scaleResources) {
+	public <U> ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> multiply(final ListenableGraph<Vertex2d, Edge2d> plan,
+			final SclableResources<U> sr, final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems,
+			final List<SclableResources<U>> scaleResources) {
 		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
 		d.addGraphListener(new VirtualTaskVertexListenerV3<>());
 		final Map<String, VirtualTaskV3<U>> hash = new HashMap<>();
