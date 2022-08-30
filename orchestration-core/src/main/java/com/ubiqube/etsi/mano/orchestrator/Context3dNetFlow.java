@@ -50,7 +50,7 @@ public class Context3dNetFlow<U> {
 	private ContextUow<U> root;
 
 	public Context3dNetFlow(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g) {
-		d = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(ConnectivityEdge.class));
+		d = new DefaultListenableGraph(new DirectedAcyclicGraph<>(ConnectivityEdge.class));
 		d.addGraphListener(new UnitOfWorkVertexListenerV3<>());
 		final Set<UnitOfWorkV3<U>> cache = new HashSet<>();
 		g.edgeSet().forEach(x -> {
