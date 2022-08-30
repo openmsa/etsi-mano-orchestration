@@ -45,7 +45,7 @@ public class PlanMerger {
 	private static final Logger LOG = LoggerFactory.getLogger(PlanMerger.class);
 
 	public <U> ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> merge(final ListenableGraph<Vertex2d, Edge2d> g, final List<ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>>> plans) {
-		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
+		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
 		d.addGraphListener(new VirtualTaskVertexListenerV3<>());
 		plans.stream().flatMap(x -> x.vertexSet().stream()).forEach(d::addVertex);
 		plans.stream().flatMap(x -> x.edgeSet().stream()).forEach(x -> d.addEdge(x.getSource(), x.getTarget()));
@@ -81,16 +81,6 @@ public class PlanMerger {
 		} catch (final IOException e) {
 			LOG.trace("Error in graph export", e);
 		}
-	}
-
-	private static <U> String toDotName(final VirtualTaskV3<U> task) {
-		final String base = task.getType().getSimpleName() + "_" + task.getName() + String.format("-%04d", task.getRank());
-		final String str = base.replace("/", "_").replace("-", "_").replace("\n", "_").replace(",", "_")
-				.replace("(", "_")
-				.replace(" ", "_")
-				.replace(")", "_");
-		LOG.debug(" {}", str);
-		return str;
 	}
 
 	private static <U> void makeOneToOne(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d, final Edge2d edge, final List<VirtualTaskV3<U>> srcs, final List<VirtualTaskV3<U>> tgts) {

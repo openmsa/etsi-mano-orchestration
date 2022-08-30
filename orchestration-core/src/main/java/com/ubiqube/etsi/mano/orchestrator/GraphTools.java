@@ -67,7 +67,7 @@ public class GraphTools {
 	}
 
 	public static String toDotName(final UnitOfWorkV3<?> task) {
-		final String base = task.getType().getSimpleName() + "_" + task.getTask().getName();
+		final String base = task.getType().getSimpleName() + "_" + task.getTask().getName() + "_" + String.format("%04d", task.getTask().getRank());
 		return cleanup(base);
 	}
 
@@ -76,7 +76,7 @@ public class GraphTools {
 	}
 
 	public static String toDotName(final VirtualTaskV3<?> task) {
-		final String base = task.getType().getSimpleName() + "_" + task.getName();
+		final String base = task.getType().getSimpleName() + "_" + task.getName() + "_" + String.format("%04d", task.getRank());
 		return cleanup(base);
 	}
 }
