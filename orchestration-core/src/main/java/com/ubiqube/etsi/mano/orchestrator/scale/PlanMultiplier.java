@@ -51,7 +51,7 @@ public class PlanMultiplier {
 	public <U> ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> multiply(final ListenableGraph<Vertex2d, Edge2d> plan,
 			final SclableResources<U> sr, final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems,
 			final List<SclableResources<U>> scaleResources) {
-		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
+		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
 		d.addGraphListener(new VirtualTaskVertexListenerV3<>());
 		final Map<String, VirtualTaskV3<U>> hash = new HashMap<>();
 		/**
@@ -135,21 +135,25 @@ public class PlanMultiplier {
 	 */
 	private static <U> VirtualTaskV3<U> createTask(final SclableResources<U> sr, final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems, final String uniqIdSrc, final Vertex2d x, final int ii, final boolean delete) {
 		final Optional<ContextHolder> ctx = findInContext(liveItems, x, ii);
+		/**
+		 * /!\ Create task is cloning the task and assign a new ToscaId to it, witch
+		 * later is used for re mapping DB tasks to WF task. Once you have created a
+		 * task, you must use it's toscaId
+		 */
 		VirtualTaskV3<U> t = createTask(uniqIdSrc, x, ii, delete, sr.getTemplateParameter(), converter);
 		if (ctx.isPresent()) {
 			if (!delete) {
-				t = createContext(uniqIdSrc, x, ii, delete, sr.getTemplateParameter(), ctx.get().getResourceId(), t.getType(), ctx.get().getVimConnectionId());
-			} else {
-				t.setVimResourceId(ctx.get().getResourceId());
-				t.setVimConnectionId(ctx.get().getVimConnectionId());
-				t.setRemovedLiveInstanceId(Objects.requireNonNull(ctx.get().getLiveInstanceId()));
+				return createContext(uniqIdSrc, x, ii, delete, t.getTemplateParameters(), ctx.get().getResourceId(), t.getType(), ctx.get().getVimConnectionId());
 			}
+			t.setVimResourceId(ctx.get().getResourceId());
+			t.setVimConnectionId(ctx.get().getVimConnectionId());
+			t.setRemovedLiveInstanceId(Objects.requireNonNull(ctx.get().getLiveInstanceId()));
 		} else {
 			if (delete) {
 				if ((sr.getHave() != 0) || (sr.getWant() != 0)) {
 					LOG.warn("Deleting {} but not found in context.", uniqIdSrc);
 				}
-				t = createContext(uniqIdSrc, x, ii, delete, sr.getTemplateParameter(), null, t.getType(), null);
+				t = createContext(uniqIdSrc, x, ii, delete, t.getTemplateParameters(), null, t.getType(), null);
 			}
 			LOG.trace("creating task: {}/{}", x.getType().getSimpleName(), x.getName());
 		}
@@ -195,7 +199,6 @@ public class PlanMultiplier {
 
 	private static <U> VirtualTaskV3<U> createTask(final String uniqId, final Vertex2d source, final int i, final boolean delete, final U params, final Function<U, VirtualTaskV3<U>> converter) {
 		final VirtualTaskV3<U> vt = converter.apply(params);
-		vt.setTemplateParameters(params);
 		vt.setRank(i);
 		vt.setName(source.getName());
 		vt.setAlias(uniqId);
