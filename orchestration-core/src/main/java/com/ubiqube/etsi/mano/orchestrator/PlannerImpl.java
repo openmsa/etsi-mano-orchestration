@@ -65,7 +65,7 @@ public class PlannerImpl<U> implements Planner<U> {
 			LOG.debug("Create graph:");
 			GraphTools.dumpV3(ng);
 		}
-		return new ExecutionGraphImplV3(ng);
+		return new ExecutionGraphImplV3<>(ng);
 	}
 
 	private ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> createImplementation(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> gf) {

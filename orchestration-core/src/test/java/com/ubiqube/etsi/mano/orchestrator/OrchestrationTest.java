@@ -19,7 +19,6 @@ package com.ubiqube.etsi.mano.orchestrator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,8 +31,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ubiqube.etsi.mano.orchestrator.cont.ContributorA;
-import com.ubiqube.etsi.mano.orchestrator.cont.ContributorB;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Compute;
@@ -66,9 +63,6 @@ class OrchestrationTest {
 	private Planner getPlanner() {
 		final List<SystemV3<?>> systems = Arrays.asList(new SysA(), new SysB());
 		final ManoDexcutorService<?> service = new ManoDexcutorService<>();
-		final List<PlanContributor> contributors = new ArrayList<>();
-		contributors.add(new ContributorA());
-		contributors.add(new ContributorB());
 		final ManoExecutor nullExec = new NullExecutor();
 		return new PlannerImpl(implementationService, nullExec, List.of());
 	}
