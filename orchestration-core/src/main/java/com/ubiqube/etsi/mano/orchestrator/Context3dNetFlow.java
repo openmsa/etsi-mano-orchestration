@@ -53,6 +53,11 @@ public class Context3dNetFlow<U> {
 		d = new DefaultListenableGraph(new DirectedAcyclicGraph<>(ConnectivityEdge.class));
 		d.addGraphListener(new UnitOfWorkVertexListenerV3<>());
 		final Set<UnitOfWorkV3<U>> cache = new HashSet<>();
+		g.vertexSet().forEach(x -> {
+			if (!cache.contains(x)) {
+				d.addVertex(x);
+			}
+		});
 		g.edgeSet().forEach(x -> {
 			final UnitOfWorkV3<U> src = x.getSource();
 			UnitOfWorkV3<U> vc;
