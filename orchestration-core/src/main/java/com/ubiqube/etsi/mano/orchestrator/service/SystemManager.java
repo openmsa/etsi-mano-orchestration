@@ -38,6 +38,9 @@ public class SystemManager {
 
 	public SystemConnections findVimByVimIdAndProviderId(final String systemConnectionId, final String vimType) {
 		final Systems sys = systemsJpa.findByVimId(systemConnectionId);
+		if (null == sys) {
+			throw new OrchestrationException("Could not find " + systemConnectionId + " for vim type: " + vimType);
+		}
 		return sys.getSubSystems().stream()
 				.filter(x -> x.getModuleName().equals(vimType))
 				.findFirst()
