@@ -27,7 +27,9 @@ import org.springframework.stereotype.Service;
 
 import com.github.dexecutor.core.task.ExecutionResult;
 import com.github.dexecutor.core.task.ExecutionResults;
+import com.ubiqube.etsi.mano.dao.mano.v2.VnfIndicatorTask;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
+import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.VnfIndicator;
 import com.ubiqube.etsi.mano.orchestrator.service.ImplementationService;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkVertexListenerV3;
@@ -72,13 +74,13 @@ public class PlannerImpl<U> implements Planner<U> {
 		final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> ng = (ListenableGraph) (Object) new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(ConnectivityEdge.class));
 		ng.addGraphListener(new UnitOfWorkVertexListenerV3<>());
 		// First resolve implementation.
-		gf.vertexSet().forEach(x -> {
+		gf.vertexSet().stream().filter(x -> x.getType() != VnfIndicator.class).forEach(x -> {
 			final SystemBuilder<U> db = (SystemBuilder<U>) implementationService.getTargetSystem(x);
 			x.setSystemBuilder(db);
 			db.getVertexV3().forEach(ng::addVertex);
 		});
 		// Connect everything.
-		gf.edgeSet().forEach(x -> {
+		gf.edgeSet().stream().filter(x -> x.getSource().getType() != VnfIndicator.class).forEach(x -> {
 			final VirtualTaskV3<U> src = x.getSource();
 			final SystemBuilder<U> vsrc = src.getSystemBuilder();
 			final VirtualTaskV3<U> dst = x.getTarget();
