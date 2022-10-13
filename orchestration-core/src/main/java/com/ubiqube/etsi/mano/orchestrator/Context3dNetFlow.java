@@ -107,12 +107,21 @@ public class Context3dNetFlow<U> {
 		 *
 		 * In this case B will be duplicated.
 		 */
-		final Set<VirtualTaskV3<U>> tasks = paths.stream()
+		Set<VirtualTaskV3<U>> tasks = new HashSet<>();
+		if(toscaName.equals("VNF_INDICATOR")) {
+		tasks = paths.stream()
 				.flatMap(x -> x.getVertexList().stream())
 				.filter(x -> x.getType() == class1)
-				.filter(x -> x.getTask().getToscaName().equals(toscaName))
 				.map(UnitOfWorkV3::getTask)
 				.collect(Collectors.toSet());
+		} else {
+			tasks = paths.stream()
+					.flatMap(x -> x.getVertexList().stream())
+					.filter(x -> x.getType() == class1)
+					.filter(x -> x.getTask().getToscaName().equals(toscaName))
+					.map(UnitOfWorkV3::getTask)
+					.collect(Collectors.toSet());
+		}
 		return tasks.stream().map(VirtualTaskV3::getVimResourceId).toList();
 	}
 
