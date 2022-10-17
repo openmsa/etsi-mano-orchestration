@@ -16,9 +16,15 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jgrapht.ListenableGraph;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
+import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
+import com.ubiqube.etsi.mano.orchestrator.scale.ContextVt;
+import com.ubiqube.etsi.mano.orchestrator.uow.ContextUow;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 /**
@@ -31,12 +37,23 @@ public class ExecutionGraphImplV3<U> implements ExecutionGraph {
 
 	private final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g;
 
+	private final List<ContextUow<U>> global = new ArrayList<>();
+
 	public ExecutionGraphImplV3(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g) {
 		this.g = g;
 	}
 
 	public ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> getGraph() {
 		return g;
+	}
+
+	@Override
+	public void add(final Class<Network> type, final String toscaName, final String resourceId) {
+		global.add(new ContextUow<>(new ContextVt<>(type, toscaName, resourceId)));
+	}
+
+	public final List<ContextUow<U>> getGlobal() {
+		return global;
 	}
 
 }

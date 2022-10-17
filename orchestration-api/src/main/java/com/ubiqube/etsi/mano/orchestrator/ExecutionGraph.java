@@ -16,6 +16,8 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
+import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
+
 /**
  * An opaque type.
  *
@@ -23,5 +25,6 @@ package com.ubiqube.etsi.mano.orchestrator;
  *
  */
 public interface ExecutionGraph {
-	// Nothing.
+
+	void add(Class<Network> type, String toscaName, String resourceId);
 }

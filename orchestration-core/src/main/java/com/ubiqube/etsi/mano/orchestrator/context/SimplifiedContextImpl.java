@@ -16,6 +16,7 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.context;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jgrapht.ListenableGraph;
@@ -32,7 +33,7 @@ public class SimplifiedContextImpl<U> implements Context3d {
 	private final UnitOfWorkV3<U> actual;
 
 	public SimplifiedContextImpl(final UnitOfWorkV3<U> actual, final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> d) {
-		this.flow = new Context3dNetFlow<>(d);
+		this.flow = new Context3dNetFlow<>(d, new ArrayList<>());
 		this.actual = actual;
 	}
 

@@ -27,6 +27,7 @@ public class ContextUow<U> implements UnitOfWorkV3<U> {
 
 	public ContextUow(final VirtualTaskV3<U> vt) {
 		this.vt = vt;
+		this.resource = vt.getVimResourceId();
 	}
 
 	@Override

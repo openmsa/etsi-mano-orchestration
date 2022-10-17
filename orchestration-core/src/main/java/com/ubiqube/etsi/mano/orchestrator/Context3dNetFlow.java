@@ -19,6 +19,7 @@ package com.ubiqube.etsi.mano.orchestrator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,8 +49,10 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 public class Context3dNetFlow<U> {
 	private final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> d;
 	private ContextUow<U> root;
+	private final List<ContextUow<U>> global;
 
-	public Context3dNetFlow(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g) {
+	public Context3dNetFlow(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g, final List<ContextUow<U>> global) {
+		this.global = global;
 		d = new DefaultListenableGraph(new DirectedAcyclicGraph<>(ConnectivityEdge.class));
 		d.addGraphListener(new UnitOfWorkVertexListenerV3<>());
 		final Set<UnitOfWorkV3<U>> cache = new HashSet<>();
@@ -94,6 +97,10 @@ public class Context3dNetFlow<U> {
 	}
 
 	public List<String> getParent(final UnitOfWorkV3<U> actual, final Class<? extends Node> class1, final String toscaName) {
+		final Optional<ContextUow<U>> gv = findInCtx(class1, toscaName);
+		if (gv.isPresent()) {
+			return List.of(gv.get().getResource());
+		}
 		Objects.requireNonNull(actual, "actual could not be null");
 		final AllDirectedPaths<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> path = new AllDirectedPaths<>(d);
 		final List<GraphPath<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>>> paths = path.getAllPaths(root, actual, true, 1000);
@@ -125,6 +132,13 @@ public class Context3dNetFlow<U> {
 		return tasks.stream().map(VirtualTaskV3::getVimResourceId).toList();
 	}
 
+	private Optional<ContextUow<U>> findInCtx(final Class<? extends Node> class1, final String toscaName) {
+		return global.stream()
+				.filter(x -> x.getType() == class1)
+				.filter(x -> x.getTask().getName().equals(toscaName))
+				.findFirst();
+	}
+
 	public void add(final UnitOfWorkV3<U> actual, final Class<? extends Node> class1, final String name, final String resourceId) {
 		Objects.requireNonNull(actual, "Actual must not be null");
 		final ContextVt<U> v = new ContextVt<>(class1, name, resourceId);
@@ -136,6 +150,10 @@ public class Context3dNetFlow<U> {
 
 	@NotNull
 	public String get(final UnitOfWorkV3<U> actual, final Class<? extends Node> class1, final String toscaName) {
+		final Optional<ContextUow<U>> gv = findInCtx(class1, toscaName);
+		if (gv.isPresent()) {
+			return gv.get().getResource();
+		}
 		final List<String> l = getParent(actual, class1, toscaName);
 		if (l.size() != 1) {
 			throw new OrchestrationException("Could not find correct element number: " + l.size() + " in " + class1.getSimpleName() + "-" + toscaName);
