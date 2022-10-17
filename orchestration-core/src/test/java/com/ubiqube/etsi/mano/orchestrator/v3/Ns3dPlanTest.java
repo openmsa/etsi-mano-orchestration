@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.graph.DefaultListenableGraph;
@@ -99,7 +100,8 @@ class Ns3dPlanTest {
 				assertNotNull(y.getTarget());
 			});
 			// exportGraph(s, "test-origin.dot");
-			final ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>> np = pm.multiply(s, null, null, List.of(), List.of());
+			final Function<Object, VirtualTaskV3<Object>> func = p -> new TestVirtualTask(null, null, null, 0);
+			final ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>> np = pm.multiply(s, x, func, List.of(), scales);
 			np.edgeSet().forEach(y -> {
 				assertNotNull(y.getSource());
 				assertNotNull(y.getTarget());

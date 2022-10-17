@@ -96,7 +96,7 @@ class Test3dPlan {
 				assertNotNull(y.getTarget());
 			});
 			// exportGraph(g, "test-origin.dot");
-			final ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>> np = pm.multiply(s, null, null, List.of(), List.of());
+			final ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>> np = pm.multiply(s, x, null, List.of(), List.of());
 			np.edgeSet().forEach(y -> {
 				assertNotNull(y.getSource());
 				assertNotNull(y.getTarget());
