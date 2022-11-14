@@ -64,7 +64,7 @@ public class PlanMultiplier<U> {
 
 	public ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> multiply(final ListenableGraph<Vertex2d, Edge2d> plan, final SclableResources<U> sr) {
 		cache = new HashSet<>();
-		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
+		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
 		d.addGraphListener(new VirtualTaskVertexListenerV3<>());
 		final Map<String, VirtualTaskV3<U>> hash = new HashMap<>();
 		/**
