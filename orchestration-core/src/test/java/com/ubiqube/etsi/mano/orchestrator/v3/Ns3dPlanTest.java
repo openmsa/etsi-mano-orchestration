@@ -82,7 +82,7 @@ class Ns3dPlanTest {
 
 	@Test
 	void testNs() throws Exception {
-		final PlanMultiplier pm = new PlanMultiplier();
+		final Function<Object, VirtualTaskV3<Object>> func = p -> new TestVirtualTask(null, null, null, 0);
 		final ScalingEngine se = new ScalingEngine();
 
 		final List<SclableResources<Object>> scales = List.of(
@@ -92,6 +92,7 @@ class Ns3dPlanTest {
 				SclableResources.of(VnfCreateNode.class, "vnf_left", 0, 1, null),
 				SclableResources.of(VnfCreateNode.class, "vnf_middle", 0, 1, null),
 				SclableResources.of(VnfCreateNode.class, "vnf_right", 0, 1, null));
+		final PlanMultiplier pm = new PlanMultiplier(scales, func, List.of());
 		final List<ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>>> plans = new ArrayList<>();
 		scales.forEach(x -> {
 			final ListenableGraph<Vertex2d, Edge2d> s = se.scale(g, x.getType(), x.getName());
@@ -100,8 +101,7 @@ class Ns3dPlanTest {
 				assertNotNull(y.getTarget());
 			});
 			// exportGraph(s, "test-origin.dot");
-			final Function<Object, VirtualTaskV3<Object>> func = p -> new TestVirtualTask(null, null, null, 0);
-			final ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>> np = pm.multiply(s, x, func, List.of(), scales);
+			final ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>> np = pm.multiply(s, x);
 			np.edgeSet().forEach(y -> {
 				assertNotNull(y.getSource());
 				assertNotNull(y.getTarget());

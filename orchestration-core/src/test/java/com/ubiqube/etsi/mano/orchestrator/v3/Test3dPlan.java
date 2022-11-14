@@ -79,7 +79,6 @@ class Test3dPlan {
 
 	@Test
 	void testVnf() throws Exception {
-		final PlanMultiplier pm = new PlanMultiplier();
 		final ScalingEngine se = new ScalingEngine();
 
 		final List<SclableResources<Object>> scales = List.of(
@@ -89,6 +88,7 @@ class Test3dPlan {
 				SclableResources.of(Network.class, "middleVl01", 0, 1, null),
 				SclableResources.of(Network.class, "leftVl01", 0, 1, null));
 		final List<ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>>> plans = new ArrayList<>();
+		final PlanMultiplier pm = new PlanMultiplier<>(scales, null, List.of());
 		scales.forEach(x -> {
 			final ListenableGraph<Vertex2d, Edge2d> s = se.scale(g, x.getType(), x.getName());
 			s.edgeSet().forEach(y -> {
@@ -96,7 +96,7 @@ class Test3dPlan {
 				assertNotNull(y.getTarget());
 			});
 			// exportGraph(g, "test-origin.dot");
-			final ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>> np = pm.multiply(s, x, null, List.of(), List.of());
+			final ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>> np = pm.multiply(s, x);
 			np.edgeSet().forEach(y -> {
 				assertNotNull(y.getSource());
 				assertNotNull(y.getTarget());

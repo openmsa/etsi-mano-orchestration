@@ -17,10 +17,13 @@
 package com.ubiqube.etsi.mano.orchestrator.scale;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 
 import org.jgrapht.ListenableGraph;
@@ -44,14 +47,24 @@ import com.ubiqube.etsi.mano.service.graph.Vertex2d;
  * @author olivier
  *
  */
-public class PlanMultiplier {
+public class PlanMultiplier<U> {
 	private static final String ADD_VT = "Add VT {}";
 	private static final Logger LOG = LoggerFactory.getLogger(PlanMultiplier.class);
 
-	public <U> ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> multiply(final ListenableGraph<Vertex2d, Edge2d> plan,
-			final SclableResources<U> sr, final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems,
-			final List<SclableResources<U>> scaleResources) {
-		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
+	private Set<ContextHolder> cache;
+	private final List<SclableResources<U>> scaleResources;
+	private final Function<U, VirtualTaskV3<U>> converter;
+	private final List<ContextHolder> liveItems;
+
+	public PlanMultiplier(final List<SclableResources<U>> scaleResources, final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems) {
+		this.scaleResources = scaleResources;
+		this.converter = converter;
+		this.liveItems = liveItems;
+	}
+
+	public ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> multiply(final ListenableGraph<Vertex2d, Edge2d> plan, final SclableResources<U> sr) {
+		cache = new HashSet<>();
+		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
 		d.addGraphListener(new VirtualTaskVertexListenerV3<>());
 		final Map<String, VirtualTaskV3<U>> hash = new HashMap<>();
 		/**
@@ -64,35 +77,48 @@ public class PlanMultiplier {
 			final int ii = i;
 			plan.edgeSet().forEach(x -> {
 				final String uniqIdSrc = getUniqId(x.getSource(), ii);
-				final VirtualTaskV3<U> src = hash.computeIfAbsent(uniqIdSrc, y -> {
-					final SclableResources<U> templSr = findTemplate(scaleResources, x.getSource());
-					final VirtualTaskV3<U> t = createTask(templSr, converter, liveItems, uniqIdSrc, x.getSource(), ii, delete);
-					LOG.debug(ADD_VT, t.getAlias());
-					d.addVertex(t);
-					return t;
-				});
+				final VirtualTaskV3<U> src = hash.computeIfAbsent(uniqIdSrc, y -> createVertex(d, delete, ii, x.getSource(), uniqIdSrc));
 				final String uniqIdDst = getUniqId(x.getTarget(), ii);
-				final VirtualTaskV3<U> dst = hash.computeIfAbsent(uniqIdDst, y -> {
-					final SclableResources<U> templSr = findTemplate(scaleResources, x.getTarget());
-					final VirtualTaskV3<U> t = createTask(templSr, converter, liveItems, uniqIdDst, x.getTarget(), ii, delete);
-					LOG.debug(ADD_VT, t.getAlias());
-					d.addVertex(t);
-					return t;
-				});
+				final VirtualTaskV3<U> dst = hash.computeIfAbsent(uniqIdDst, y -> createVertex(d, delete, ii, x.getTarget(), uniqIdDst));
 				Optional.ofNullable(d.addEdge(src, dst)).ifPresent(y -> y.setRelation(x.getRelation()));
 			});
 			plan.vertexSet().forEach(x -> {
 				final String uniqIdSrc = getUniqId(x, ii);
-				hash.computeIfAbsent(uniqIdSrc, y -> {
-					final SclableResources<U> templSr = findTemplate(scaleResources, x);
-					final VirtualTaskV3<U> t = createTask(templSr, converter, liveItems, uniqIdSrc, x, ii, delete);
-					LOG.debug(ADD_VT, t.getAlias());
-					d.addVertex(t);
-					return t;
-				});
+				hash.computeIfAbsent(uniqIdSrc, y -> createVertex(d, delete, ii, x, uniqIdSrc));
 			});
 		}
+		collectOphan(d, plan, max, sr.getTemplateParameter());
 		return d;
+	}
+
+	private void collectOphan(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d, final ListenableGraph<Vertex2d, Edge2d> plan, final int i, final U u) {
+		final List<Vertex2d> res = plan.vertexSet().stream()
+				.filter(x -> match(x, liveItems))
+				.toList();
+		final List<Vertex2d> should = res.stream().filter(x -> isNotIn(x, d)).toList();
+		should.stream().forEach(x -> createVertex(d, true, i, x, UUID.randomUUID().toString()));
+		LOG.debug("{}", should);
+	}
+
+	private static <U> boolean isNotIn(final Vertex2d v, final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d) {
+		return d.vertexSet().stream()
+				.filter(x -> x.getType() == v.getType())
+				.noneMatch(x -> x.getName().equals(v.getName()));
+	}
+
+	private static boolean match(final Vertex2d v, final List<ContextHolder> liveItems) {
+		return liveItems.stream()
+				.filter(x -> x.getType() == v.getType())
+				.anyMatch(x -> x.getName().equals(v.getName()));
+	}
+
+	private VirtualTaskV3<U> createVertex(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d,
+			final boolean delete, final int ii, final Vertex2d x, final String uniqIdDst) {
+		final SclableResources<U> templSr = findTemplate(scaleResources, x);
+		final VirtualTaskV3<U> t = createTask(templSr, uniqIdDst, x, ii, delete);
+		LOG.debug(ADD_VT, t.getAlias());
+		d.addVertex(t);
+		return t;
 	}
 
 	private static <U> SclableResources<U> findTemplate(final List<SclableResources<U>> plan, final Vertex2d target) {
@@ -127,27 +153,29 @@ public class PlanMultiplier {
 	 * @param converter
 	 * @param liveItems
 	 * @param uniqIdSrc
-	 * @param x
+	 * @param xVertex
 	 * @param ii
 	 * @param delete
 	 * @param vimConnectionId
 	 * @return
 	 */
-	private static <U> VirtualTaskV3<U> createTask(final SclableResources<U> sr, final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems, final String uniqIdSrc, final Vertex2d x, final int ii, final boolean delete) {
+	private VirtualTaskV3<U> createTask(final SclableResources<U> sr, final String uniqIdSrc, final Vertex2d x, final int ii, final boolean delete) {
 		final Optional<ContextHolder> ctx = findInContext(liveItems, x, ii);
 		/**
 		 * /!\ Create task is cloning the task and assign a new ToscaId to it, witch
 		 * later is used for re mapping DB tasks to WF task. Once you have created a
 		 * task, you must use it's toscaId
 		 */
-		VirtualTaskV3<U> t = createTask(uniqIdSrc, x, ii, delete, sr.getTemplateParameter(), converter);
+		VirtualTaskV3<U> t = createTask(uniqIdSrc, x, ii, delete, sr.getTemplateParameter());
 		if (ctx.isPresent()) {
+			final ContextHolder liveInstance = ctx.get();
+			cache.add(liveInstance);
 			if (!delete) {
-				return createContext(uniqIdSrc, x, ii, delete, t.getTemplateParameters(), ctx.get().getResourceId(), t.getType(), ctx.get().getVimConnectionId());
+				return createContext(uniqIdSrc, x, ii, delete, t.getTemplateParameters(), liveInstance.getResourceId(), t.getType(), liveInstance.getVimConnectionId());
 			}
-			t.setVimResourceId(ctx.get().getResourceId());
-			t.setVimConnectionId(ctx.get().getVimConnectionId());
-			t.setRemovedLiveInstanceId(Objects.requireNonNull(ctx.get().getLiveInstanceId()));
+			t.setVimResourceId(liveInstance.getResourceId());
+			t.setVimConnectionId(liveInstance.getVimConnectionId());
+			t.setRemovedLiveInstanceId(Objects.requireNonNull(liveInstance.getLiveInstanceId()));
 		} else {
 			if (delete) {
 				if ((sr.getHave() != 0) || (sr.getWant() != 0)) {
@@ -197,7 +225,7 @@ public class PlanMultiplier {
 		return sb.toString();
 	}
 
-	private static <U> VirtualTaskV3<U> createTask(final String uniqId, final Vertex2d source, final int i, final boolean delete, final U params, final Function<U, VirtualTaskV3<U>> converter) {
+	private VirtualTaskV3<U> createTask(final String uniqId, final Vertex2d source, final int i, final boolean delete, final U params) {
 		final VirtualTaskV3<U> vt = converter.apply(params);
 		vt.setRank(i);
 		vt.setName(source.getName());

@@ -51,7 +51,7 @@ public class BlueprintBuilderImpl implements BlueprintBuilder {
 	@Override
 	public <U> PreExecutionGraphV3<U> buildPlan(final List<SclableResources<U>> scaleResources, final ListenableGraph<Vertex2d, Edge2d> g,
 			final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems, final List<Class<? extends Node>> masterVertex) {
-		final PlanMultiplier pm = new PlanMultiplier();
+		final PlanMultiplier<U> pm = new PlanMultiplier<>(scaleResources, converter, liveItems);
 		final List<SclableResources<U>> ttd = masterVertex.stream()
 				.map(x -> toThingsToDo(x, scaleResources))
 				.flatMap(List::stream)
@@ -60,7 +60,7 @@ public class BlueprintBuilderImpl implements BlueprintBuilder {
 		ttd.forEach(x -> {
 			LOG.trace("SR = {}/{}", x.getType().getSimpleName(), x.getName());
 			final ListenableGraph<Vertex2d, Edge2d> s = se.scale(g, x.getType(), x.getName());
-			final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> np = pm.multiply(s, x, converter, liveItems, scaleResources);
+			final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> np = pm.multiply(s, x);
 			plans.add(np);
 		});
 		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> ret = pMerge.merge(g, plans);
