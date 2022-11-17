@@ -26,10 +26,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import org.hibernate.search.mapper.pojo.bridge.builtin.annotation.GeoPointBinding;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
-
-import com.ubiqube.etsi.mano.dao.mano.common.GeoPoint;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -64,8 +61,5 @@ public class SystemConnections {
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Map<String, String> extra;
-
-	@GeoPointBinding
-	private GeoPoint geoloc;
 
 }
