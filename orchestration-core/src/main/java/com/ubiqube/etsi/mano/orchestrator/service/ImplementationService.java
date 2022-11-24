@@ -65,7 +65,7 @@ public class ImplementationService<U> {
 		}
 		final List<SystemV3<U>> usys = sys.stream().filter(x -> x.getVimType().equals(vim.getVimType())).toList();
 		if (usys.size() != 1) {
-			throw new OrchestrationException("Unique system of " + vim.getVimId() + "/" + virtualTask.getType() + ", is not uniq.");
+			throw new OrchestrationException("Unique system of " + vim.getVimId() + "/" + virtualTask.getType() + ", must be uniq but was " + usys.size());
 		}
 		return usys.get(0).getImplementation(orchestrationServicev3, virtualTask, vim);
 	}
