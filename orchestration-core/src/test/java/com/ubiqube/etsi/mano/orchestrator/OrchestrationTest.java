@@ -16,13 +16,14 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.jgrapht.ListenableGraph;
+import org.jgrapht.graph.DefaultListenableGraph;
+import org.jgrapht.graph.DirectedAcyclicGraph;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -32,23 +33,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
-import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
-import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Compute;
-import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Monitoring;
-import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
 import com.ubiqube.etsi.mano.orchestrator.service.ImplementationService;
 import com.ubiqube.etsi.mano.orchestrator.service.SystemManager;
 import com.ubiqube.etsi.mano.orchestrator.system.SysA;
 import com.ubiqube.etsi.mano.orchestrator.system.SysB;
+import com.ubiqube.etsi.mano.orchestrator.uow.ANode;
+import com.ubiqube.etsi.mano.orchestrator.uow.BNode;
+import com.ubiqube.etsi.mano.orchestrator.uow.CNode;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitA;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitB;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitC;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkVertexListenerV3;
+import com.ubiqube.etsi.mano.orchestrator.v3.BlueprintBuilderImpl;
+import com.ubiqube.etsi.mano.orchestrator.v3.OrchTestListener;
 import com.ubiqube.etsi.mano.orchestrator.v3.PreExecutionGraphV3;
 import com.ubiqube.etsi.mano.orchestrator.v3.PreExecutionGraphV3Impl;
 import com.ubiqube.etsi.mano.orchestrator.vt.ProvAVt;
 import com.ubiqube.etsi.mano.orchestrator.vt.ProvBVt;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskVertexListenerV3;
 import com.ubiqube.etsi.mano.service.sys.SystemV3;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,6 +63,7 @@ class OrchestrationTest {
 
 	@Mock
 	private SystemManager vimManager;
+	@Mock
 	private ImplementationService implementationService;
 
 	private Planner getPlanner() {
@@ -69,26 +75,42 @@ class OrchestrationTest {
 
 	@Test
 	void testplanLevel() throws Exception {
+		final BlueprintBuilderImpl bb = new BlueprintBuilderImpl();
+		final ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>> network;
+		final ListenableGraph<UnitOfWorkV3<Object>, ConnectivityEdge<UnitOfWorkV3<Object>>> g = new DefaultListenableGraph(new DirectedAcyclicGraph<>(ConnectivityEdge.class));
+		g.addGraphListener(new UnitOfWorkVertexListenerV3<>());
+		final UnitA ua = new UnitA("test", ANode.class);
+		g.addVertex(ua);
+		final UnitB ub = new UnitB("test", BNode.class);
+		g.addVertex(ub);
+		final UnitC uc = new UnitC("test", CNode.class);
+		g.addVertex(uc);
+		g.addEdge(ua, ub);
+		g.addEdge(ub, uc);
+		final ExecutionGraph imp = new ExecutionGraphImplV3<>(g);
+		final OrchExecutionListener listener = new OrchTestListener();
 		final Planner p = getPlanner();
-		final List<Class<? extends Node>> planConstituent = Arrays.asList(Network.class, Compute.class, Monitoring.class);
-		final PreExecutionGraphV3<?> planOpaque = new PreExecutionGraphV3Impl<>(null);// p.makePlan(null, planConstituent, null);
-		final ListenableGraph<VirtualTaskV3, VirtualTaskConnectivityV3> plan = ((PreExecutionGraphV3Impl) planOpaque).getGraph();
-		assertEquals(1, plan.edgeSet().size());
-		final VirtualTaskConnectivityV3 o = plan.edgeSet().iterator().next();
-		assertNotNull(o.getSource());
-		assertNotNull(o.getTarget());
-		assertEquals(o.getSource().getClass(), ProvAVt.class);
-		assertEquals(o.getTarget().getClass(), ProvBVt.class);
-		//
-		Mockito.lenient().when(vimManager.findVimByVimIdAndProviderId("PROVA", "")).thenReturn(TestFactory.createVimConnectionA());
-		Mockito.lenient().when(vimManager.findVimByVimIdAndProviderId("PROVB", "")).thenReturn(TestFactory.createVimConnectionB());
-		final ExecutionGraph rOpaq = p.implement(planOpaque);
-		final ListenableGraph<UnitOfWorkV3<?>, ConnectivityEdge> r = ((ExecutionGraphImplV3) rOpaq).getGraph();
-		assertEquals(1, r.edgeSet().size());
-		final ConnectivityEdge e = r.edgeSet().iterator().next();
-		assertNotNull(e.getSource());
-		assertNotNull(e.getTarget());
-		assertEquals(e.getSource().getClass(), UnitA.class);
-		assertEquals(e.getTarget().getClass(), UnitB.class);
+		p.execute(imp, listener);
+	}
+
+	@Test
+	void testImplementation() {
+		final Planner<TestParameters> p = getPlanner();
+		final ListenableGraph<VirtualTaskV3<TestParameters>, VirtualTaskConnectivityV3<TestParameters>> g = new DefaultListenableGraph(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
+		g.addGraphListener(new VirtualTaskVertexListenerV3<>());
+		final ProvAVt a = new ProvAVt();
+		final UnitA ua = new UnitA("test", ANode.class);
+		g.addVertex(a);
+		final ProvBVt b = new ProvBVt();
+		final UnitB ub = new UnitB("test", BNode.class);
+		g.addVertex(b);
+		g.addEdge(a, b);
+		final PreExecutionGraphV3 prePlan = new PreExecutionGraphV3Impl<>(g);
+		final SystemBuilder<Object> sa = SystemBuilderV3Impl.of(ua);
+		final SystemBuilder<Object> sb = SystemBuilderV3Impl.of(ub);
+		Mockito.when(implementationService.getTargetSystem(a)).thenReturn(sa);
+		Mockito.when(implementationService.getTargetSystem(b)).thenReturn(sb);
+		final ExecutionGraph res = p.implement(prePlan);
+		assertNotNull(res);
 	}
 }

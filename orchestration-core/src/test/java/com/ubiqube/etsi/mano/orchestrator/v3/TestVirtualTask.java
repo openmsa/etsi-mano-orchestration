@@ -30,16 +30,18 @@ import lombok.Setter;
 @Setter
 public class TestVirtualTask implements VirtualTaskV3<Object> {
 
-	private final String name;
+	private String name;
 	private final Class<? extends Node> type;
-	private final String taskAlias;
+	private String alias;
 	private final int rank;
+	private String toscaName;
 
 	public TestVirtualTask(final Class<? extends Node> type, final String name, final String taskAlias, final int i) {
 		this.type = type;
 		this.name = name;
-		this.taskAlias = taskAlias;
+		this.alias = taskAlias;
 		this.rank = i;
+		this.toscaName = name;
 	}
 
 	@Override
@@ -50,24 +52,6 @@ public class TestVirtualTask implements VirtualTaskV3<Object> {
 
 	@Override
 	public String getVimConnectionId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setName(final String name) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setAlias(final String alias) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public String getAlias() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -124,11 +108,6 @@ public class TestVirtualTask implements VirtualTaskV3<Object> {
 	public void setRemovedLiveInstanceId(final UUID liveInstanceId) {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public String getToscaName() {
-		return null;
 	}
 
 	@Override

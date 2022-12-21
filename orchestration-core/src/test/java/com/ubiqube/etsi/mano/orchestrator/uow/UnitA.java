@@ -21,6 +21,13 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 public class UnitA implements UnitOfWorkV3<Object> {
+	private final NamedTestTask task;
+	private final Class<? extends Node> type;
+
+	public UnitA(final String name, final Class<? extends Node> type) {
+		this.task = new NamedTestTask(name, type);
+		this.type = type;
+	}
 
 	@Override
 	public String execute(final Context3d context) {
@@ -34,14 +41,12 @@ public class UnitA implements UnitOfWorkV3<Object> {
 
 	@Override
 	public VirtualTaskV3<Object> getTask() {
-		// TODO Auto-generated method stub
-		return null;
+		return task;
 	}
 
 	@Override
 	public Class<? extends Node> getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return type;
 	}
 
 	@Override

@@ -36,7 +36,7 @@ public class SysB implements SystemV3<Object> {
 
 	@Override
 	public SystemBuilder getImplementation(final OrchestrationServiceV3<Object> orchestrationServicev3, final VirtualTaskV3<Object> virtualTask, final SystemConnections vim) {
-		return SystemBuilderV3Impl.of(new UnitB(), new UnitC());
+		return SystemBuilderV3Impl.of(new UnitB(virtualTask.getName(), virtualTask.getType()), new UnitC(virtualTask.getName(), virtualTask.getType()));
 	}
 
 	@Override

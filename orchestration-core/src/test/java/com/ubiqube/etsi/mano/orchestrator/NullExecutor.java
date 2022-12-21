@@ -27,7 +27,7 @@ public class NullExecutor implements ManoExecutor<Object> {
 
 	@Override
 	public ExecutionResults<UnitOfWorkV3<Object>, String> execute(final ListenableGraph<UnitOfWorkV3<Object>, ConnectivityEdge<UnitOfWorkV3<Object>>> g, final TaskProvider<UnitOfWorkV3<Object>, String> uowTaskProvider) {
-		return null;
+		return new ExecutionResults<>();
 	}
 
 }

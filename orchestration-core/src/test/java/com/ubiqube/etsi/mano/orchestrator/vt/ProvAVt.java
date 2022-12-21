@@ -25,6 +25,8 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
 public class ProvAVt implements VirtualTaskV3<TestParameters> {
 
+	private SystemBuilder<TestParameters> sys;
+
 	@Override
 	public boolean isDeleteTask() {
 		return false;
@@ -98,14 +100,12 @@ public class ProvAVt implements VirtualTaskV3<TestParameters> {
 
 	@Override
 	public void setSystemBuilder(final SystemBuilder<TestParameters> db) {
-		// TODO Auto-generated method stub
-
+		this.sys = db;
 	}
 
 	@Override
 	public SystemBuilder<TestParameters> getSystemBuilder() {
-		// TODO Auto-generated method stub
-		return null;
+		return sys;
 	}
 
 	@Override

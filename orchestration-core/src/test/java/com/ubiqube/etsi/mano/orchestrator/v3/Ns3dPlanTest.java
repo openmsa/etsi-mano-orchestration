@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -32,29 +33,57 @@ import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.DirectedAcyclicGraph;
 import org.jgrapht.nio.dot.DOTExporter;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ubiqube.etsi.mano.controllers.VertexResult;
+import com.ubiqube.etsi.mano.orchestrator.ManoDexcutorService;
+import com.ubiqube.etsi.mano.orchestrator.ManoExecutor;
+import com.ubiqube.etsi.mano.orchestrator.NullExecutor;
+import com.ubiqube.etsi.mano.orchestrator.Planner;
+import com.ubiqube.etsi.mano.orchestrator.PlannerImpl;
 import com.ubiqube.etsi.mano.orchestrator.SclableResources;
 import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
+import com.ubiqube.etsi.mano.orchestrator.nodes.mec.VnfExtractorNode;
+import com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.PortPairNode;
 import com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.VnfCreateNode;
+import com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.VnfInstantiateNode;
 import com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.VnffgLoadbalancerNode;
 import com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.VnffgPostNode;
 import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
 import com.ubiqube.etsi.mano.orchestrator.scale.PlanMerger;
 import com.ubiqube.etsi.mano.orchestrator.scale.PlanMultiplier;
 import com.ubiqube.etsi.mano.orchestrator.scale.ScalingEngine;
+import com.ubiqube.etsi.mano.orchestrator.service.ImplementationService;
+import com.ubiqube.etsi.mano.orchestrator.service.SystemManager;
+import com.ubiqube.etsi.mano.orchestrator.system.SysA;
+import com.ubiqube.etsi.mano.orchestrator.system.SysB;
+import com.ubiqube.etsi.mano.orchestrator.uow.ContextUow;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 import com.ubiqube.etsi.mano.service.graph.Edge2d;
 import com.ubiqube.etsi.mano.service.graph.GraphListener2d;
 import com.ubiqube.etsi.mano.service.graph.Vertex2d;
+import com.ubiqube.etsi.mano.service.sys.SystemV3;
 
+@ExtendWith(MockitoExtension.class)
 class Ns3dPlanTest {
 
 	private final ListenableGraph<Vertex2d, Edge2d> g;
+	@Mock
+	private SystemManager vimManager;
+	private ImplementationService implementationService;
+
+	private Planner getPlanner() {
+		final List<SystemV3<?>> systems = Arrays.asList(new SysA(), new SysB());
+		final ManoDexcutorService<?> service = new ManoDexcutorService<>();
+		final ManoExecutor nullExec = new NullExecutor();
+		return new PlannerImpl(implementationService, nullExec, List.of());
+	}
 
 	public Ns3dPlanTest() throws StreamReadException, DatabindException, IOException {
 		final ObjectMapper mapper = new ObjectMapper();
@@ -82,16 +111,25 @@ class Ns3dPlanTest {
 
 	@Test
 	void testNs() throws Exception {
-		final Function<Object, VirtualTaskV3<Object>> func = p -> new TestVirtualTask(null, null, null, 0);
+		final Function<Object, VirtualTaskV3<Object>> func = p -> new TestVirtualTask(VnffgLoadbalancerNode.class, "name", "alias", 0);
 		final ScalingEngine se = new ScalingEngine();
 
 		final List<SclableResources<Object>> scales = List.of(
 				SclableResources.of(VnffgLoadbalancerNode.class, "nfp_position_1", 0, 1, null),
+				SclableResources.of(PortPairNode.class, "element_1", 0, 1, null),
+				SclableResources.of(PortPairNode.class, "element_2", 0, 1, null),
+				SclableResources.of(PortPairNode.class, "element_3", 0, 1, null),
 				SclableResources.of(Network.class, "left_vl", 0, 1, null),
 				SclableResources.of(VnffgPostNode.class, "vnffg_1", 0, 1, null),
 				SclableResources.of(VnfCreateNode.class, "vnf_left", 0, 1, null),
+				SclableResources.of(VnfInstantiateNode.class, "vnf_left", 0, 1, null),
+				SclableResources.of(VnfExtractorNode.class, "vnf_left", 0, 1, null),
 				SclableResources.of(VnfCreateNode.class, "vnf_middle", 0, 1, null),
-				SclableResources.of(VnfCreateNode.class, "vnf_right", 0, 1, null));
+				SclableResources.of(VnfInstantiateNode.class, "vnf_middle", 0, 1, null),
+				SclableResources.of(VnfExtractorNode.class, "vnf_middle", 0, 1, null),
+				SclableResources.of(VnfCreateNode.class, "vnf_right", 0, 1, null),
+				SclableResources.of(VnfInstantiateNode.class, "vnf_right", 0, 1, null),
+				SclableResources.of(VnfExtractorNode.class, "vnf_right", 0, 1, null));
 		final PlanMultiplier pm = new PlanMultiplier(scales, func, List.of());
 		final List<ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>>> plans = new ArrayList<>();
 		scales.forEach(x -> {
@@ -111,7 +149,8 @@ class Ns3dPlanTest {
 		});
 		final PlanMerger pMerge = new PlanMerger();
 		final ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>> ret = pMerge.merge(g, plans);
-		exportGraph(ret, "test-scale.dot");
+		final List<ContextUow<?>> global = new ArrayList<>();
+		// exportGraph(ret, "test-scale.dot");
 	}
 
 	private static void exportGraph(final ListenableGraph np, final String filename) {
