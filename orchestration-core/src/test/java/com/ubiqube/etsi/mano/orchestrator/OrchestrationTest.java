@@ -90,7 +90,8 @@ class OrchestrationTest {
 		final ExecutionGraph imp = new ExecutionGraphImplV3<>(g);
 		final OrchExecutionListener listener = new OrchTestListener();
 		final Planner p = getPlanner();
-		p.execute(imp, listener);
+		final OrchExecutionResults res = p.execute(imp, listener);
+		assertNotNull(res);
 	}
 
 	@Test

@@ -71,7 +71,7 @@ import com.ubiqube.etsi.mano.service.graph.Vertex2d;
 import com.ubiqube.etsi.mano.service.sys.SystemV3;
 
 @ExtendWith(MockitoExtension.class)
-class Ns3dPlanTest {
+public class Ns3dPlanTest {
 
 	private final ListenableGraph<Vertex2d, Edge2d> g;
 	@Mock
@@ -113,7 +113,6 @@ class Ns3dPlanTest {
 	void testNs() throws Exception {
 		final Function<Object, VirtualTaskV3<Object>> func = p -> new TestVirtualTask(VnffgLoadbalancerNode.class, "name", "alias", 0);
 		final ScalingEngine se = new ScalingEngine();
-
 		final List<SclableResources<Object>> scales = List.of(
 				SclableResources.of(VnffgLoadbalancerNode.class, "nfp_position_1", 0, 1, null),
 				SclableResources.of(PortPairNode.class, "element_1", 0, 1, null),

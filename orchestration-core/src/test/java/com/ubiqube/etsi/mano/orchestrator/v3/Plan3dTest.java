@@ -58,12 +58,12 @@ import com.ubiqube.etsi.mano.service.graph.Edge2d;
 import com.ubiqube.etsi.mano.service.graph.GraphListener2d;
 import com.ubiqube.etsi.mano.service.graph.Vertex2d;
 
-class Test3dPlan {
+public class Plan3dTest {
 
 	private final ListenableGraph<Vertex2d, Edge2d> g;
 	private final List<SclableResources<Object>> sr;
 
-	public Test3dPlan() throws StreamReadException, DatabindException, IOException {
+	public Plan3dTest() throws StreamReadException, DatabindException, IOException {
 		final ObjectMapper mapper = new ObjectMapper();
 		final VertexResult r;
 		try (InputStream is = this.getClass().getResourceAsStream("/vnf-full.json")) {
