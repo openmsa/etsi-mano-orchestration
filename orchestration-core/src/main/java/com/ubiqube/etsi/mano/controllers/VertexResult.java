@@ -19,7 +19,7 @@ package com.ubiqube.etsi.mano.controllers;
 import java.util.List;
 import java.util.Set;
 
-import com.ubiqube.etsi.mano.service.graph.Vertex2d;
+import com.ubiqube.etsi.mano.orchestrator.Vertex2d;
 
 import lombok.Getter;
 import lombok.Setter;

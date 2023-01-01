@@ -16,7 +16,7 @@
  */
 package com.ubiqube.etsi.mano.controllers;
 
-import com.ubiqube.etsi.mano.service.graph.Relation;
+import com.ubiqube.etsi.mano.orchestrator.Relation;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
