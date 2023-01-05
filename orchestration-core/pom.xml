@@ -59,11 +59,11 @@
 		</dependency>
 		<dependency>
 			<groupId>ma.glasnost.orika</groupId>
-			<artifactId>orika-core</artifactId>
+			<artifactId>ubi-orika-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>ma.glasnost.orika</groupId>
-			<artifactId>orika-eclipse-tools</artifactId>
+			<artifactId>ubi-orika-eclipse-tools</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
