@@ -17,11 +17,11 @@
 	<distributionManagement>
 		<snapshotRepository>
 			<id>nexus-snapshots</id>
-			<url>http://nexus.ubiqube.com:8081/repository/maven-snapshots/</url>
+			<url>http://nexus.ubiqube.com/repository/maven-snapshots/</url>
 		</snapshotRepository>
 		<repository>
 			<id>nexus-releases</id>
-			<url>http://nexus.ubiqube.com:8081/repository/maven-releases/</url>
+			<url>http://nexus.ubiqube.com/repository/maven-releases/</url>
 		</repository>
 	</distributionManagement>
 
@@ -33,7 +33,7 @@
 		<dependency>
 			<groupId>com.ubiqube.mano</groupId>
 			<artifactId>orchestration-api</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.dexecutor</groupId>

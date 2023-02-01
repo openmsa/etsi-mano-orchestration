@@ -3,24 +3,24 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>orchestration-api</artifactId>
-	<name>orchestration-api</name>
-	<description>ETSI MANO Database Model.</description>
 	<parent>
 		<groupId>com.ubiqube.mano</groupId>
 		<artifactId>mano-orchestration-aggregator</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
+	<artifactId>orchestration-api</artifactId>
+	<name>orchestration-api</name>
+	<description>ETSI MANO Database Model.</description>
 
 	<distributionManagement>
 		<snapshotRepository>
 			<id>nexus-snapshots</id>
-			<url>http://nexus.ubiqube.com:8081/repository/maven-snapshots/</url>
+			<url>http://nexus.ubiqube.com/repository/maven-snapshots/</url>
 		</snapshotRepository>
 		<repository>
 			<id>nexus-releases</id>
-			<url>http://nexus.ubiqube.com:8081/repository/maven-releases/</url>
+			<url>http://nexus.ubiqube.com/repository/maven-releases/</url>
 		</repository>
 	</distributionManagement>
 	<dependencies>
@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.ubiqube.mano</groupId>
 			<artifactId>mano-model</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>3.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jgrapht</groupId>

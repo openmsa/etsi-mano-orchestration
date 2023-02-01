@@ -58,7 +58,7 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 import com.ubiqube.etsi.mano.service.graph.GraphListener2d;
 
-public class Plan3dTest {
+class Plan3dTest {
 
 	private final ListenableGraph<Vertex2d, Edge2d> g;
 	private final List<SclableResources<Object>> sr;

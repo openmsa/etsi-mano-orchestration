@@ -18,10 +18,10 @@ package com.ubiqube.etsi.mano.orchestrator;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
+
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 
 /**
  *

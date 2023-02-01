@@ -23,9 +23,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
 import org.jgrapht.GraphPath;
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
@@ -40,6 +37,9 @@ import com.ubiqube.etsi.mano.orchestrator.uow.ContextUow;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkVertexListenerV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
+
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 
 /**
  *

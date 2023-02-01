@@ -23,8 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.DirectedAcyclicGraph;
@@ -41,6 +39,8 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitB;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitC;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkVertexListenerV3;
+
+import jakarta.validation.constraints.NotNull;
 
 class ContextTest {
 

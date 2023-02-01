@@ -71,7 +71,7 @@ import com.ubiqube.etsi.mano.service.graph.GraphListener2d;
 import com.ubiqube.etsi.mano.service.sys.SystemV3;
 
 @ExtendWith(MockitoExtension.class)
-public class Ns3dPlanTest {
+class Ns3dPlanTest {
 
 	private final ListenableGraph<Vertex2d, Edge2d> g;
 	@Mock
