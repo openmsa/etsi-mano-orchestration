@@ -16,7 +16,7 @@
  */
 @NonNullApi
 @NonNullFields
-package com.ubiqube.etsi.mano.orchestrator.nodes.contrail;
+package com.ubiqube.etsi.mano.orchestrator.repository;
 
 import org.springframework.lang.NonNullApi;
 import org.springframework.lang.NonNullFields;
