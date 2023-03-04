@@ -33,12 +33,7 @@ public class ServerGroup {
 
 	private String availabilityZone;
 
-	public ServerGroup() {
-		// Nothing.
-	}
-
 	public ServerGroup(final String id, final String name, final String _availabilityZone) {
-		super();
 		this.id = id;
 		this.name = name;
 		availabilityZone = _availabilityZone;
