@@ -24,6 +24,8 @@ import org.jgrapht.ListenableGraph;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
+import jakarta.annotation.Nullable;
+
 public class SystemBuilderV3Impl<U> implements SystemBuilder<U> {
 	private final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g = GraphTools.createGraphV3();
 	private UnitOfWorkV3<U> single = null;
@@ -50,6 +52,7 @@ public class SystemBuilderV3Impl<U> implements SystemBuilder<U> {
 	}
 
 	@Override
+	@Nullable
 	public UnitOfWorkV3<U> getSingle() {
 		return single;
 	}

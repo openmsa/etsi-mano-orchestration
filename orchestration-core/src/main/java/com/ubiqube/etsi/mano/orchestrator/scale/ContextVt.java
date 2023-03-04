@@ -23,6 +23,8 @@ import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,7 +45,7 @@ import lombok.Setter;
 public class ContextVt<U> implements VirtualTaskV3<U> {
 
 	private String vimConnectionId;
-
+	@Nonnull
 	private String name;
 
 	private String alias;
@@ -54,6 +56,7 @@ public class ContextVt<U> implements VirtualTaskV3<U> {
 
 	private boolean delete;
 
+	@Nullable
 	private String vimResourceId;
 
 	private Class<? extends Node> parent;
@@ -62,7 +65,7 @@ public class ContextVt<U> implements VirtualTaskV3<U> {
 
 	private UUID removedLiveInstanceId;
 
-	public ContextVt(Class<? extends Node> clazz, String name, String vimResourceId) {
+	public ContextVt(Class<? extends Node> clazz, String name,@Nullable String vimResourceId) {
 		this.parent = clazz;
 		this.name = name;
 		this.vimResourceId = vimResourceId;
@@ -73,7 +76,7 @@ public class ContextVt<U> implements VirtualTaskV3<U> {
 	}
 
 	@Override
-	public Class<? extends Node> getType() {
+	public @Nullable Class<? extends Node> getType() {
 		return parent;
 	}
 
@@ -88,7 +91,7 @@ public class ContextVt<U> implements VirtualTaskV3<U> {
 	}
 
 	@Override
-	public String toString() {
+	public @Nullable String toString() {
 		return alias;
 	}
 	@Override

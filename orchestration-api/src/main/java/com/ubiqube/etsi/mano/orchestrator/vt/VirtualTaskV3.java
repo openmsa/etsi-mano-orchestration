@@ -22,6 +22,8 @@ import com.ubiqube.etsi.mano.orchestrator.ResultType;
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
+import jakarta.annotation.Nullable;
+
 /**
  *
  * @author olivier
@@ -31,6 +33,7 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 public interface VirtualTaskV3<U> {
 	boolean isDeleteTask();
 
+	@Nullable
 	String getVimConnectionId();
 
 	void setVimConnectionId(String conn);
@@ -59,6 +62,7 @@ public interface VirtualTaskV3<U> {
 
 	SystemBuilder<U> getSystemBuilder();
 
+	@Nullable
 	String getVimResourceId();
 
 	void setVimResourceId(String res);

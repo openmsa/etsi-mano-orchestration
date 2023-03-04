@@ -16,34 +16,39 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.uow;
 
+import java.util.Objects;
+
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphListener;
 import org.jgrapht.event.GraphVertexChangeEvent;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 
+import jakarta.annotation.Nullable;
+
 public class UnitOfWorkVertexListenerV3<U> implements GraphListener<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> {
 
 	@Override
-	public void vertexAdded(final GraphVertexChangeEvent<UnitOfWorkV3<U>> e) {
+	public void vertexAdded(final @Nullable GraphVertexChangeEvent<UnitOfWorkV3<U>> e) {
 		// Nothing.
 	}
 
 	@Override
-	public void vertexRemoved(final GraphVertexChangeEvent<UnitOfWorkV3<U>> e) {
+	public void vertexRemoved(final @Nullable GraphVertexChangeEvent<UnitOfWorkV3<U>> e) {
 		// Nothing.
 
 	}
 
 	@Override
-	public void edgeAdded(final GraphEdgeChangeEvent<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> e) {
+	public void edgeAdded(final @Nullable GraphEdgeChangeEvent<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> e) {
+		Objects.requireNonNull(e);
 		final ConnectivityEdge<UnitOfWorkV3<U>> edge = e.getEdge();
 		edge.setSource(e.getEdgeSource());
 		edge.setTarget(e.getEdgeTarget());
 	}
 
 	@Override
-	public void edgeRemoved(final GraphEdgeChangeEvent<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> e) {
+	public void edgeRemoved(final @Nullable GraphEdgeChangeEvent<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> e) {
 		// Nothing.
 	}
 

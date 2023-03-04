@@ -22,8 +22,10 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.ubiqube.etsi.mano.orchestrator.entities.Systems;
 
-public interface SystemJpa extends CrudRepository<Systems, UUID> {
+import jakarta.annotation.Nullable;
 
+public interface SystemJpa extends CrudRepository<Systems, UUID> {
+	@Nullable
 	Systems findByVimId(String vimId);
 
 	void deleteByVimOrigin(UUID id);

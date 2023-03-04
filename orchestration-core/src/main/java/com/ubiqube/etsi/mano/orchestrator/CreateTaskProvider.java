@@ -16,12 +16,16 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dexecutor.core.task.Task;
 import com.github.dexecutor.core.task.TaskProvider;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+
+import jakarta.annotation.Nonnull;
 
 /**
  *
@@ -31,12 +35,14 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 public class CreateTaskProvider<U> implements TaskProvider<UnitOfWorkV3<U>, String> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CreateTaskProvider.class);
+	@Nonnull
 	private final Context3dNetFlow<U> context;
+	@Nonnull
 	private final OrchExecutionListener<U> listener;
 
 	public CreateTaskProvider(final Context3dNetFlow<U> context, final OrchExecutionListener<U> listener) {
-		this.context = context;
-		this.listener = listener;
+		this.context = Objects.requireNonNull(context);
+		this.listener = Objects.requireNonNull(listener);
 	}
 
 	@Override

@@ -16,6 +16,7 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import com.github.dexecutor.core.task.Task;
@@ -23,22 +24,25 @@ import com.ubiqube.etsi.mano.orchestrator.context.SimplifiedContextImpl;
 import com.ubiqube.etsi.mano.orchestrator.uow.ContextUow;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+
 public class DexecutorTask<P> extends Task<UnitOfWorkV3<P>, String> {
 	/** Serial. */
 	private static final long serialVersionUID = 1L;
-
+	@Nonnull
 	private final transient UnitOfWorkV3<P> uaow;
-
+	@Nonnull
 	private final transient Function<Context3d, String> function;
-
+	@Nonnull
 	private transient OrchExecutionListener<P> listener;
-
+	@Nonnull
 	private transient Context3dNetFlow<P> context;
 
 	public DexecutorTask(final OrchExecutionListener<P> listener, final UnitOfWorkV3<P> uaow, final Context3dNetFlow<P> context, final boolean create) {
-		this.uaow = uaow;
-		this.listener = listener;
-		this.context = context;
+		this.uaow = Objects.requireNonNull(uaow);
+		this.listener = Objects.requireNonNull(listener);
+		this.context = Objects.requireNonNull(context);
 		if (!(uaow.getTask().isDeleteTask() ^ create)) {
 			function = x -> null;
 		} else if (create) {
@@ -55,7 +59,7 @@ public class DexecutorTask<P> extends Task<UnitOfWorkV3<P>, String> {
 	}
 
 	@Override
-	public String execute() {
+	public @Nullable String execute() {
 		if (uaow instanceof ContextUow) {
 			return null;
 		}

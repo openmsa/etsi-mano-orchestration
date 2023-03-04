@@ -29,6 +29,8 @@ import com.ubiqube.etsi.mano.orchestrator.GraphTools;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
+import jakarta.annotation.Nonnull;
+
 /**
  *
  * @author olivier
@@ -37,7 +39,7 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
  */
 public class PreExecutionGraphV3Impl<U> implements PreExecutionGraphV3<U> {
 	private static final Logger LOG = LoggerFactory.getLogger(PreExecutionGraphV3Impl.class);
-
+	@Nonnull
 	private final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> network;
 
 	public PreExecutionGraphV3Impl(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> network) {

@@ -27,6 +27,8 @@ import com.ubiqube.etsi.mano.orchestrator.scale.ContextVt;
 import com.ubiqube.etsi.mano.orchestrator.uow.ContextUow;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
+import jakarta.annotation.Nonnull;
+
 /**
  *
  * @author olivier
@@ -34,9 +36,9 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
  * @param <U>
  */
 public class ExecutionGraphImplV3<U> implements ExecutionGraph {
-
+	@Nonnull
 	private final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g;
-
+	@Nonnull
 	private final List<ContextUow<U>> global = new ArrayList<>();
 
 	public ExecutionGraphImplV3(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g) {

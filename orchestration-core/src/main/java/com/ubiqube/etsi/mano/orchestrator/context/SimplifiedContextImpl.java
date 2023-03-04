@@ -27,9 +27,13 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
-public class SimplifiedContextImpl<U> implements Context3d {
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
+public class SimplifiedContextImpl<U> implements Context3d {
+	@Nonnull
 	private final Context3dNetFlow<U> flow;
+	@Nonnull
 	private final UnitOfWorkV3<U> actual;
 
 	public SimplifiedContextImpl(final UnitOfWorkV3<U> actual, final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> d) {
@@ -63,6 +67,7 @@ public class SimplifiedContextImpl<U> implements Context3d {
 	}
 
 	@Override
+	@Nullable
 	public String getOptional(final Class<? extends Node> class1, final String toscaName) {
 		return flow.getOptional(actual, class1, toscaName);
 	}

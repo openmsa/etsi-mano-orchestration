@@ -20,13 +20,15 @@ import java.util.List;
 
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
+import jakarta.annotation.Nullable;
+
 /**
  *
  * @author Olivier Vignaud <ovi@ubiqube.com>
  *
  */
 public interface SystemBuilder<U> {
-
+	@Nullable
 	UnitOfWorkV3<U> getSingle();
 
 	void add(UnitOfWorkV3<U> src, UnitOfWorkV3<U> dest);

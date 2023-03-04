@@ -19,6 +19,8 @@ package com.ubiqube.etsi.mano.orchestrator.entities;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import jakarta.annotation.Nullable;
+
 public enum SystemType {
 	COMPUTE("COMMPUTE"),
 	NETWORK("NETWORK"),
@@ -35,12 +37,12 @@ public enum SystemType {
 
 	@Override
 	@JsonValue
-	public String toString() {
+	public @Nullable String toString() {
 		return String.valueOf(value);
 	}
 
 	@JsonCreator
-	public static SystemType fromValue(final String text) {
+	public static @Nullable SystemType fromValue(final String text) {
 		for (final SystemType b : SystemType.values()) {
 			if (String.valueOf(b.value).equals(text)) {
 				return b;

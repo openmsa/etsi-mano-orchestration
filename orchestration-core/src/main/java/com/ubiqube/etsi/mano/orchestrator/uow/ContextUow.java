@@ -20,8 +20,11 @@ import com.ubiqube.etsi.mano.orchestrator.Context3d;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
-public class ContextUow<U> implements UnitOfWorkV3<U> {
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
+public class ContextUow<U> implements UnitOfWorkV3<U> {
+	@Nonnull
 	private final VirtualTaskV3<U> vt;
 	private String resource;
 
@@ -31,12 +34,14 @@ public class ContextUow<U> implements UnitOfWorkV3<U> {
 	}
 
 	@Override
+	@Nullable
 	public String execute(final Context3d context) {
 		// Nothing.
 		return null;
 	}
 
 	@Override
+	@Nullable
 	public String rollback(final Context3d context) {
 		// Nothing.
 		return null;

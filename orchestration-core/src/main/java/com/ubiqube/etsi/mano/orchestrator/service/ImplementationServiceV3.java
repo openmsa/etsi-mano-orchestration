@@ -30,6 +30,8 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 import com.ubiqube.etsi.mano.service.sys.SystemV3;
 
+import jakarta.annotation.Nonnull;
+
 /**
  *
  * @author olivier
@@ -37,8 +39,11 @@ import com.ubiqube.etsi.mano.service.sys.SystemV3;
  */
 @Service
 public class ImplementationServiceV3<U> {
+	@Nonnull
 	private final SystemManager vimManager;
+	@Nonnull
 	private final Map<String, List<SystemV3<U>>> systems;
+	@Nonnull
 	private final OrchestrationServiceV3<U> orchestrationService;
 
 	public ImplementationServiceV3(final List<SystemV3<U>> systems, final SystemManager vimManager, final OrchestrationServiceV3<U> orchestrationService) {

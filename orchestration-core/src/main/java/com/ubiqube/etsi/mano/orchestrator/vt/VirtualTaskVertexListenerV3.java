@@ -16,9 +16,13 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.vt;
 
+import java.util.Objects;
+
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphListener;
 import org.jgrapht.event.GraphVertexChangeEvent;
+
+import jakarta.annotation.Nullable;
 
 /**
  *
@@ -28,24 +32,25 @@ import org.jgrapht.event.GraphVertexChangeEvent;
 public class VirtualTaskVertexListenerV3<V> implements GraphListener<VirtualTaskV3<V>, VirtualTaskConnectivityV3<V>> {
 
 	@Override
-	public void vertexAdded(final GraphVertexChangeEvent<VirtualTaskV3<V>> e) {
+	public void vertexAdded(final @Nullable GraphVertexChangeEvent<VirtualTaskV3<V>> e) {
 		// Nothing.
 	}
 
 	@Override
-	public void vertexRemoved(final GraphVertexChangeEvent<VirtualTaskV3<V>> e) {
+	public void vertexRemoved(final @Nullable GraphVertexChangeEvent<VirtualTaskV3<V>> e) {
 		// Nothing.
 	}
 
 	@Override
-	public void edgeAdded(final GraphEdgeChangeEvent<VirtualTaskV3<V>, VirtualTaskConnectivityV3<V>> e) {
+	public void edgeAdded(final @Nullable GraphEdgeChangeEvent<VirtualTaskV3<V>, VirtualTaskConnectivityV3<V>> e) {
+		Objects.requireNonNull(e);
 		final VirtualTaskConnectivityV3<V> edge = e.getEdge();
 		edge.setSource(e.getEdgeSource());
 		edge.setTarget(e.getEdgeTarget());
 	}
 
 	@Override
-	public void edgeRemoved(final GraphEdgeChangeEvent<VirtualTaskV3<V>, VirtualTaskConnectivityV3<V>> e) {
+	public void edgeRemoved(final @Nullable GraphEdgeChangeEvent<VirtualTaskV3<V>, VirtualTaskConnectivityV3<V>> e) {
 		// Nothing.
 	}
 

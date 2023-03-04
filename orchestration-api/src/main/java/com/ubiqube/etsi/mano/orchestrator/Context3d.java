@@ -21,7 +21,6 @@ import java.util.List;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
 import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.NotNull;
 
 /**
  *
@@ -30,7 +29,6 @@ import jakarta.validation.constraints.NotNull;
  */
 public interface Context3d {
 
-	@NotNull
 	String get(Class<? extends Node> class1, String toscaName);
 
 	List<String> getParent(Class<? extends Node> class1, String toscaName);

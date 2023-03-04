@@ -18,21 +18,15 @@ package com.ubiqube.etsi.mano.orchestrator.vt;
 
 import com.ubiqube.etsi.mano.orchestrator.Relation;
 
+import jakarta.annotation.Nonnull;
+
 public class VirtualTaskConnectivityV3<U> {
+	@Nonnull
 	private VirtualTaskV3<U> source;
-
+	@Nonnull
 	private VirtualTaskV3<U> target;
-
+	@Nonnull
 	private Relation relation;
-
-	public VirtualTaskConnectivityV3() {
-		// Nothing.
-	}
-
-	public VirtualTaskConnectivityV3(final VirtualTaskV3<U> source, final VirtualTaskV3<U> target) {
-		this.source = source;
-		this.target = target;
-	}
 
 	public VirtualTaskConnectivityV3(final VirtualTaskV3<U> source, final VirtualTaskV3<U> target, final Relation relation) {
 		this.source = source;

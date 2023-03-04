@@ -36,6 +36,8 @@ import com.ubiqube.etsi.mano.orchestrator.scale.ScalingEngine;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
+import jakarta.annotation.Nonnull;
+
 /**
  *
  * @author olivier
@@ -44,13 +46,14 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 @Service
 public class BlueprintBuilderImpl implements BlueprintBuilder {
 	private static final Logger LOG = LoggerFactory.getLogger(BlueprintBuilderImpl.class);
-
+	@Nonnull
 	private final ScalingEngine se = new ScalingEngine();
+	@Nonnull
 	private final PlanMerger pMerge = new PlanMerger();
 
 	@Override
 	public <U> PreExecutionGraphV3<U> buildPlan(final List<SclableResources<U>> scaleResources, final ListenableGraph<Vertex2d, Edge2d> g,
-			final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems, final List<Class<? extends Node>> masterVertex) {
+			final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems, final List<@Nonnull Class<? extends Node>> masterVertex) {
 		final PlanMultiplier<U> pm = new PlanMultiplier<>(scaleResources, converter, liveItems);
 		final List<SclableResources<U>> ttd = masterVertex.stream()
 				.map(x -> toThingsToDo(x, scaleResources))

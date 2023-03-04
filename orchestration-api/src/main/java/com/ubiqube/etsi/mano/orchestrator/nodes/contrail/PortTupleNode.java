@@ -19,5 +19,5 @@ package com.ubiqube.etsi.mano.orchestrator.nodes.contrail;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
 public interface PortTupleNode extends Node {
-
+	//
 }

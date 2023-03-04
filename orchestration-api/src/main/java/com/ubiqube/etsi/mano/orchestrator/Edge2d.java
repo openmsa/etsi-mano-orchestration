@@ -18,6 +18,7 @@ package com.ubiqube.etsi.mano.orchestrator;
 
 import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
 
+import jakarta.annotation.Nonnull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,11 +30,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Edge2d {
-
+	@Nonnull
 	private Vertex2d source;
-
+	@Nonnull
 	private Vertex2d target;
-
+	@Nonnull
 	private Relation relation;
 
 	@Override

@@ -33,6 +33,8 @@ import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.service.graph.GraphListener2d;
 
+import jakarta.annotation.Nonnull;
+
 /**
  *
  * @author olivier
@@ -42,7 +44,7 @@ public class ScalingEngine {
 	private static final Logger LOG = LoggerFactory.getLogger(ScalingEngine.class);
 
 	public ListenableGraph<Vertex2d, Edge2d> scale(final ListenableGraph<Vertex2d, Edge2d> g, final Class<? extends Node> clazz, final String name) {
-		final List<Vertex2d> found = g.vertexSet().stream().filter(x -> (x.getType() == clazz) && (x.getName().equals(name))).toList();
+		final List<@Nonnull Vertex2d> found = g.vertexSet().stream().filter(x -> (x.getType() == clazz) && (x.getName().equals(name))).toList();
 		if (found.size() != 1) {
 			throw new OrchestrationException("Bad number of match " + found.size() + ", when looking for :" + clazz.getSimpleName() + "/" + name);
 		}

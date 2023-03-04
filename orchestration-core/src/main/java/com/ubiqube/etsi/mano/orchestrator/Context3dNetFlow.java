@@ -39,7 +39,6 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkVertexListenerV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.NotNull;
 
 /**
  *
@@ -48,6 +47,7 @@ import jakarta.validation.constraints.NotNull;
  */
 public class Context3dNetFlow<U> {
 	private final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> d;
+	@Nullable
 	private ContextUow<U> root;
 	private final List<ContextUow<U>> global;
 
@@ -148,7 +148,6 @@ public class Context3dNetFlow<U> {
 		d.outgoingEdgesOf(actual).forEach(x -> d.addEdge(uow, x.getTarget()));
 	}
 
-	@NotNull
 	public String get(final UnitOfWorkV3<U> actual, final Class<? extends Node> class1, final String toscaName) {
 		final Optional<ContextUow<U>> gv = findInCtx(class1, toscaName);
 		if (gv.isPresent()) {

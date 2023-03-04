@@ -20,6 +20,8 @@ import com.ubiqube.etsi.mano.orchestrator.Context3d;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
+import jakarta.annotation.Nullable;
+
 /**
  *
  * @author olivier
@@ -28,8 +30,10 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 public interface UnitOfWorkV3<U> {
 	VirtualTaskV3<U> getTask();
 
+	@Nullable
 	String execute(Context3d context);
 
+	@Nullable
 	String rollback(Context3d context);
 
 	Class<? extends Node> getType();

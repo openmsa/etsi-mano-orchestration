@@ -20,6 +20,7 @@ import java.util.Objects;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 
 /**
@@ -44,7 +45,7 @@ public class Vertex2d {
 		this.parent = parent;
 	}
 
-	public boolean match(final Class<? extends Node> inType, final String inName, final Vertex2d inParent) {
+	public boolean match(final Class<? extends Node> inType, final String inName, final @Nullable Vertex2d inParent) {
 		final boolean ret = ((inType == type) && inName.equals(name));
 		if ((null == inParent)) {
 			return ret;
@@ -66,7 +67,7 @@ public class Vertex2d {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(final @Nullable Object obj) {
 		if (this == obj) {
 			return true;
 		}

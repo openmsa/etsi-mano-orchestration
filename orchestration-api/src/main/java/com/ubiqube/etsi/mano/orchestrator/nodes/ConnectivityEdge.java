@@ -16,18 +16,19 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.nodes;
 
-public class ConnectivityEdge<U> {
-	private U source;
+import java.util.Objects;
 
+import jakarta.annotation.Nonnull;
+
+public class ConnectivityEdge<U> {
+	@Nonnull
+	private U source;
+	@Nonnull
 	private U target;
 
-	public ConnectivityEdge() {
-		// Nothing.
-	}
-
 	public ConnectivityEdge(final U source, final U target) {
-		this.source = source;
-		this.target = target;
+		this.source = Objects.requireNonNull(source);
+		this.target = Objects.requireNonNull(target);
 	}
 
 	public U getSource() {
