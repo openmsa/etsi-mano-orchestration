@@ -53,7 +53,7 @@ public class BlueprintBuilderImpl implements BlueprintBuilder {
 
 	@Override
 	public <U> PreExecutionGraphV3<U> buildPlan(final List<SclableResources<U>> scaleResources, final ListenableGraph<Vertex2d, Edge2d> g,
-			final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems, final List<@Nonnull Class<? extends Node>> masterVertex) {
+			final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems, final List<Class<? extends Node>> masterVertex) {
 		final PlanMultiplier<U> pm = new PlanMultiplier<>(scaleResources, converter, liveItems);
 		final List<SclableResources<U>> ttd = masterVertex.stream()
 				.map(x -> toThingsToDo(x, scaleResources))

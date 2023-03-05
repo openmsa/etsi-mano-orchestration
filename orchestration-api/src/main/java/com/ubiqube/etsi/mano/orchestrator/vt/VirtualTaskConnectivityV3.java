@@ -28,6 +28,10 @@ public class VirtualTaskConnectivityV3<U> {
 	@Nonnull
 	private Relation relation;
 
+	public VirtualTaskConnectivityV3() {
+		// Need default constructor for graph.
+	}
+
 	public VirtualTaskConnectivityV3(final VirtualTaskV3<U> source, final VirtualTaskV3<U> target, final Relation relation) {
 		this.source = source;
 		this.target = target;

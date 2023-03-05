@@ -26,6 +26,10 @@ public class ConnectivityEdge<U> {
 	@Nonnull
 	private U target;
 
+	public ConnectivityEdge() {
+		// Need constructor for graph.
+	}
+
 	public ConnectivityEdge(final U source, final U target) {
 		this.source = Objects.requireNonNull(source);
 		this.target = Objects.requireNonNull(target);
