@@ -42,6 +42,9 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskVertexListenerV3;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+
 /**
  *
  * @author olivier
@@ -52,8 +55,10 @@ public class PlanMultiplier<U> {
 	private static final Logger LOG = LoggerFactory.getLogger(PlanMultiplier.class);
 
 	private Set<ContextHolder> cache;
+	@Nonnull
 	private final List<SclableResources<U>> scaleResources;
 	private final Function<U, VirtualTaskV3<U>> converter;
+	@Nonnull
 	private final List<ContextHolder> liveItems;
 
 	public PlanMultiplier(final List<SclableResources<U>> scaleResources, final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems) {
@@ -190,7 +195,7 @@ public class PlanMultiplier<U> {
 
 	@SuppressWarnings("unchecked")
 	private static <U> VirtualTaskV3<U> createContext(final String uniqIdSrc, final Vertex2d source, final int i, final boolean delete,
-			final U u, final String resourceId, final Class<? extends Node> class1, final String vimConnectionId) {
+			final U u, @Nullable final String resourceId, final Class<? extends Node> class1, @Nullable final String vimConnectionId) {
 		return (VirtualTaskV3<U>) ContextVt.builder()
 				.alias(uniqIdSrc)
 				.delete(delete)

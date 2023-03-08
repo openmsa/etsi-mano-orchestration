@@ -33,13 +33,14 @@ public class Vertex2d {
 
 	private Class<? extends Node> type;
 	private String name;
+	@Nullable
 	private Vertex2d parent;
 
 	public Vertex2d() {
 		//
 	}
 
-	public Vertex2d(final Class<? extends Node> class1, final String name, final Vertex2d parent) {
+	public Vertex2d(final Class<? extends Node> class1, final String name, @Nullable final Vertex2d parent) {
 		this.type = class1;
 		this.name = name;
 		this.parent = parent;
