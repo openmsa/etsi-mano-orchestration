@@ -54,7 +54,6 @@ public class PlanMultiplier<U> {
 	private static final String ADD_VT = "Add VT {}";
 	private static final Logger LOG = LoggerFactory.getLogger(PlanMultiplier.class);
 
-	private Set<ContextHolder> cache;
 	@Nonnull
 	private final List<SclableResources<U>> scaleResources;
 	private final Function<U, VirtualTaskV3<U>> converter;
@@ -68,7 +67,7 @@ public class PlanMultiplier<U> {
 	}
 
 	public ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> multiply(final ListenableGraph<Vertex2d, Edge2d> plan, final SclableResources<U> sr) {
-		cache = new HashSet<>();
+		final Set<ContextHolder> cache = new HashSet<>();
 		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
 		d.addGraphListener(new VirtualTaskVertexListenerV3<>());
 		final Map<String, VirtualTaskV3<U>> hash = new HashMap<>();
@@ -82,26 +81,26 @@ public class PlanMultiplier<U> {
 			final int ii = i;
 			plan.edgeSet().forEach(x -> {
 				final String uniqIdSrc = getUniqId(x.getSource(), ii);
-				final VirtualTaskV3<U> src = hash.computeIfAbsent(uniqIdSrc, y -> createVertex(d, delete, ii, x.getSource(), uniqIdSrc));
+				final VirtualTaskV3<U> src = hash.computeIfAbsent(uniqIdSrc, y -> createVertex(d, delete, ii, x.getSource(), uniqIdSrc, cache));
 				final String uniqIdDst = getUniqId(x.getTarget(), ii);
-				final VirtualTaskV3<U> dst = hash.computeIfAbsent(uniqIdDst, y -> createVertex(d, delete, ii, x.getTarget(), uniqIdDst));
+				final VirtualTaskV3<U> dst = hash.computeIfAbsent(uniqIdDst, y -> createVertex(d, delete, ii, x.getTarget(), uniqIdDst, cache));
 				Optional.ofNullable(d.addEdge(src, dst)).ifPresent(y -> y.setRelation(x.getRelation()));
 			});
 			plan.vertexSet().forEach(x -> {
 				final String uniqIdSrc = getUniqId(x, ii);
-				hash.computeIfAbsent(uniqIdSrc, y -> createVertex(d, delete, ii, x, uniqIdSrc));
+				hash.computeIfAbsent(uniqIdSrc, y -> createVertex(d, delete, ii, x, uniqIdSrc, cache));
 			});
 		}
-		collectOphan(d, plan, max, sr.getTemplateParameter());
+		collectOrphan(d, plan, max, cache);
 		return d;
 	}
 
-	private void collectOphan(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d, final ListenableGraph<Vertex2d, Edge2d> plan, final int i, final U u) {
+	private void collectOrphan(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d, final ListenableGraph<Vertex2d, Edge2d> plan, final int i, final Set<ContextHolder> cache) {
 		final List<Vertex2d> res = plan.vertexSet().stream()
 				.filter(x -> match(x, liveItems))
 				.toList();
 		final List<Vertex2d> should = res.stream().filter(x -> isNotIn(x, d)).toList();
-		should.stream().forEach(x -> createVertex(d, true, i, x, UUID.randomUUID().toString()));
+		should.stream().forEach(x -> createVertex(d, true, i, x, UUID.randomUUID().toString(), cache));
 		LOG.debug("{}", should);
 	}
 
@@ -118,9 +117,9 @@ public class PlanMultiplier<U> {
 	}
 
 	private VirtualTaskV3<U> createVertex(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d,
-			final boolean delete, final int ii, final Vertex2d x, final String uniqIdDst) {
+			final boolean delete, final int ii, final Vertex2d x, final String uniqIdDst, final Set<ContextHolder> cache) {
 		final SclableResources<U> templSr = findTemplate(scaleResources, x);
-		final VirtualTaskV3<U> t = createTask(templSr, uniqIdDst, x, ii, delete);
+		final VirtualTaskV3<U> t = createTask(templSr, uniqIdDst, x, ii, delete, cache);
 		LOG.debug(ADD_VT, t.getAlias());
 		d.addVertex(t);
 		return t;
@@ -161,10 +160,11 @@ public class PlanMultiplier<U> {
 	 * @param xVertex
 	 * @param ii
 	 * @param delete
+	 * @param cache
 	 * @param vimConnectionId
 	 * @return
 	 */
-	private VirtualTaskV3<U> createTask(final SclableResources<U> sr, final String uniqIdSrc, final Vertex2d x, final int ii, final boolean delete) {
+	private VirtualTaskV3<U> createTask(final SclableResources<U> sr, final String uniqIdSrc, final Vertex2d x, final int ii, final boolean delete, final Set<ContextHolder> cache) {
 		final Optional<ContextHolder> ctx = findInContext(liveItems, x, ii);
 		/**
 		 * /!\ Create task is cloning the task and assign a new ToscaId to it, witch

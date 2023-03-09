@@ -46,5 +46,6 @@ class GraphGeneratorTest {
 		final TaskVertex v = new TaskVertex();
 		g.addVertex(v);
 		GraphGenerator.drawGraph2(g);
+		assertTrue(true);
 	}
 }

@@ -56,7 +56,7 @@ public class Vertex2d {
 
 	@Override
 	public String toString() {
-		if (parent != null) {
+		if (null != parent) {
 			return parent.name + "-" + name + "\n" + type.getSimpleName();
 		}
 		return name + "\n" + type.getSimpleName();
