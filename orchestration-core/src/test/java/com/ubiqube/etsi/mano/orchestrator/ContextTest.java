@@ -40,8 +40,6 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitC;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkVertexListenerV3;
 
-import jakarta.validation.constraints.NotNull;
-
 class ContextTest {
 
 	@Test
@@ -64,7 +62,6 @@ class ContextTest {
 		final String ro = ctx.getOptional(uc, BNode.class, "notHere");
 		assertNull(ro);
 		ctx.add(ub, BNode.class, "notHere", "rid");
-		@NotNull
 		final String end = ctx.get(uc, BNode.class, "notHere");
 		assertNotNull(end);
 		final List<String> an = ctx.getParent(uc, ANode.class);
