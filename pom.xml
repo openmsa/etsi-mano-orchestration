@@ -28,4 +28,7 @@
 			<url>http://nexus.ubiqube.com/repository/maven-releases/</url>
 		</repository>
 	</distributionManagement>
+	<scm>
+		<developerConnection>scm:git:https://github.com/openmsa/etsi-mano-data-orchestration.git</developerConnection>
+	</scm>
 </project>
