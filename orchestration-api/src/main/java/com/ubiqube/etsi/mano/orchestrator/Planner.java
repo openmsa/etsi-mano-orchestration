@@ -12,7 +12,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
@@ -20,8 +20,7 @@ import com.ubiqube.etsi.mano.orchestrator.v3.PreExecutionGraphV3;
 
 /**
  *
- * @author Olivier Vignaud <ovi@ubiqube.com>
- * @param <P>
+ * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *
  */
 public interface Planner<U> {

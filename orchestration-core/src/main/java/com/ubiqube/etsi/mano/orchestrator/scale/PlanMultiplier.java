@@ -12,7 +12,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 package com.ubiqube.etsi.mano.orchestrator.scale;
 
@@ -152,7 +152,6 @@ public class PlanMultiplier<U> {
 	 * <li>A live instance does not exist and delete is disable => Create Task</li>
 	 * </ul>
 	 *
-	 * @param <U>
 	 * @param sr
 	 * @param converter
 	 * @param liveItems

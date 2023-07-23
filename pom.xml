@@ -10,7 +10,6 @@
 		<relativePath/>
 	</parent>
 	<artifactId>mano-orchestration-aggregator</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>mano-orchestration-aggregator</name>
 	<description>ETSI MANO Orchestration parent.</description>
@@ -18,6 +17,9 @@
 		<module>orchestration-api</module>
 		<module>orchestration-core</module>
 	</modules>
+	<scm>
+		<developerConnection>scm:git:https://github.com/openmsa/etsi-mano-orchestration.git</developerConnection>
+	</scm>
 	<distributionManagement>
 		<snapshotRepository>
 			<id>nexus-snapshots</id>
@@ -28,7 +30,4 @@
 			<url>http://nexus.ubiqube.com/repository/maven-releases/</url>
 		</repository>
 	</distributionManagement>
-	<scm>
-		<developerConnection>scm:git:https://github.com/openmsa/etsi-mano-data-orchestration.git</developerConnection>
-	</scm>
 </project>
