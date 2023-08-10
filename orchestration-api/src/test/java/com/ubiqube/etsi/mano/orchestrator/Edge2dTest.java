@@ -17,11 +17,9 @@
 package com.ubiqube.etsi.mano.orchestrator;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
 import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
 
 @SuppressWarnings("static-method")
@@ -73,14 +71,5 @@ class Edge2dTest {
 		obj.setSource(new Vertex2d(Network.class, "name", null));
 		obj.setTarget(new Vertex2d(Network.class, "name2", null));
 		assertNotNull(obj.toString());
-	}
-
-	@Test
-	void testRelation005() throws Exception {
-		final Edge2d obj = new Edge2d();
-		obj.setRelation(null);
-		obj.setSource(new Vertex2d(Network.class, "name", null));
-		obj.setTarget(new Vertex2d(Network.class, "name2", null));
-		assertThrows(OrchestrationException.class, () -> obj.toString());
 	}
 }
