@@ -17,7 +17,6 @@
 package com.ubiqube.etsi.mano.orchestrator;
 
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
-import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 import jakarta.annotation.Nullable;
 
@@ -28,7 +27,7 @@ import jakarta.annotation.Nullable;
  */
 public interface OrchExecutionListener<U> {
 
-	void onStart(VirtualTaskV3<U> virtualTask);
+	void onStart(UnitOfWorkV3<U> uaow);
 
 	void onTerminate(UnitOfWorkV3<U> uaow, @Nullable String res);
 

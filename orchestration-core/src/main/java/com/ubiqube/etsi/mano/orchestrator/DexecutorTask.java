@@ -63,7 +63,7 @@ public class DexecutorTask<P> extends Task<UnitOfWorkV3<P>, String> {
 		if (uaow instanceof ContextUow) {
 			return null;
 		}
-		listener.onStart(uaow.getTask());
+		listener.onStart(uaow);
 		final Context3d ctx = new SimplifiedContextImpl<>(uaow, context);
 		final String res;
 		try {
