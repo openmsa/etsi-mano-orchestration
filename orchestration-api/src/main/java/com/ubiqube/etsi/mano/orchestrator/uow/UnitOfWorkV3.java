@@ -28,7 +28,7 @@ import jakarta.annotation.Nullable;
  *
  */
 public interface UnitOfWorkV3<U> {
-	VirtualTaskV3<U> getTask();
+	VirtualTaskV3<U> getVirtualTask();
 
 	@Nullable
 	String execute(Context3d context);

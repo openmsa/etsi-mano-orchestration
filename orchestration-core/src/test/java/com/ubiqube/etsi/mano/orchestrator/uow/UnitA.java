@@ -40,7 +40,7 @@ public class UnitA implements UnitOfWorkV3<Object> {
 	}
 
 	@Override
-	public VirtualTaskV3<Object> getTask() {
+	public VirtualTaskV3<Object> getVirtualTask() {
 		return task;
 	}
 

@@ -53,7 +53,7 @@ public class ContextUow<U> implements UnitOfWorkV3<U> {
 	}
 
 	@Override
-	public VirtualTaskV3<U> getTask() {
+	public VirtualTaskV3<U> getVirtualTask() {
 		return vt;
 	}
 

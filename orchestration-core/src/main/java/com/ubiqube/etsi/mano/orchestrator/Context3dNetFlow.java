@@ -119,14 +119,14 @@ public class Context3dNetFlow<U> {
 			tasks = paths.stream()
 					.flatMap(x -> x.getVertexList().stream())
 					.filter(x -> x.getType() == class1)
-					.map(UnitOfWorkV3::getTask)
+					.map(UnitOfWorkV3::getVirtualTask)
 					.collect(Collectors.toSet());
 		} else {
 			tasks = paths.stream()
 					.flatMap(x -> x.getVertexList().stream())
 					.filter(x -> x.getType() == class1)
-					.filter(x -> x.getTask().getToscaName().equals(toscaName))
-					.map(UnitOfWorkV3::getTask)
+					.filter(x -> x.getVirtualTask().getToscaName().equals(toscaName))
+					.map(UnitOfWorkV3::getVirtualTask)
 					.collect(Collectors.toSet());
 		}
 		return tasks.stream().map(VirtualTaskV3::getVimResourceId).toList();
@@ -135,7 +135,7 @@ public class Context3dNetFlow<U> {
 	private Optional<ContextUow<U>> findInCtx(final Class<? extends Node> class1, final String toscaName) {
 		return global.stream()
 				.filter(x -> x.getType() == class1)
-				.filter(x -> x.getTask().getName().equals(toscaName))
+				.filter(x -> x.getVirtualTask().getName().equals(toscaName))
 				.findFirst();
 	}
 
@@ -167,7 +167,7 @@ public class Context3dNetFlow<U> {
 		return paths.stream()
 				.flatMap(x -> x.getVertexList().stream())
 				.filter(x -> x.getType() == class1)
-				.map(UnitOfWorkV3::getTask)
+				.map(UnitOfWorkV3::getVirtualTask)
 				.map(VirtualTaskV3::getVimResourceId)
 				.collect(Collectors.toSet())
 				.stream()

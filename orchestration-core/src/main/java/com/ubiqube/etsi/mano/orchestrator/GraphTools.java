@@ -62,12 +62,12 @@ public class GraphTools {
 	}
 
 	public static <U> void dumpV3(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g) {
-		g.vertexSet().forEach(x -> LOG.debug("v: {} of {}", x.getTask().getAlias(), x.getType().getSimpleName()));
-		g.edgeSet().forEach(x -> LOG.debug("e: {} => {}", x.getSource().getTask().getAlias(), x.getTarget().getTask().getAlias()));
+		g.vertexSet().forEach(x -> LOG.debug("v: {} of {}", x.getVirtualTask().getAlias(), x.getType().getSimpleName()));
+		g.edgeSet().forEach(x -> LOG.debug("e: {} => {}", x.getSource().getVirtualTask().getAlias(), x.getTarget().getVirtualTask().getAlias()));
 	}
 
 	public static String toDotName(final UnitOfWorkV3<?> task) {
-		final String base = task.getType().getSimpleName() + "_" + task.getTask().getName() + "_" + String.format("%04d", task.getTask().getRank());
+		final String base = task.getType().getSimpleName() + "_" + task.getVirtualTask().getName() + "_" + String.format("%04d", task.getVirtualTask().getRank());
 		return cleanup(base);
 	}
 
