@@ -18,6 +18,7 @@ package com.ubiqube.etsi.mano.orchestrator;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.jgrapht.ListenableGraph;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,8 @@ import com.github.dexecutor.core.task.TaskProvider;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
+import io.micrometer.context.ContextExecutorService;
+
 /**
  *
  * @author olivier
@@ -40,7 +43,8 @@ public class ManoDexcutorService<U> implements ManoExecutor<U> {
 
 	@Override
 	public ExecutionResults<UnitOfWorkV3<U>, String> execute(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g, final TaskProvider<UnitOfWorkV3<U>, String> uowTaskProvider) {
-		final ExecutorService executorService = Executors.newFixedThreadPool(10);
+		final ThreadPoolExecutor tpe = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
+		final ExecutorService executorService = ContextExecutorService.wrap(tpe);
 		final DexecutorConfig<UnitOfWorkV3<U>, String> config = new DexecutorConfig<>(executorService, uowTaskProvider);
 		// What about config setExecutionListener.
 		final DefaultDexecutor<UnitOfWorkV3<U>, String> executor = new DefaultDexecutor<>(config);
