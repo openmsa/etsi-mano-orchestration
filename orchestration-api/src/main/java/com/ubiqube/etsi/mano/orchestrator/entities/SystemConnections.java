@@ -19,8 +19,6 @@ package com.ubiqube.etsi.mano.orchestrator.entities;
 import java.util.Map;
 import java.util.UUID;
 
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
-
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -44,10 +42,8 @@ public class SystemConnections {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID id;
 
-	@FullTextField
 	private String vimId;
 
-	@FullTextField
 	private String vimType;
 
 	private String moduleName;
