@@ -24,11 +24,25 @@ import java.util.List;
  *
  */
 public interface OrchExecutionResults<U> {
-
+	/**
+	 * Get all success results.
+	 *
+	 * @return A list of success results.
+	 */
 	List<OrchExecutionResult<U>> getSuccess();
 
+	/**
+	 * Get all error results.
+	 *
+	 * @return A list of all failed results.
+	 */
 	List<OrchExecutionResult<U>> getErrored();
 
-	void addAll(OrchExecutionResults<U> convertResults);
+	/**
+	 * Add all results.
+	 *
+	 * @param results An execution results object {@link OrchExecutionResults}.
+	 */
+	void addAll(OrchExecutionResults<U> results);
 
 }

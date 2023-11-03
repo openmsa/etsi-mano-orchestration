@@ -34,7 +34,16 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
  *
  */
 public interface BlueprintBuilder {
-
+	/**
+	 *
+	 * @param <U>
+	 * @param scaleResources
+	 * @param g
+	 * @param converter
+	 * @param liveItems
+	 * @param masterVertex
+	 * @return A pre execution plan.
+	 */
 	<U> PreExecutionGraphV3<U> buildPlan(final List<SclableResources<U>> scaleResources, final ListenableGraph<Vertex2d, Edge2d> g,
 			Function<U, VirtualTaskV3<U>> converter, List<ContextHolder> liveItems, List<Class<? extends Node>> masterVertex);
 

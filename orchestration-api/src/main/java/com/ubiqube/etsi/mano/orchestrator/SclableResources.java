@@ -23,18 +23,36 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
+ * A SclableResources represent a Single resource that could scale vertically,
+ * for example a Compute resource. This class is responsive for handling number
+ * of vertical instances and its parameters.
  *
- * @author olivier
+ * @author Olivier Vignaud
  *
  */
 @AllArgsConstructor
 @Getter
 @Setter
 public class SclableResources<U> {
+	/**
+	 * Node type. Must inherit {@link Node}
+	 */
 	private Class<? extends Node> type;
+	/**
+	 * Name of the resource.
+	 */
 	private String name;
+	/**
+	 * Number of already present resources.
+	 */
 	private int have;
+	/**
+	 * Targeted number of ressources.
+	 */
 	private int want;
+	/**
+	 * Parameter to create new resourcces.
+	 */
 	private U templateParameter;
 
 	public static <U> SclableResources<U> of(final Class<? extends Node> type, final String name, final int have, final int want, final U param) {
