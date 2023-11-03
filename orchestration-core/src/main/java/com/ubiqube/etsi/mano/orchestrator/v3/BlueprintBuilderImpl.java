@@ -40,7 +40,7 @@ import jakarta.annotation.Nonnull;
 
 /**
  *
- * @author olivier
+ * @author Olivier Vignaud
  *
  */
 @Service
@@ -70,6 +70,14 @@ public class BlueprintBuilderImpl implements BlueprintBuilder {
 		return new PreExecutionGraphV3Impl<>(ret);
 	}
 
+	/**
+	 * Extract tasks to do.
+	 *
+	 * @param <U>
+	 * @param inNode         Node type to filter.
+	 * @param scaleResources List of scale resources.
+	 * @return A list of resources. or an empty list.
+	 */
 	private static <U> List<SclableResources<U>> toThingsToDo(final Class<? extends Node> inNode, final List<SclableResources<U>> scaleResources) {
 		return scaleResources.stream()
 				.filter(x -> x.getType() == inNode)

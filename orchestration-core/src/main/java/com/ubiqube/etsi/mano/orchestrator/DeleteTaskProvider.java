@@ -24,6 +24,7 @@ import com.github.dexecutor.core.task.TaskProvider;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 /**
+ * An implementation for task delete.
  *
  * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *

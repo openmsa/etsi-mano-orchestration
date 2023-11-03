@@ -24,12 +24,19 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 /**
+ * Interface for executor service.
  *
- * @author olivier
+ * @author Olivier Vignaud
  *
  */
 public interface ManoExecutor<U> {
-
+	/**
+	 * Esecute the service.
+	 *
+	 * @param g               The graph representing the execution flow.
+	 * @param uowTaskProvider A task provider.
+	 * @return An execution results object {@linkplain ExecutionResults}.
+	 */
 	ExecutionResults<UnitOfWorkV3<U>, String> execute(ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g, TaskProvider<UnitOfWorkV3<U>, String> uowTaskProvider);
 
 }

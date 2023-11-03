@@ -47,7 +47,7 @@ import jakarta.annotation.Nullable;
 
 /**
  *
- * @author olivier
+ * @author Olivier Vignaud
  *
  */
 public class PlanMultiplier<U> {
@@ -66,6 +66,13 @@ public class PlanMultiplier<U> {
 		this.liveItems = liveItems;
 	}
 
+	/**
+	 * Take a plan as input and multiply it by the given {@link SclableResources}.
+	 *
+	 * @param plan A 2D plan of the connected resources.
+	 * @param sr   A SclableResources.
+	 * @return The new graph.
+	 */
 	public ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> multiply(final ListenableGraph<Vertex2d, Edge2d> plan, final SclableResources<U> sr) {
 		final Set<ContextHolder> cache = new HashSet<>();
 		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
@@ -110,12 +117,29 @@ public class PlanMultiplier<U> {
 				.noneMatch(x -> x.getName().equals(v.getName()));
 	}
 
+	/**
+	 * Match a given vertex2d in live instances.
+	 *
+	 * @param v         The given vertex2d to match among live instances.
+	 * @param liveItems A list of live instances.
+	 * @return True or false.
+	 */
 	private static boolean match(final Vertex2d v, final List<ContextHolder> liveItems) {
 		return liveItems.stream()
 				.filter(x -> x.getType() == v.getType())
 				.anyMatch(x -> x.getName().equals(v.getName()));
 	}
 
+	/**
+	 *
+	 * @param d
+	 * @param delete
+	 * @param ii
+	 * @param x
+	 * @param uniqIdDst
+	 * @param cache
+	 * @return
+	 */
 	private VirtualTaskV3<U> createVertex(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d,
 			final boolean delete, final int ii, final Vertex2d x, final String uniqIdDst, final Set<ContextHolder> cache) {
 		final SclableResources<U> templSr = findTemplate(scaleResources, x);
@@ -125,6 +149,15 @@ public class PlanMultiplier<U> {
 		return t;
 	}
 
+	/**
+	 * Find the corresponding scale resource for a given Vertex2D.
+	 *
+	 * @param <U>
+	 * @param plan   The plan.
+	 * @param target The desired vertex2D.
+	 * @return A ScalableResources matching the Vertext2d. Throw an exception if not
+	 *         found.
+	 */
 	private static <U> SclableResources<U> findTemplate(final List<SclableResources<U>> plan, final Vertex2d target) {
 		final List<SclableResources<U>> l = plan.stream()
 				.filter(x -> x.getType() == target.getType())
@@ -192,6 +225,20 @@ public class PlanMultiplier<U> {
 		return t;
 	}
 
+	/**
+	 * Create a Virtual task from a resourceId.
+	 *
+	 * @param <U>
+	 * @param uniqIdSrc
+	 * @param source
+	 * @param i
+	 * @param delete
+	 * @param u
+	 * @param resourceId
+	 * @param class1
+	 * @param vimConnectionId
+	 * @return A {@link ContextVt} instance
+	 */
 	@SuppressWarnings("unchecked")
 	private static <U> VirtualTaskV3<U> createContext(final String uniqIdSrc, final Vertex2d source, final int i, final boolean delete,
 			final U u, @Nullable final String resourceId, final Class<? extends Node> class1, @Nullable final String vimConnectionId) {
@@ -207,6 +254,15 @@ public class PlanMultiplier<U> {
 				.build();
 	}
 
+	/**
+	 * Find resource (Vertex2d) in a list of live items, using rank.
+	 *
+	 * @param liveItems Live items.
+	 * @param source    The vertex to search.
+	 * @param i         The rank.
+	 * @return An optional {@link ContextHolder}, Throw an exception if multiple
+	 *         match.
+	 */
 	private static Optional<ContextHolder> findInContext(final List<ContextHolder> liveItems, final Vertex2d source, final int i) {
 		final List<ContextHolder> lst = liveItems.stream()
 				.filter(x -> x.getType() == source.getType())
@@ -219,6 +275,13 @@ public class PlanMultiplier<U> {
 		return Optional.ofNullable(lst).filter(x -> !lst.isEmpty()).map(x -> x.get(0));
 	}
 
+	/**
+	 * Create an unique id using vertex name and rank.
+	 *
+	 * @param source The vertex.
+	 * @param i      The rank.
+	 * @return The unique name.
+	 */
 	private static String getUniqId(final Vertex2d source, final int i) {
 		final StringBuilder sb = new StringBuilder(source.getName());
 		if (null != source.getParent()) {
@@ -229,6 +292,16 @@ public class PlanMultiplier<U> {
 		return sb.toString();
 	}
 
+	/**
+	 * Create a task from a given vertex.
+	 *
+	 * @param uniqId The task id.
+	 * @param source The source vertex.
+	 * @param i      The rank.
+	 * @param delete True if vertex have to be deleted.
+	 * @param params Parameters for vertex creation.
+	 * @return The newly created task.
+	 */
 	private VirtualTaskV3<U> createTask(final String uniqId, final Vertex2d source, final int i, final boolean delete, final U params) {
 		final VirtualTaskV3<U> vt = converter.apply(params);
 		vt.setRank(i);

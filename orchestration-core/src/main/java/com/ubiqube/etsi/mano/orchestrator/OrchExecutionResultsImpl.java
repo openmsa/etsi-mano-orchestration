@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Implementation of an execution result.
  *
  * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *

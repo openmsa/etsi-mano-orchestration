@@ -34,8 +34,9 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import io.micrometer.context.ContextExecutorService;
 
 /**
+ * Executor Service using Dexecutor library.
  *
- * @author olivier
+ * @author Olivier Vignaud
  *
  */
 @Service
