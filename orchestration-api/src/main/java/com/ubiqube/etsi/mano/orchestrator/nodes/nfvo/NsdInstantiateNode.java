@@ -23,6 +23,6 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
  * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *
  */
-public class NsdInstantiateNode implements Node {
+public interface NsdInstantiateNode extends Node {
 	// Nothing.
 }

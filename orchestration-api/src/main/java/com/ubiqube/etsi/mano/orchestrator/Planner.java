@@ -24,9 +24,22 @@ import com.ubiqube.etsi.mano.orchestrator.v3.PreExecutionGraphV3;
  *
  */
 public interface Planner<U> {
-
+	/**
+	 * Take a virtual execution plan, and replace vertexes with the final
+	 * implementation one.
+	 *
+	 * @param plan The virtual plan.
+	 * @return A ready to use execution graph.
+	 */
 	ExecutionGraph implement(PreExecutionGraphV3<U> plan);
 
+	/**
+	 * Execute the given graph.
+	 *
+	 * @param imp      The implementation graph.
+	 * @param listener An orchestration listener.
+	 * @return The results.
+	 */
 	OrchExecutionResults<U> execute(ExecutionGraph imp, final OrchExecutionListener<U> listener);
 
 }

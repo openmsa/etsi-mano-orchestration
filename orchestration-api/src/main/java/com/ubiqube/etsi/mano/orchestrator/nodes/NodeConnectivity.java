@@ -17,6 +17,7 @@
 package com.ubiqube.etsi.mano.orchestrator.nodes;
 
 /**
+ * Specialized class to create an edge between 2 node classes.
  *
  * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *

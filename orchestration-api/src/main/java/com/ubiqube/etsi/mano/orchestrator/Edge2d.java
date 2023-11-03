@@ -23,17 +23,27 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
+ * The representation of an edge between 2 vertex.
  *
- * @author olivier
+ * @author Olivier Vignaud
  *
  */
 @Getter
 @Setter
 public class Edge2d {
+	/**
+	 * Source vertex.
+	 */
 	@Nonnull
 	private Vertex2d source;
+	/**
+	 * Target vertex.
+	 */
 	@Nonnull
 	private Vertex2d target;
+	/**
+	 * Relation between the 2 vertex.
+	 */
 	@Nonnull
 	private Relation relation;
 

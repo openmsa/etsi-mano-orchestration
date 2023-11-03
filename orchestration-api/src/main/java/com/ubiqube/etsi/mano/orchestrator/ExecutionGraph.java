@@ -19,7 +19,8 @@ package com.ubiqube.etsi.mano.orchestrator;
 import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
 
 /**
- * An opaque type.
+ * An opaque type representing the execution graph. Can be enhanced if more use
+ * cases appears.
  *
  * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *

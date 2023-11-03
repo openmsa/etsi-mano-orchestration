@@ -17,8 +17,9 @@
 package com.ubiqube.etsi.mano.orchestrator;
 
 /**
+ * Represent the relation between two vertexes.
  *
- * @author olivier
+ * @author Olivier Vignaud
  *
  */
 public enum Relation {

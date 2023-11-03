@@ -20,6 +20,11 @@ import java.util.Objects;
 
 import jakarta.annotation.Nonnull;
 
+/**
+ * Represent an edge between 2 vertexes.
+ *
+ * @param <U>
+ */
 public class ConnectivityEdge<U> {
 	@Nonnull
 	private U source;

@@ -20,6 +20,12 @@ import com.ubiqube.etsi.mano.orchestrator.Relation;
 
 import jakarta.annotation.Nonnull;
 
+/**
+ * An edge specialized in Virtual tasks.
+ *
+ * @author Olivier Vignaud
+ * @param <U> Task parameters.
+ */
 public class VirtualTaskConnectivityV3<U> {
 	@Nonnull
 	private VirtualTaskV3<U> source;

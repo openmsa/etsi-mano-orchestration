@@ -23,6 +23,6 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
  * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *
  */
-public class MepDnsRulesNode implements Node {
+public interface MepDnsRulesNode extends Node {
 	// Nothing.
 }

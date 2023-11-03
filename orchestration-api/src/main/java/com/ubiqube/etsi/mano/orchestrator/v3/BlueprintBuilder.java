@@ -29,14 +29,16 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 /**
+ * Create a plan of virtual tasks.
  *
- * @author olivier
+ * @author Olivier Vignaud
  *
  */
 public interface BlueprintBuilder {
 	/**
+	 * Build a plan of virtual tasks.
 	 *
-	 * @param <U>
+	 * @param <U>            The task parameters.
 	 * @param scaleResources
 	 * @param g
 	 * @param converter

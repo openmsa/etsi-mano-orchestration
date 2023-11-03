@@ -23,21 +23,49 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 import jakarta.annotation.Nullable;
 
 /**
+ * A unit of work, is like a workflow task.
  *
- * @author olivier
+ * @author Olivier Vignaud
  *
  */
 public interface UnitOfWorkV3<U> {
+	/**
+	 * Return the associated virtual task.
+	 *
+	 * @return The associated virtual task.
+	 */
 	VirtualTaskV3<U> getVirtualTask();
 
+	/**
+	 * Execute the task.
+	 *
+	 * @param context The workflow context.
+	 * @return The allocated resource.
+	 */
 	@Nullable
 	String execute(Context3d context);
 
+	/**
+	 * Rollback/delete the resource.
+	 *
+	 * @param context The workflow context.
+	 * @return Probably nothing.
+	 */
 	@Nullable
 	String rollback(Context3d context);
 
+	/**
+	 * The type of the Unit of work
+	 *
+	 * @return A Node derived class.
+	 */
 	Class<? extends Node> getType();
 
+	/**
+	 * Set the resource id.
+	 *
+	 * @param res The resource Id.
+	 */
 	void setResource(String res);
 
 }

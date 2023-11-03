@@ -18,6 +18,6 @@ package com.ubiqube.etsi.mano.orchestrator.nodes.vnfm;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
-public class Storage implements Node {
+public interface Storage extends Node {
 	// Nothing.
 }

@@ -19,7 +19,10 @@ package com.ubiqube.etsi.mano.orchestrator;
 import java.util.List;
 
 /**
+ * Hold a collection of execution results.
  *
+ * @param <U> The task parameters, this one is unique per task type (Network,
+ *            compute, ...)
  * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *
  */

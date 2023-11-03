@@ -23,16 +23,33 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import jakarta.annotation.Nullable;
 
 /**
+ * Helper class for building Systems.
  *
  * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *
  */
 public interface SystemBuilder<U> {
+	/**
+	 * Return a single vertex.
+	 *
+	 * @return Return a single Vertex.
+	 */
 	@Nullable
 	UnitOfWorkV3<U> getSingle();
 
+	/**
+	 * Add 2 vertex, and link them in the current system.
+	 *
+	 * @param src  Source vertex.
+	 * @param dest Target vertex.
+	 */
 	void add(UnitOfWorkV3<U> src, UnitOfWorkV3<U> dest);
 
+	/**
+	 * Return all system vertexes.
+	 *
+	 * @return A list of vertex.
+	 */
 	List<UnitOfWorkV3<U>> getVertexV3();
 
 }

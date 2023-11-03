@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
 
 class SclableResourcesTest {
@@ -29,6 +30,12 @@ class SclableResourcesTest {
 	void testContructor() throws Exception {
 		final SclableResources<Object> obj = new SclableResources<>(Network.class, "name", 0, 1, getClass());
 		assertNotNull(obj.toString());
+		obj.setHave(0);
+		obj.setName("name");
+		obj.setTemplateParameter(obj);
+		obj.setType(Node.class);
+		obj.setWant(1);
+
 	}
 
 	@Test

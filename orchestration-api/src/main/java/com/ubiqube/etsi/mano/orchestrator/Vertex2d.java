@@ -24,8 +24,9 @@ import jakarta.annotation.Nullable;
 import lombok.Getter;
 
 /**
+ * Represent a virtual vertex.
  *
- * @author olivier
+ * @author Olivier Vignaud
  *
  */
 @Getter

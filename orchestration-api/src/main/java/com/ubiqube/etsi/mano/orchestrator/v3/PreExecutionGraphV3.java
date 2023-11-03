@@ -21,14 +21,24 @@ import java.util.List;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 /**
+ * Hold a virtual execution graph.
  *
- * @author olivier
+ * @author Olivier Vignaud
  *
  */
 public interface PreExecutionGraphV3<U> {
-
+	/**
+	 * Return all virtual tasks.
+	 *
+	 * @return A list of all virtual tasks contains in the plan.
+	 */
 	List<VirtualTaskV3<U>> getPreTasks();
 
+	/**
+	 * Write a dot file.
+	 *
+	 * @param filename The path to write the file.
+	 */
 	void toDotFile(String filename);
 
 }

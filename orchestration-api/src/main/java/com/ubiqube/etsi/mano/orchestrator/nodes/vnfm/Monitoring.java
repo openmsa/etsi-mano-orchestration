@@ -18,6 +18,6 @@ package com.ubiqube.etsi.mano.orchestrator.nodes.vnfm;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
-public class Monitoring implements Node {
+public interface Monitoring extends Node {
 	// Nothing.
 }

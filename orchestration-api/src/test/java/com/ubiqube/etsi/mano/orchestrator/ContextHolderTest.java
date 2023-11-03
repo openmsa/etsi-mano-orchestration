@@ -42,6 +42,7 @@ class ContextHolderTest {
 		ch.setResourceId("");
 		ch.setType(Network.class);
 		ch.setVimConnectionId("");
+		ch.getRank();
 	}
 
 	@Test

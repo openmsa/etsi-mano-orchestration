@@ -17,6 +17,9 @@
 package com.ubiqube.etsi.mano.orchestrator;
 
 /**
+ * A bundle is an abstract package descriptor. Where all settings rely.
+ * <p>
+ * The orchestration doesn't need to understand the underlying package.
  *
  * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *

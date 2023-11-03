@@ -21,15 +21,32 @@ import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import jakarta.annotation.Nullable;
 
 /**
+ * Execution callback, called every start/stop/error of tasks.
  *
  * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *
  */
 public interface OrchExecutionListener<U> {
-
+	/**
+	 * Called before task start.
+	 *
+	 * @param uaow A Unit of work.
+	 */
 	void onStart(UnitOfWorkV3<U> uaow);
 
+	/**
+	 * Called after successful task termination.
+	 *
+	 * @param uaow The unit of works.
+	 * @param res  Result of the task, mainly the allocated resource.
+	 */
 	void onTerminate(UnitOfWorkV3<U> uaow, @Nullable String res);
 
+	/**
+	 * Called if task failed.
+	 *
+	 * @param uaow The unit of work.
+	 * @param e    The exception thrown by the task.
+	 */
 	void onError(UnitOfWorkV3<U> uaow, RuntimeException e);
 }

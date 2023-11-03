@@ -18,6 +18,6 @@ package com.ubiqube.etsi.mano.orchestrator.nodes.nfvo;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
-public class SapNode implements Node {
+public interface SapNode extends Node {
 	// Nothing.
 }

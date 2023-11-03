@@ -16,6 +16,9 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.nodes;
 
+/**
+ * Represent a task type.
+ */
 public interface Node {
 	// Nothing.
 }

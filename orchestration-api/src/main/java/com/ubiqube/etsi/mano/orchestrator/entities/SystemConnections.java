@@ -29,6 +29,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
+ * Describe a connection to VIM system.
+ * <P>
+ * <b>WARNING</b>: This is not a full vim, it can represent just the access to
+ * an openstack for the neutron part.
  *
  * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *

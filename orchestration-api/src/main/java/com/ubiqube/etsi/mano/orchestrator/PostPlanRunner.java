@@ -22,14 +22,25 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 /**
+ * Called after plan runner task, this is mainly for debugging dumping the
+ * graph.
  *
- * @author olivier
+ * @author Olivier Vignaud
  *
  */
 public interface PostPlanRunner<U> {
-
+	/**
+	 * Called After the graph creation.
+	 *
+	 * @param createImplementation The graph.
+	 */
 	void runCreatePost(ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> createImplementation);
 
+	/**
+	 * Called after a delete action.
+	 *
+	 * @param deleteImplementation The delete graph.
+	 */
 	void runDeletePost(ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> deleteImplementation);
 
 }

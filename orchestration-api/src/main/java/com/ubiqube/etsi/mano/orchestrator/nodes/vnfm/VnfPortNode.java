@@ -24,6 +24,6 @@ package com.ubiqube.etsi.mano.orchestrator.nodes.vnfm;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
-public class VnfPortNode implements Node {
+public interface VnfPortNode extends Node {
 	// Nothing.
 }

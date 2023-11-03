@@ -19,12 +19,13 @@ package com.ubiqube.etsi.mano.orchestrator;
 import java.util.List;
 
 /**
+ * Template extractor extract task from a bundle (Package).
  *
  * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *
  * @param <U> Task parameters.
- * @param <B>
- * @param <P> BluePring class.
+ * @param <B> Bundle class.
+ * @param <P> BluePrint class or workflow parameters.
  */
 
 public interface TemplateExtractorV3<U, P, B> {

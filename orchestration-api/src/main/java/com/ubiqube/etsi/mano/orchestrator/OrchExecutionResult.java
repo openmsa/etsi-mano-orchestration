@@ -19,15 +19,32 @@ package com.ubiqube.etsi.mano.orchestrator;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
 /**
+ * The representation of one execution result.
  *
+ * @param <U> The task parameters, this one is unique per task type (Network,
+ *            compute, ...)
  * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *
  */
 public interface OrchExecutionResult<U> {
-
+	/**
+	 * Return the task f the workflow.
+	 *
+	 * @return The associated task parameters
+	 */
 	UnitOfWorkV3<U> getTask();
 
+	/**
+	 * Return the execution result of the task.
+	 *
+	 * @return The result of the task. Cannot be null.
+	 */
 	ResultType getResult();
 
+	/**
+	 * The message ?
+	 *
+	 * @return A String containing the message.
+	 */
 	String getMessage();
 }

@@ -26,8 +26,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
+ * Hold a context element.
  *
- * @author olivier
+ * @author Olivier Vignaud
  *
  */
 @Getter
@@ -40,14 +41,29 @@ public class ContextHolder {
 	 */
 	private UUID liveInstanceId;
 
+	/**
+	 * Node type.
+	 */
 	private Class<? extends Node> type;
 
+	/**
+	 * Element name.
+	 */
 	private String name;
 
+	/**
+	 * Rank of the element, maybe a dimension.
+	 */
 	private int rank;
 
+	/**
+	 * The resource id in the vim.
+	 */
 	private String resourceId;
 
+	/**
+	 * The vim associated with the resourceId.
+	 */
 	private String vimConnectionId;
 
 }

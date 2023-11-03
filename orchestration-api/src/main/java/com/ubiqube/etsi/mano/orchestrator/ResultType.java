@@ -16,6 +16,11 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
+/**
+ * The result type.
+ *
+ * @author Olivier Vignaud
+ */
 public enum ResultType {
 	NOT_STARTED,
 	SUCCESS,

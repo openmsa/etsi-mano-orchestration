@@ -18,6 +18,6 @@ package com.ubiqube.etsi.mano.orchestrator.nodes.vnfm;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
-public class DnsZone implements Node {
+public interface DnsZone extends Node {
 	// Nothing.
 }

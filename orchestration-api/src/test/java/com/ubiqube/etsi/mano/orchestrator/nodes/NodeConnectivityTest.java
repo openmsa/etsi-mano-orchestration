@@ -12,25 +12,24 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see https://www.gnu.org/licenses/.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.ubiqube.etsi.mano.orchestrator;
+package com.ubiqube.etsi.mano.orchestrator.nodes;
 
-import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-/**
- * Convert a UnitOfWork to a system builder. This is the difference between
- * virtual tasks and there implementations.
- *
- * @author Olivier Vignaud
- * @param <U>
- */
-public interface OrchestrationServiceV3<U> {
+import org.junit.jupiter.api.Test;
 
-	SystemBuilder<UnitOfWorkV3<U>> systemBuilderOf(UnitOfWorkV3<U> uow);
+import com.ubiqube.etsi.mano.orchestrator.nodes.nfvo.SapNode;
 
-	SystemBuilder<UnitOfWorkV3<U>> systemBuilderOf(final UnitOfWorkV3<U> left, final UnitOfWorkV3<U> right);
+class NodeConnectivityTest {
 
-	SystemBuilder<UnitOfWorkV3<U>> createEmptySystemBuilder();
+	@Test
+	void test() {
+		final Class<? extends Node> n1 = SapNode.class;
+		final Class<? extends Node> n2 = SapNode.class;
+		final NodeConnectivity srv = new NodeConnectivity(n1, n2);
+		assertNotNull(srv);
+	}
 
 }

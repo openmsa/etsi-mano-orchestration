@@ -55,6 +55,17 @@ public class SclableResources<U> {
 	 */
 	private U templateParameter;
 
+	/**
+	 * Simple function for construction of a ScalableResources
+	 *
+	 * @param <U>   The parameters.
+	 * @param type  The type of the class.
+	 * @param name  The name of the element.
+	 * @param have  Number of entities already present.
+	 * @param want  Number of element wanted at the end of the graph execution.
+	 * @param param Task parameters.
+	 * @return A Scalable resource.
+	 */
 	public static <U> SclableResources<U> of(final Class<? extends Node> type, final String name, final int have, final int want, final U param) {
 		return new SclableResources<>(type, name, have, want, param);
 	}

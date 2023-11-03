@@ -23,6 +23,6 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
  * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *
  */
-public class MepTrafficRulesNode implements Node {
+public interface MepTrafficRulesNode extends Node {
 	// Nothing.
 }
