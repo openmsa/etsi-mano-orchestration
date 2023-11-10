@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.ubiqube.mano</groupId>
 		<artifactId>mano-orchestration-aggregator</artifactId>
-		<version>3.2.1-SNAPSHOT</version>
+		<version>3.2.1</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>orchestration-api</artifactId>
