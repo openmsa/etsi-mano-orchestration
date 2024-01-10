@@ -21,11 +21,15 @@ import java.util.List;
 
 import org.jgrapht.ListenableGraph;
 
+import com.ubiqube.etsi.mano.orchestrator.dump.Connection;
+import com.ubiqube.etsi.mano.orchestrator.dump.ExecutionResult;
+import com.ubiqube.etsi.mano.orchestrator.dump.Vertex;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
 import com.ubiqube.etsi.mano.orchestrator.scale.ContextVt;
 import com.ubiqube.etsi.mano.orchestrator.uow.ContextUow;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 import jakarta.annotation.Nonnull;
 
@@ -58,4 +62,36 @@ public class ExecutionGraphImplV3<U> implements ExecutionGraph {
 		return global;
 	}
 
+	@Override
+	public ExecutionResult dump() {
+		final List<Vertex> vertex = g.vertexSet().stream().map(this::map).toList();
+		final List<Connection> links = g.edgeSet().stream().map(this::map).toList();
+		return new ExecutionResult(vertex, links);
+	}
+
+	private Vertex map(final UnitOfWorkV3<U> v) {
+		final VirtualTaskV3<U> vt = v.getVirtualTask();
+		return Vertex.builder()
+				.alias(vt.getAlias())
+				.name(vt.getName())
+				.rank(vt.getRank())
+				.status(statusConvert(vt))
+				.type(vt.getType().getSimpleName())
+				.vimConnectionId(vt.getVimConnectionId())
+				.vimResourceId(vt.getVimResourceId())
+				.build();
+	}
+
+	private String statusConvert(final VirtualTaskV3<U> vt) {
+		if (vt.getVimResourceId() != null) {
+			return "SUCCESS";
+		}
+		return "FAILED";
+	}
+
+	private Connection map(final ConnectivityEdge<UnitOfWorkV3<U>> conn) {
+		final String source = conn.getSource().getVirtualTask().getName();
+		final String target = conn.getTarget().getVirtualTask().getName();
+		return new Connection(source, target);
+	}
 }
