@@ -24,6 +24,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class Vertex {
+	private String id;
 	private String name;
 	private String vimConnectionId;
 	private String vimResourceId;

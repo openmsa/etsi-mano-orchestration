@@ -16,6 +16,9 @@
  */
 package com.ubiqube.etsi.mano.orchestrator;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +27,9 @@ import org.jgrapht.ListenableGraph;
 import com.ubiqube.etsi.mano.orchestrator.dump.Connection;
 import com.ubiqube.etsi.mano.orchestrator.dump.ExecutionResult;
 import com.ubiqube.etsi.mano.orchestrator.dump.Vertex;
+import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
+import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
 import com.ubiqube.etsi.mano.orchestrator.scale.ContextVt;
 import com.ubiqube.etsi.mano.orchestrator.uow.ContextUow;
@@ -72,6 +77,7 @@ public class ExecutionGraphImplV3<U> implements ExecutionGraph {
 	private Vertex map(final UnitOfWorkV3<U> v) {
 		final VirtualTaskV3<U> vt = v.getVirtualTask();
 		return Vertex.builder()
+				.id(makeKey(vt.getName(), vt.getRank(), vt.getType()))
 				.alias(vt.getAlias())
 				.name(vt.getName())
 				.rank(vt.getRank())
@@ -82,6 +88,17 @@ public class ExecutionGraphImplV3<U> implements ExecutionGraph {
 				.build();
 	}
 
+	private static String makeKey(final String name, final int rank, final Class<? extends Node> type) {
+		final String tmp = "%s-%04d-%s".formatted(name, rank, type.getSimpleName());
+		try {
+			final MessageDigest md = MessageDigest.getInstance("MD5");
+			md.update(tmp.getBytes());
+			return String.format("%032x", new BigInteger(1, md.digest()));
+		} catch (final NoSuchAlgorithmException e) {
+			throw new OrchestrationException(e);
+		}
+	}
+
 	private String statusConvert(final VirtualTaskV3<U> vt) {
 		if (vt.getVimResourceId() != null) {
 			return "SUCCESS";
@@ -90,8 +107,8 @@ public class ExecutionGraphImplV3<U> implements ExecutionGraph {
 	}
 
 	private Connection map(final ConnectivityEdge<UnitOfWorkV3<U>> conn) {
-		final String source = conn.getSource().getVirtualTask().getName();
-		final String target = conn.getTarget().getVirtualTask().getName();
-		return new Connection(source, target);
+		final VirtualTaskV3<U> src = conn.getSource().getVirtualTask();
+		final VirtualTaskV3<U> tgt = conn.getTarget().getVirtualTask();
+		return new Connection(makeKey(src.getName(), src.getRank(), src.getType()), makeKey(tgt.getName(), tgt.getRank(), tgt.getType()));
 	}
 }

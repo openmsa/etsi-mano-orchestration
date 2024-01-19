@@ -29,4 +29,8 @@ public class OrchestrationException extends RuntimeException {
 		super(message);
 	}
 
+	public OrchestrationException(final Throwable e) {
+		super(e);
+	}
+
 }
