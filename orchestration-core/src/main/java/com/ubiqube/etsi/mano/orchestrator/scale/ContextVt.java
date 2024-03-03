@@ -21,6 +21,7 @@ import java.util.UUID;
 import com.ubiqube.etsi.mano.orchestrator.ResultType;
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
+import com.ubiqube.etsi.mano.orchestrator.v4.api.Selector;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 import jakarta.annotation.Nonnull;
@@ -45,12 +46,6 @@ import lombok.Setter;
 public class ContextVt<U> implements VirtualTaskV3<U> {
 
 	private String vimConnectionId;
-	@Nonnull
-	private String name;
-
-	private String alias;
-
-	private int rank;
 
 	private U templateParameters;
 
@@ -59,16 +54,15 @@ public class ContextVt<U> implements VirtualTaskV3<U> {
 	@Nullable
 	private String vimResourceId;
 
-	private Class<? extends Node> parent;
-
 	private SystemBuilder<U> systemBuilder;
 
 	private UUID removedLiveInstanceId;
+	@Nonnull
+	private Selector selector;
 
-	public ContextVt(Class<? extends Node> clazz, String name,@Nullable String vimResourceId) {
-		this.parent = clazz;
-		this.name = name;
+	public ContextVt(final Selector selector,@Nullable final String vimResourceId) {
 		this.vimResourceId = vimResourceId;
+		this.selector = selector;
 	}
 	@Override
 	public boolean isDeleteTask() {
@@ -76,26 +70,16 @@ public class ContextVt<U> implements VirtualTaskV3<U> {
 	}
 
 	@Override
-	public @Nullable Class<? extends Node> getType() {
-		return parent;
-	}
-
-	@Override
-	public void setRemovedLiveInstanceId(UUID liveInstanceId) {
+	public void setRemovedLiveInstanceId(final UUID liveInstanceId) {
 		removedLiveInstanceId = liveInstanceId;
 	}
 
 	@Override
-	public String getToscaName() {
-		return name;
-	}
-
-	@Override
-	public @Nullable String toString() {
-		return alias;
-	}
-	@Override
 	public ResultType getStatus() {
 		return ResultType.NOT_STARTED;
+	}
+	@Override
+	public Selector getSelector() {
+		return selector;
 	}
 }

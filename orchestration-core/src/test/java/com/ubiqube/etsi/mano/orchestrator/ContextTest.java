@@ -45,14 +45,14 @@ class ContextTest {
 	@Test
 	void testName() throws Exception {
 		final List<ContextUow<?>> global = new ArrayList<>();
-		global.add(new ContextUow<>(new ContextVt<>(BNode.class, "global", "grid")));
+		global.add(new ContextUow<>(new ContextVt<>(ManoSelector.of(BNode.class, "global"), "grid")));
 		final ListenableGraph<UnitOfWorkV3<Object>, ConnectivityEdge<UnitOfWorkV3<Object>>> g = new DefaultListenableGraph(new DirectedAcyclicGraph<>(ConnectivityEdge.class));
 		g.addGraphListener(new UnitOfWorkVertexListenerV3<>());
-		final UnitA ua = new UnitA("test", ANode.class);
+		final UnitA ua = new UnitA(ManoSelector.of(ANode.class, "test"));
 		g.addVertex(ua);
-		final UnitB ub = new UnitB("test", BNode.class);
+		final UnitB ub = new UnitB(ManoSelector.of(BNode.class, "test"));
 		g.addVertex(ub);
-		final UnitC uc = new UnitC("test", CNode.class);
+		final UnitC uc = new UnitC(ManoSelector.of(CNode.class, "test"));
 		g.addVertex(uc);
 		g.addEdge(ua, ub);
 		g.addEdge(ub, uc);

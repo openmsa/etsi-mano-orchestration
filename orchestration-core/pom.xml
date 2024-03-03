@@ -46,6 +46,11 @@
 			<artifactId>spring-data-commons</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.ubiqube.mano</groupId>
+			<artifactId>bean-walker</artifactId>
+			<version>${version.mano-bean-walker}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<scope>test</scope>

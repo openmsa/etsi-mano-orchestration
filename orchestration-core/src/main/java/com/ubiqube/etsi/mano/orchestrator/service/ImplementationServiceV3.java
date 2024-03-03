@@ -55,11 +55,11 @@ public class ImplementationServiceV3<U> {
 	public SystemBuilder<UnitOfWorkV3<U>> getTargetSystem(final VirtualTaskV3<U> virtualTask) {
 		final String connectionId = virtualTask.getVimConnectionId();
 		if (null == connectionId) {
-			throw new OrchestrationException("Unable to find VimId: " + virtualTask.getVimConnectionId() + ", for task: " + virtualTask.getName());
+			throw new OrchestrationException("Unable to find VimId: " + virtualTask.getVimConnectionId() + ", for task: " + virtualTask.getSelector().getName());
 		}
-		final SystemConnections vim = vimManager.findVimByVimIdAndProviderId(connectionId, virtualTask.getType().getSimpleName());
+		final SystemConnections vim = vimManager.findVimByVimIdAndProviderId(connectionId, virtualTask.getSelector().getType().getSimpleName());
 		vim.getVimType();
-		final List<SystemV3<U>> sysList = systems.get(virtualTask.getType().getSimpleName());
+		final List<SystemV3<U>> sysList = systems.get(virtualTask.getSelector().getType().getSimpleName());
 		final SystemV3<U> sys = getSimpleOrCrash(sysList, vim.getVimType());
 		return sys.getImplementation(orchestrationService, virtualTask, vim);
 	}
@@ -68,6 +68,9 @@ public class ImplementationServiceV3<U> {
 		if (sysList.isEmpty()) {
 			throw new OrchestrationException("No system for the given vim Type " + vimType);
 		}
-		return sysList.stream().filter(x -> x.getVimType().equals(vimType)).findFirst().orElseThrow(() -> new OrchestrationException("Unable to find " + vimType + "in " + sysList));
+		return sysList.stream()
+				.filter(x -> x.getVimType().equals(vimType))
+				.findFirst()
+				.orElseThrow(() -> new OrchestrationException("Unable to find " + vimType + "in " + sysList));
 	}
 }

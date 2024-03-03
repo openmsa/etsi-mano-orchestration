@@ -79,11 +79,11 @@ class OrchestrationTest {
 		final ListenableGraph<VirtualTaskV3<Object>, VirtualTaskConnectivityV3<Object>> network;
 		final ListenableGraph<UnitOfWorkV3<Object>, ConnectivityEdge<UnitOfWorkV3<Object>>> g = new DefaultListenableGraph(new DirectedAcyclicGraph<>(ConnectivityEdge.class));
 		g.addGraphListener(new UnitOfWorkVertexListenerV3<>());
-		final UnitA ua = new UnitA("test", ANode.class);
+		final UnitA ua = new UnitA(ManoSelector.of(ANode.class, "test"));
 		g.addVertex(ua);
-		final UnitB ub = new UnitB("test", BNode.class);
+		final UnitB ub = new UnitB(ManoSelector.of(BNode.class, "test"));
 		g.addVertex(ub);
-		final UnitC uc = new UnitC("test", CNode.class);
+		final UnitC uc = new UnitC(ManoSelector.of(CNode.class, "test"));
 		g.addVertex(uc);
 		g.addEdge(ua, ub);
 		g.addEdge(ub, uc);
@@ -100,10 +100,10 @@ class OrchestrationTest {
 		final ListenableGraph<VirtualTaskV3<TestParameters>, VirtualTaskConnectivityV3<TestParameters>> g = new DefaultListenableGraph(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
 		g.addGraphListener(new VirtualTaskVertexListenerV3<>());
 		final ProvAVt a = new ProvAVt();
-		final UnitA ua = new UnitA("test", ANode.class);
+		final UnitA ua = new UnitA(ManoSelector.of(ANode.class, "test"));
 		g.addVertex(a);
 		final ProvBVt b = new ProvBVt();
-		final UnitB ub = new UnitB("test", BNode.class);
+		final UnitB ub = new UnitB(ManoSelector.of(BNode.class, "test"));
 		g.addVertex(b);
 		g.addEdge(a, b);
 		final PreExecutionGraphV3 prePlan = new PreExecutionGraphV3Impl<>(g);

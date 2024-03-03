@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import com.ubiqube.etsi.mano.orchestrator.Edge2d;
 import com.ubiqube.etsi.mano.orchestrator.GraphTools;
+import com.ubiqube.etsi.mano.orchestrator.ManoSelector;
 import com.ubiqube.etsi.mano.orchestrator.Relation;
 import com.ubiqube.etsi.mano.orchestrator.Vertex2d;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
@@ -94,11 +95,12 @@ public class PlanMerger {
 		});
 	}
 
+	@SuppressWarnings("null")
 	private static <U> Optional<VirtualTaskV3<U>> find(final VirtualTaskV3<U> src, final Edge2d edge, final List<VirtualTaskV3<U>> tgts) {
+		final ManoSelector selector = ManoSelector.of(edge.getTarget().getType(), edge.getTarget().getName());
 		return tgts.stream()
-				.filter(x -> x.getType() == edge.getTarget().getType())
-				.filter(x -> x.getName().equals(edge.getTarget().getName()))
-				.filter(x -> x.getRank() == src.getRank())
+				.filter(x -> selector.equalsFully(x.getSelector()))
+				.filter(x -> selector.getRank() == src.getSelector().getRank())
 				.findFirst();
 	}
 
@@ -111,11 +113,12 @@ public class PlanMerger {
 		tgts.forEach(x -> d.addEdge(src, x));
 	}
 
+	@SuppressWarnings("null")
 	private static <U> List<VirtualTaskV3<U>> getAll(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d, final String name, final Class<?> type, final List<VirtualTaskV3<U>> exclude) {
+		final ManoSelector selector = ManoSelector.of(type, name);
 		return d.vertexSet().stream()
 				.filter(x -> !exclude.contains(x))
-				.filter(x -> x.getType() == type)
-				.filter(x -> x.getName().startsWith(name))
+				.filter(x -> selector.equalsNoRank(selector))
 				.toList();
 	}
 

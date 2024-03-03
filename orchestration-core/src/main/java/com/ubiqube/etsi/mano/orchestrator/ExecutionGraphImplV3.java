@@ -29,11 +29,11 @@ import com.ubiqube.etsi.mano.orchestrator.dump.ExecutionResult;
 import com.ubiqube.etsi.mano.orchestrator.dump.Vertex;
 import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
-import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.nodes.vnfm.Network;
 import com.ubiqube.etsi.mano.orchestrator.scale.ContextVt;
 import com.ubiqube.etsi.mano.orchestrator.uow.ContextUow;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
+import com.ubiqube.etsi.mano.orchestrator.v4.api.Selector;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 import jakarta.annotation.Nonnull;
@@ -60,7 +60,7 @@ public class ExecutionGraphImplV3<U> implements ExecutionGraph {
 
 	@Override
 	public void add(final Class<Network> type, final String toscaName, final String resourceId) {
-		global.add(new ContextUow<>(new ContextVt<>(type, toscaName, resourceId)));
+		global.add(new ContextUow<>(new ContextVt<>(ManoSelector.of(type, toscaName), resourceId)));
 	}
 
 	public final List<ContextUow<U>> getGlobal() {
@@ -75,21 +75,18 @@ public class ExecutionGraphImplV3<U> implements ExecutionGraph {
 	}
 
 	private Vertex map(final UnitOfWorkV3<U> v) {
-		final VirtualTaskV3<U> vt = v.getVirtualTask();
+		final VirtualTaskV3<U> vt = v.getParameters();
 		return Vertex.builder()
-				.id(makeKey(vt.getName(), vt.getRank(), vt.getType()))
-				.alias(vt.getAlias())
-				.name(vt.getName())
-				.rank(vt.getRank())
+				.id(makeKey(vt.getSelector()))
+				.selector(vt.getSelector())
 				.status(statusConvert(vt))
-				.type(vt.getType().getSimpleName())
 				.vimConnectionId(vt.getVimConnectionId())
 				.vimResourceId(vt.getVimResourceId())
 				.build();
 	}
 
-	private static String makeKey(final String name, final int rank, final Class<? extends Node> type) {
-		final String tmp = "%s-%04d-%s".formatted(name, rank, type.getSimpleName());
+	private static String makeKey(final Selector selector) {
+		final String tmp = "%s-%04d-%s".formatted(selector.getName(), selector.getRank(), selector.getType().getSimpleName());
 		try {
 			final MessageDigest md = MessageDigest.getInstance("MD5");
 			md.update(tmp.getBytes());
@@ -107,8 +104,8 @@ public class ExecutionGraphImplV3<U> implements ExecutionGraph {
 	}
 
 	private Connection map(final ConnectivityEdge<UnitOfWorkV3<U>> conn) {
-		final VirtualTaskV3<U> src = conn.getSource().getVirtualTask();
-		final VirtualTaskV3<U> tgt = conn.getTarget().getVirtualTask();
-		return new Connection(makeKey(src.getName(), src.getRank(), src.getType()), makeKey(tgt.getName(), tgt.getRank(), tgt.getType()));
+		final VirtualTaskV3<U> src = conn.getSource().getParameters();
+		final VirtualTaskV3<U> tgt = conn.getTarget().getParameters();
+		return new Connection(makeKey(src.getSelector()), makeKey(tgt.getSelector()));
 	}
 }

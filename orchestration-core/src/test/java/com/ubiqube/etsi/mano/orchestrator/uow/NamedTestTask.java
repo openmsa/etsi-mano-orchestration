@@ -20,19 +20,15 @@ import java.util.UUID;
 
 import com.ubiqube.etsi.mano.orchestrator.ResultType;
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
-import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
+import com.ubiqube.etsi.mano.orchestrator.v4.api.Selector;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 public class NamedTestTask implements VirtualTaskV3<Object> {
 
-	private final String name;
-	private final Class<? extends Node> type;
-	private int rank;
-	private String alias;
+	private final Selector selector;
 
-	public NamedTestTask(final String name, final Class<? extends Node> type) {
-		this.name = name;
-		this.type = type;
+	public NamedTestTask(final Selector selector) {
+		this.selector = selector;
 	}
 
 	@Override
@@ -48,41 +44,6 @@ public class NamedTestTask implements VirtualTaskV3<Object> {
 	@Override
 	public void setVimConnectionId(final String conn) {
 		throw new IllegalArgumentException();
-	}
-
-	@Override
-	public void setName(final String name) {
-		throw new IllegalArgumentException();
-	}
-
-	@Override
-	public String getName() {
-		return this.name;
-	}
-
-	@Override
-	public Class<? extends Node> getType() {
-		return this.type;
-	}
-
-	@Override
-	public void setAlias(final String alias) {
-		this.alias = alias;
-	}
-
-	@Override
-	public String getAlias() {
-		return alias;
-	}
-
-	@Override
-	public int getRank() {
-		return this.rank;
-	}
-
-	@Override
-	public void setRank(final int rank) {
-		this.rank = rank;
 	}
 
 	@Override
@@ -112,7 +73,7 @@ public class NamedTestTask implements VirtualTaskV3<Object> {
 
 	@Override
 	public String getVimResourceId() {
-		return name;
+		return "";
 	}
 
 	@Override
@@ -126,13 +87,13 @@ public class NamedTestTask implements VirtualTaskV3<Object> {
 	}
 
 	@Override
-	public String getToscaName() {
-		return name;
+	public ResultType getStatus() {
+		throw new IllegalArgumentException();
 	}
 
 	@Override
-	public ResultType getStatus() {
-		throw new IllegalArgumentException();
+	public Selector getSelector() {
+		return selector;
 	}
 
 }

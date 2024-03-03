@@ -87,7 +87,7 @@ public class Context3dNetFlow<U> {
 
 	private void makeStartNode() {
 		final List<UnitOfWorkV3<U>> lv = d.vertexSet().stream().filter(x -> d.incomingEdgesOf(x).isEmpty()).toList();
-		root = new ContextUow<>(new ContextVt<>(Node.class, "start", null));
+		root = new ContextUow<>(new ContextVt<>(ManoSelector.of(Node.class, "start"), null));
 		d.addVertex(root);
 		lv.forEach(x -> d.addEdge(root, x));
 	}
@@ -114,34 +114,25 @@ public class Context3dNetFlow<U> {
 		 *
 		 * In this case B will be duplicated.
 		 */
-		Set<VirtualTaskV3<U>> tasks;
-		if ("VNF_INDICATOR".equals(toscaName)) {
-			tasks = paths.stream()
-					.flatMap(x -> x.getVertexList().stream())
-					.filter(x -> x.getType() == class1)
-					.map(UnitOfWorkV3::getVirtualTask)
-					.collect(Collectors.toSet());
-		} else {
-			tasks = paths.stream()
-					.flatMap(x -> x.getVertexList().stream())
-					.filter(x -> x.getType() == class1)
-					.filter(x -> x.getVirtualTask().getToscaName().equals(toscaName))
-					.map(UnitOfWorkV3::getVirtualTask)
-					.collect(Collectors.toSet());
-		}
+		final ManoSelector selector = ManoSelector.of(class1, toscaName);
+		final Set<VirtualTaskV3<U>> tasks = paths.stream()
+				.flatMap(x -> x.getVertexList().stream())
+				.filter(x -> selector.equalsNoRank(x.getParameters().getSelector()))
+				.map(UnitOfWorkV3::getParameters)
+				.collect(Collectors.toSet());
 		return tasks.stream().map(VirtualTaskV3::getVimResourceId).toList();
 	}
 
 	private Optional<ContextUow<U>> findInCtx(final Class<? extends Node> class1, final String toscaName) {
+		final ManoSelector selector = ManoSelector.of(class1, toscaName);
 		return global.stream()
-				.filter(x -> x.getType() == class1)
-				.filter(x -> x.getVirtualTask().getName().equals(toscaName))
+				.filter(x -> selector.equalsNoRank(x.getParameters().getSelector()))
 				.findFirst();
 	}
 
 	public void add(final UnitOfWorkV3<U> actual, final Class<? extends Node> class1, final String name, final String resourceId) {
 		Objects.requireNonNull(actual, "Actual must not be null");
-		final ContextVt<U> v = new ContextVt<>(class1, name, resourceId);
+		final ContextVt<U> v = new ContextVt<>(ManoSelector.of(class1, name), resourceId);
 		final ContextUow<U> uow = new ContextUow<>(v);
 		d.addVertex(uow);
 		d.incomingEdgesOf(actual).forEach(x -> d.addEdge(x.getSource(), uow));
@@ -166,8 +157,8 @@ public class Context3dNetFlow<U> {
 		final List<GraphPath<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>>> paths = path.getAllPaths(root, actual, true, 1000);
 		return paths.stream()
 				.flatMap(x -> x.getVertexList().stream())
-				.filter(x -> x.getType() == class1)
-				.map(UnitOfWorkV3::getVirtualTask)
+				.filter(x -> x.getParameters().getSelector().getType() == class1)
+				.map(UnitOfWorkV3::getParameters)
 				.map(VirtualTaskV3::getVimResourceId)
 				.collect(Collectors.toSet())
 				.stream()

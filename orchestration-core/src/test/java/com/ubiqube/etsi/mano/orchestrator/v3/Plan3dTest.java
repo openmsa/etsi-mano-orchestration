@@ -39,6 +39,7 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ubiqube.etsi.mano.controllers.VertexResult;
 import com.ubiqube.etsi.mano.orchestrator.Edge2d;
+import com.ubiqube.etsi.mano.orchestrator.ManoSelector;
 import com.ubiqube.etsi.mano.orchestrator.SclableResources;
 import com.ubiqube.etsi.mano.orchestrator.Vertex2d;
 import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
@@ -100,7 +101,7 @@ class Plan3dTest {
 	 */
 	void testVnf() throws Exception {
 		final ScalingEngine se = new ScalingEngine();
-		final Function<Object, VirtualTaskV3<Object>> func = p -> new TestVirtualTask(null, null, null, 0);
+		final Function<Object, VirtualTaskV3<Object>> func = p -> new TestVirtualTask(ManoSelector.of(getClass(), "name"));
 		final List<SclableResources<Object>> scales = new ArrayList<>();
 		scales.add(SclableResources.of(SecurityGroupNode.class, "security", 0, 1, null));
 		scales.add(SclableResources.of(Monitoring.class, "name", 0, 1, null));

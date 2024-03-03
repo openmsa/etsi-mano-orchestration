@@ -20,7 +20,7 @@ import java.util.UUID;
 
 import com.ubiqube.etsi.mano.orchestrator.ResultType;
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
-import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
+import com.ubiqube.etsi.mano.orchestrator.v4.api.Selector;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 import lombok.Getter;
@@ -30,18 +30,10 @@ import lombok.Setter;
 @Setter
 public class TestVirtualTask implements VirtualTaskV3<Object> {
 
-	private String name;
-	private final Class<? extends Node> type;
-	private String alias;
-	private final int rank;
-	private String toscaName;
+	private Selector selector;
 
-	public TestVirtualTask(final Class<? extends Node> type, final String name, final String taskAlias, final int i) {
-		this.type = type;
-		this.name = name;
-		this.alias = taskAlias;
-		this.rank = i;
-		this.toscaName = name;
+	public TestVirtualTask(final Selector selector) {
+		this.selector = selector;
 	}
 
 	@Override
@@ -54,12 +46,6 @@ public class TestVirtualTask implements VirtualTaskV3<Object> {
 	public String getVimConnectionId() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void setRank(final int rank) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -120,6 +106,11 @@ public class TestVirtualTask implements VirtualTaskV3<Object> {
 	public ResultType getStatus() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Selector getSelector() {
+		return selector;
 	}
 
 }

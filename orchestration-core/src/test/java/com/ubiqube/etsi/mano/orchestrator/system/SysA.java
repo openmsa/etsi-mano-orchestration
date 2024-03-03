@@ -29,7 +29,7 @@ public class SysA implements SystemV3<Object> {
 
 	@Override
 	public SystemBuilder getImplementation(final OrchestrationServiceV3 orchestrationService, final VirtualTaskV3 virtualTask, final SystemConnections vim) {
-		return SystemBuilderV3Impl.of(new UnitA(virtualTask.getName(), virtualTask.getType()));
+		return SystemBuilderV3Impl.of(new UnitA(virtualTask.getSelector()));
 	}
 
 	@Override

@@ -17,7 +17,6 @@
 package com.ubiqube.etsi.mano.orchestrator.uow;
 
 import com.ubiqube.etsi.mano.orchestrator.Context3d;
-import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 import jakarta.annotation.Nonnull;
@@ -48,12 +47,7 @@ public class ContextUow<U> implements UnitOfWorkV3<U> {
 	}
 
 	@Override
-	public Class<? extends Node> getType() {
-		return vt.getType();
-	}
-
-	@Override
-	public VirtualTaskV3<U> getVirtualTask() {
+	public VirtualTaskV3<U> getParameters() {
 		return vt;
 	}
 

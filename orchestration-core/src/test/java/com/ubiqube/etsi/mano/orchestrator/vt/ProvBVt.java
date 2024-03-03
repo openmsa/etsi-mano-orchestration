@@ -21,7 +21,7 @@ import java.util.UUID;
 import com.ubiqube.etsi.mano.orchestrator.ResultType;
 import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
 import com.ubiqube.etsi.mano.orchestrator.TestParameters;
-import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
+import com.ubiqube.etsi.mano.orchestrator.v4.api.Selector;
 
 public class ProvBVt implements VirtualTaskV3<TestParameters> {
 
@@ -37,48 +37,6 @@ public class ProvBVt implements VirtualTaskV3<TestParameters> {
 	public String getVimConnectionId() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void setName(final String name) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Class<? extends Node> getType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setAlias(final String alias) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public String getAlias() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getRank() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void setRank(final int rank) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -128,12 +86,6 @@ public class ProvBVt implements VirtualTaskV3<TestParameters> {
 	}
 
 	@Override
-	public String getToscaName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void setVimConnectionId(final String conn) {
 		// TODO Auto-generated method stub
 
@@ -141,6 +93,12 @@ public class ProvBVt implements VirtualTaskV3<TestParameters> {
 
 	@Override
 	public ResultType getStatus() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Selector getSelector() {
 		// TODO Auto-generated method stub
 		return null;
 	}

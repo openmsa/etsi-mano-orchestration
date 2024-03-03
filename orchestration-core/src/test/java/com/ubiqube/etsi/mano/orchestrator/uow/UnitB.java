@@ -17,16 +17,14 @@
 package com.ubiqube.etsi.mano.orchestrator.uow;
 
 import com.ubiqube.etsi.mano.orchestrator.Context3d;
-import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
+import com.ubiqube.etsi.mano.orchestrator.v4.api.Selector;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 public class UnitB implements UnitOfWorkV3<Object> {
 	private final NamedTestTask task;
-	private final Class<? extends Node> type;
 
-	public UnitB(final String name, final Class<? extends Node> type) {
-		this.task = new NamedTestTask(name, type);
-		this.type = type;
+	public UnitB(final Selector selector) {
+		this.task = new NamedTestTask(selector);
 	}
 
 	@Override
@@ -42,13 +40,8 @@ public class UnitB implements UnitOfWorkV3<Object> {
 	}
 
 	@Override
-	public VirtualTaskV3<Object> getVirtualTask() {
+	public VirtualTaskV3<Object> getParameters() {
 		return task;
-	}
-
-	@Override
-	public Class<? extends Node> getType() {
-		return type;
 	}
 
 	@Override

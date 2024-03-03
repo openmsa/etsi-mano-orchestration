@@ -42,7 +42,7 @@ public class DeleteTaskProvider<U> implements TaskProvider<UnitOfWorkV3<U>, Stri
 
 	@Override
 	public Task<UnitOfWorkV3<U>, String> provideTask(final UnitOfWorkV3<U> uaow) {
-		LOG.debug("Called with: {} {}", uaow.getVirtualTask().getClass(), uaow.getVirtualTask().getAlias());
+		LOG.debug("Called with: {} {}", uaow.getParameters().getClass(), uaow.getParameters().getSelector());
 		return new UowExecDeleteTask<>(listener, uaow, context);
 	}
 

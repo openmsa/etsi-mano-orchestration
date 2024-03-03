@@ -58,7 +58,7 @@ public interface Selector {
 	 *
 	 * @param rank The rank.
 	 */
-	void setRank(int rank);
+//	void setRank(int rank);
 
 	/**
 	 * The tosca name.

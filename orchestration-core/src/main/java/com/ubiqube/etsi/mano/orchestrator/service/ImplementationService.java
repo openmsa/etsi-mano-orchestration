@@ -56,22 +56,22 @@ public class ImplementationService<U> {
 		}
 		final String connectionId = virtualTask.getVimConnectionId();
 		if (null == connectionId) {
-			throw new OrchestrationException("Unable to find VimId: " + virtualTask.getVimConnectionId() + ", for task: " + virtualTask.getName());
+			throw new OrchestrationException("Unable to find VimId: " + virtualTask.getVimConnectionId() + ", for task: " + virtualTask.getSelector().getName());
 		}
-		final SystemConnections vim = vimManager.findVimByVimIdAndProviderId(connectionId, virtualTask.getType().getSimpleName());
+		final SystemConnections vim = vimManager.findVimByVimIdAndProviderId(connectionId, virtualTask.getSelector().getType().getSimpleName());
 		final List<SystemV3<U>> sys = systemsV3.get(buildKey(virtualTask));
 		if (null == sys) {
-			throw new OrchestrationException("Unable to find system matching: " + vim.getVimType() + "/" + connectionId + " / " + virtualTask.getType().getSimpleName());
+			throw new OrchestrationException("Unable to find system matching: " + vim.getVimType() + "/" + connectionId + " / " + virtualTask.getSelector().getType().getSimpleName());
 		}
 		final List<SystemV3<U>> usys = sys.stream().filter(x -> x.getVimType().equals(vim.getVimType())).toList();
 		if (usys.size() != 1) {
-			throw new OrchestrationException("Unique system of " + vim.getVimId() + "/" + virtualTask.getType() + ", must be uniq but was " + usys.size());
+			throw new OrchestrationException("Unique system of " + vim.getVimId() + "/" + virtualTask.getSelector().getType() + ", must be uniq but was " + usys.size());
 		}
 		return usys.get(0).getImplementation(orchestrationServicev3, virtualTask, vim);
 	}
 
 	private String buildKey(final VirtualTaskV3<U> virtualTask) {
-		return virtualTask.getType().getSimpleName();
+		return virtualTask.getSelector().getType().getSimpleName();
 	}
 
 	private String buildKey(final SystemV3<U> sv) {

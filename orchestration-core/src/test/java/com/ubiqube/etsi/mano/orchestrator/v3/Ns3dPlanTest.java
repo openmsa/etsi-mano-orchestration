@@ -44,6 +44,7 @@ import com.ubiqube.etsi.mano.controllers.VertexResult;
 import com.ubiqube.etsi.mano.orchestrator.Edge2d;
 import com.ubiqube.etsi.mano.orchestrator.ManoDexcutorService;
 import com.ubiqube.etsi.mano.orchestrator.ManoExecutor;
+import com.ubiqube.etsi.mano.orchestrator.ManoSelector;
 import com.ubiqube.etsi.mano.orchestrator.NullExecutor;
 import com.ubiqube.etsi.mano.orchestrator.Planner;
 import com.ubiqube.etsi.mano.orchestrator.PlannerImpl;
@@ -111,7 +112,7 @@ class Ns3dPlanTest {
 
 	@Test
 	void testNs() throws Exception {
-		final Function<Object, VirtualTaskV3<Object>> func = p -> new TestVirtualTask(VnffgLoadbalancerNode.class, "name", "alias", 0);
+		final Function<Object, VirtualTaskV3<Object>> func = p -> new TestVirtualTask(ManoSelector.of(VnffgLoadbalancerNode.class, "name"));
 		final ScalingEngine se = new ScalingEngine();
 		final List<SclableResources<Object>> scales = List.of(
 				SclableResources.of(VnffgLoadbalancerNode.class, "nfp_position_1", 0, 1, null),

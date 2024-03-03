@@ -133,7 +133,7 @@ public class PlannerImpl<U> implements Planner<U> {
 	}
 
 	private OrchExecutionResultImpl<U> convert(final ExecutionResult<UnitOfWorkV3<U>, String> res) {
-		final VirtualTaskV3<U> t = res.getId().getVirtualTask();
+		final VirtualTaskV3<U> t = res.getId().getParameters();
 		t.getStatus();
 		return new OrchExecutionResultImpl<>(res.getId(), t.getStatus(), res.getResult());
 	}

@@ -34,10 +34,11 @@ import org.slf4j.LoggerFactory;
 
 import com.ubiqube.etsi.mano.orchestrator.ContextHolder;
 import com.ubiqube.etsi.mano.orchestrator.Edge2d;
+import com.ubiqube.etsi.mano.orchestrator.ManoSelector;
 import com.ubiqube.etsi.mano.orchestrator.SclableResources;
 import com.ubiqube.etsi.mano.orchestrator.Vertex2d;
 import com.ubiqube.etsi.mano.orchestrator.exceptions.OrchestrationException;
-import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
+import com.ubiqube.etsi.mano.orchestrator.v4.api.Selector;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskVertexListenerV3;
@@ -112,9 +113,9 @@ public class PlanMultiplier<U> {
 	}
 
 	private static <U> boolean isNotIn(final Vertex2d v, final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d) {
+		final ManoSelector sel = ManoSelector.of(v.getType(), v.getName());
 		return d.vertexSet().stream()
-				.filter(x -> x.getType() == v.getType())
-				.noneMatch(x -> x.getName().equals(v.getName()));
+				.noneMatch(x -> sel.equalsNoRank(x.getSelector()));
 	}
 
 	/**
@@ -144,7 +145,7 @@ public class PlanMultiplier<U> {
 			final boolean delete, final int ii, final Vertex2d x, final String uniqIdDst, final Set<ContextHolder> cache) {
 		final SclableResources<U> templSr = findTemplate(scaleResources, x);
 		final VirtualTaskV3<U> t = createTask(templSr, uniqIdDst, x, ii, delete, cache);
-		LOG.debug(ADD_VT, t.getAlias());
+		LOG.debug(ADD_VT, t.getSelector());
 		d.addVertex(t);
 		return t;
 	}
@@ -208,7 +209,7 @@ public class PlanMultiplier<U> {
 			final ContextHolder liveInstance = ctx.get();
 			cache.add(liveInstance);
 			if (!delete) {
-				return createContext(uniqIdSrc, x, ii, delete, t.getTemplateParameters(), liveInstance.getResourceId(), t.getType(), liveInstance.getVimConnectionId());
+				return createContext(uniqIdSrc, x, ii, delete, t.getTemplateParameters(), liveInstance.getResourceId(), t.getSelector(), liveInstance.getVimConnectionId());
 			}
 			t.setVimResourceId(liveInstance.getResourceId());
 			t.setVimConnectionId(liveInstance.getVimConnectionId());
@@ -218,7 +219,7 @@ public class PlanMultiplier<U> {
 				if ((sr.getHave() != 0) || (sr.getWant() != 0)) {
 					LOG.warn("Deleting {} but not found in context.", uniqIdSrc);
 				}
-				t = createContext(uniqIdSrc, x, ii, delete, t.getTemplateParameters(), null, t.getType(), null);
+				t = createContext(uniqIdSrc, x, ii, delete, t.getTemplateParameters(), null, t.getSelector(), null);
 			}
 			LOG.trace("creating task: {}/{}", x.getType().getSimpleName(), x.getName());
 		}
@@ -235,22 +236,20 @@ public class PlanMultiplier<U> {
 	 * @param delete
 	 * @param u
 	 * @param resourceId
-	 * @param class1
+	 * @param selector
 	 * @param vimConnectionId
 	 * @return A {@link ContextVt} instance
 	 */
 	@SuppressWarnings("unchecked")
 	private static <U> VirtualTaskV3<U> createContext(final String uniqIdSrc, final Vertex2d source, final int i, final boolean delete,
-			final U u, @Nullable final String resourceId, final Class<? extends Node> class1, @Nullable final String vimConnectionId) {
+			final U u, @Nullable final String resourceId, final Selector selector, @Nullable final String vimConnectionId) {
 		return (VirtualTaskV3<U>) ContextVt.builder()
-				.alias(uniqIdSrc)
 				.delete(delete)
-				.name(source.getName())
-				.rank(i)
+				.selector(selector)
 				.templateParameters(u)
 				.vimResourceId(resourceId)
 				.vimConnectionId(vimConnectionId)
-				.parent(class1)
+				// .parent(class1)
 				.build();
 	}
 
@@ -304,9 +303,9 @@ public class PlanMultiplier<U> {
 	 */
 	private VirtualTaskV3<U> createTask(final String uniqId, final Vertex2d source, final int i, final boolean delete, final U params) {
 		final VirtualTaskV3<U> vt = converter.apply(params);
-		vt.setRank(i);
-		vt.setName(source.getName());
-		vt.setAlias(uniqId);
+		vt.getSelector().setRank(i);
+		vt.getSelector().setName(source.getName());
+		vt.getSelector().setAlias(uniqId);
 		vt.setDelete(delete);
 		return vt;
 	}

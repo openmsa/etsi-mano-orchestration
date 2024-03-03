@@ -43,7 +43,7 @@ public class DexecutorTask<P> extends Task<UnitOfWorkV3<P>, String> {
 		this.uaow = Objects.requireNonNull(uaow);
 		this.listener = Objects.requireNonNull(listener);
 		this.context = Objects.requireNonNull(context);
-		if (!(uaow.getVirtualTask().isDeleteTask() ^ create)) {
+		if (!(uaow.getParameters().isDeleteTask() ^ create)) {
 			function = x -> null;
 		} else if (create) {
 			function = x -> {
