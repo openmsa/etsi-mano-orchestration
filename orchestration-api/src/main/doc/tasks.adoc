@@ -1,0 +1,105 @@
+# Ochestration notebook
+
+## Virtual tasks
+Virtual task are non implemented tasks.
+Imagine you want a kubernetes cluster, but you don't relly know where this cluster is going to land.
+We assume that you have enough parameters to setup this cluster on AWS, Baremetal, or what so ever.
+This is what is a virtual task is, a task that will be replaced by more complex network of other tasks, like networks, VM and so on.
+
+- Selector: Read `selector` documentation.
+- Parameters: Parameters of the task.
+
+## ImplementedTask
+- Selector:
+- Produced:
+- Parameters
+- Status:
+- 
+
+## Unit of works
+UnitOfWork is a simple task executor, using the methods `execute` and `rollback`. A UnitOfWork `produce` some resources, ans those resources can be rollbacked.
+A UnitOfWork must create a unique resource. this is to handle retry feature and rollback feature.
+Rational: It is more easy to create one resource and let the underlying framework handle the retry/rollback feature.
+
+- Parameters: Parameters from Task.
+- execute: Rollout function.
+- rollback: Rollback function.
+- Selector: Selector of this task.
+- Produced: Data produced by this task. Used for rollbacking as well.
+
+## Produced data
+This represent the result of a UnitOfWork.
+Currently it's a 
+
+## Selectors
+- Type:
+- task name:
+- rank:
+
+## Design considerations
+
+### Tosca specifities
+
+One specifities of tosca files is the ability to name multiple objects on under the same name.
+Let's have two Virtual machines, and let them have a single storage dirve named `root`.
+In this case you will have `vm1 -> root` and `vm2 -> root`.
+Another specific thing on this exemple, is you have to create `root` befoe the VMs.
+In TOSCA you can define storage in two ways:
+
+- Inside a VM
+- Globally as a stand alone storage. This mode is nice for avoiding 
+spaming the same storage block around VMs.
+
+*Proposition:* We can probably use graph relation to identify and remodel the coordinates of such elements. The one to one connection or maybe a another custom one, may give an hint on the relization of the correct coordinates inside the graph.
+
+### Parameters
+Parameters have meaning only for a given Unit of works.
+But this is a little bit wrong.
+
+Let's imagine a network and it's sub networks.
+You will have to implementation tasks:
+
+- Network task.
+- And multiple subnetwork (Ip range, dhcp, ... ) paramters.
+
+You will probably feel a banefit to create a sub network task with just needed paramters. Like so, a simple call to `cretaeSubNetwork(cidr[0])` will be more efficient than `createSubNetwork(network, id)`
+
+Actually, `cretaeSubNetwork(cidr[0])` is used.
+The drawback is parameters manipulation between virtual tasks, and implementation task.
+
+*Proposition:* 
+
+### Selectors
+On first design selectors doesn't exist explicitly. You have a number fields that represent the selector idea like `type`, `toscaname`, `rank`, `alias`. Note that `alias` is a kind of flat multi dimensional coordinates, in form of `x-y-z-...`.
+
+There is probably two ideas beyond the `selector`:
+- First, the necessity to encode/decode the coordinate of a task in the graph.
+- The second type behind `type` to find the correct implementation for a given virtual taks.
+
+*Proposition:* Keep type outside the selector. While of course `Type` will be used silently in coordinates/selectors.
+
+### Context
+Context design in workflows is in most of the case an untyped Map. While it may seems to be suitable in most of the case, the fact is completly dangenrous from a developement point of view. Imagine passing a Map with no type between the call of your functions, at large scale, It will result in a unmanagable software, and unmaintenable one.
+
+While in early design we take a approach to type the Map, but it was still a map. And `keys` where always a problem, between some part of the software. For good reason, One time you call your variable `Foo-stuff`, and a month later you may decide to call it `foo,stuff`. This will lead to unmatched paramters, and a broken software.
+
+Second approach, was to use a map of `Class<?>`, at first glance it seems to solve the previous naming problem. But it does not. The drawback it that you have to create as many classes as you have tasks. Not really a scalable approach.
+
+Enum is also not a correct approach. We still need to maintain this `enum` class for adding / removing tasks, leading one more time to a non scalable solution.
+
+None the less, our current approach is to put everything into a graph.
+Imagine, you have a complex graph of task execution `a -> b -> c` and many more around this simple schema.
+If you are task `c` you can only retreive parent tasks.
+It's suitable because it's simplify alot the complexity induce by multidimentional problem like scaling.
+The counter part to pay, is on already executed tasks, Because you need to reinject those tasks inside the graph, wich is rather complex.
+
+The problem is probably on implementation side, because we don't store the graph and we use partialy broken selectors.
+
+*Propostion:* So far there is no major flaw on this part.
+The actual difficulties are:
+
+- Existing task injection.
+- Lake of unified coordinates.
+
+### Implementation limitations
+

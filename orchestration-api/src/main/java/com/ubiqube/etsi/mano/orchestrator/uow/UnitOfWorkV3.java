@@ -17,7 +17,6 @@
 package com.ubiqube.etsi.mano.orchestrator.uow;
 
 import com.ubiqube.etsi.mano.orchestrator.Context3d;
-import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
 import jakarta.annotation.Nullable;
@@ -34,7 +33,7 @@ public interface UnitOfWorkV3<U> {
 	 *
 	 * @return The associated virtual task.
 	 */
-	VirtualTaskV3<U> getVirtualTask();
+	VirtualTaskV3<U> getParameters();
 
 	/**
 	 * Execute the task.
@@ -53,13 +52,6 @@ public interface UnitOfWorkV3<U> {
 	 */
 	@Nullable
 	String rollback(Context3d context);
-
-	/**
-	 * The type of the Unit of work
-	 *
-	 * @return A Node derived class.
-	 */
-	Class<? extends Node> getType();
 
 	/**
 	 * Set the resource id.

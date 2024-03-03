@@ -1,0 +1,39 @@
+
+Function
+ - of sub Function
+ 
+ What are parameters of a function ?
+  - network params
+
+a -> b
+b -> c
+a -> d
+
+with(a)
+	.then(b)
+	.then(c)
+	.join(d)
+
+vertex.of(a)
+	.withParams(selector("network", "vl01"), selector("storage", "a")
+	.build();
+
+with(a)
+	.then(b)
+	.then(c)
+	.join(d)
+
+with(b)
+	.then(zz)
+
+#
+g
+	.edge()
+		.form(a)
+		.to(b)
+	.edge()
+		.from(a)
+		.to(c)
+	
+#
+

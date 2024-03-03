@@ -12,24 +12,11 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see https://www.gnu.org/licenses/.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.ubiqube.etsi.mano.orchestrator.dump;
+package com.ubiqube.etsi.mano.orchestrator;
 
-import com.ubiqube.etsi.mano.orchestrator.v4.api.Selector;
+public interface GraphBuilder<U> {
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
-@Builder
-public class Vertex {
-	private String id;
-	private String vimConnectionId;
-	private String vimResourceId;
-	private Selector selector;
-	private int rank;
-	private String status;
+	EdgeBuilder<U> edge();
 }
