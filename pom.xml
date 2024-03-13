@@ -14,6 +14,7 @@
 	<modules>
 		<module>orchestration-api</module>
 		<module>orchestration-core</module>
+		<module>orchestration-demo</module>
 	</modules>
 	<scm>
 		<developerConnection>scm:git:https://github.com/openmsa/etsi-mano-orchestration.git</developerConnection>
