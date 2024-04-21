@@ -56,14 +56,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>ma.glasnost.orika</groupId>
-			<artifactId>ubi-orika-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ma.glasnost.orika</groupId>
-			<artifactId>ubi-orika-eclipse-tools</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>context-propagation</artifactId>
 			<version>1.0.5</version>
