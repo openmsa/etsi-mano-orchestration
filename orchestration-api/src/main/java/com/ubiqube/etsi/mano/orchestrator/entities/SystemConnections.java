@@ -57,10 +57,10 @@ public class SystemConnections {
 	private String moduleName;
 
 	@OneToOne
-	private InterfaceInfo interfaceInfo;
+	private InterfaceInfo interfaceInfo = new InterfaceInfo();
 
 	@OneToOne
-	private AccessInfo accessInfo;
+	private AccessInfo accessInfo = new AccessInfo();
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Map<String, String> extra;
