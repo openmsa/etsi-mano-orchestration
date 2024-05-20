@@ -23,15 +23,18 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
+import com.ubiqube.etsi.mano.dao.mano.vim.AccessInfo;
+import com.ubiqube.etsi.mano.dao.mano.vim.InterfaceInfo;
+
 class SystemConnectionsTest {
 
 	@Test
 	void test() {
 		final SystemConnections srv = new SystemConnections();
-		srv.setAccessInfo(Map.of());
+		srv.setAccessInfo(new AccessInfo());
 		srv.setExtra(Map.of());
 		srv.setId(UUID.randomUUID());
-		srv.setInterfaceInfo(Map.of());
+		srv.setInterfaceInfo(new InterfaceInfo());
 		srv.setModuleName("MODULE");
 		srv.setVimId("ID");
 		srv.setVimType("TYPE");

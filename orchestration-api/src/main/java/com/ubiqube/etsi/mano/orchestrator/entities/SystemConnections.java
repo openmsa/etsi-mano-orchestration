@@ -19,12 +19,16 @@ package com.ubiqube.etsi.mano.orchestrator.entities;
 import java.util.Map;
 import java.util.UUID;
 
+import com.ubiqube.etsi.mano.dao.mano.vim.AccessInfo;
+import com.ubiqube.etsi.mano.dao.mano.vim.InterfaceInfo;
+
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -52,11 +56,11 @@ public class SystemConnections {
 
 	private String moduleName;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	private Map<String, String> interfaceInfo;
+	@OneToOne
+	private InterfaceInfo interfaceInfo;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	private Map<String, String> accessInfo;
+	@OneToOne
+	private AccessInfo accessInfo;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Map<String, String> extra;
