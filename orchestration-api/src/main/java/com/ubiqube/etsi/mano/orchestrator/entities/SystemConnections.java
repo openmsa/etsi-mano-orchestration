@@ -22,6 +22,7 @@ import java.util.UUID;
 import com.ubiqube.etsi.mano.dao.mano.AccessInfo;
 import com.ubiqube.etsi.mano.dao.mano.InterfaceInfo;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -56,10 +57,10 @@ public class SystemConnections {
 
 	private String moduleName;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private InterfaceInfo interfaceInfo = new InterfaceInfo();
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private AccessInfo accessInfo = new AccessInfo();
 
 	@ElementCollection(fetch = FetchType.EAGER)
