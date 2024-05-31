@@ -48,6 +48,8 @@ import lombok.Setter;
 @Entity
 public class SystemConnections<I extends InterfaceInfo, A extends AccessInfo> extends Connection<I, A> {
 
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID id;
