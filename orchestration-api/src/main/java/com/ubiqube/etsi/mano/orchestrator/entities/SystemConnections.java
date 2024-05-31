@@ -60,10 +60,10 @@ public class SystemConnections<I extends InterfaceInfo, A extends AccessInfo> ex
 
 	private String moduleName;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, targetEntity = InterfaceInfo.class)
 	private I interfaceInfo;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, targetEntity = AccessInfo.class)
 	private A accessInfo;
 
 	@ElementCollection(fetch = FetchType.EAGER)
