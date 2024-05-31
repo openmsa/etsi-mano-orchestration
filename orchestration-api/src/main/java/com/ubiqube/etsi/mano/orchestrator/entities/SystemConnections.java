@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.ubiqube.etsi.mano.dao.mano.AccessInfo;
+import com.ubiqube.etsi.mano.dao.mano.Connection;
 import com.ubiqube.etsi.mano.dao.mano.InterfaceInfo;
 
 import jakarta.persistence.CascadeType;
@@ -45,7 +46,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class SystemConnections {
+public class SystemConnections<I extends InterfaceInfo, A extends AccessInfo> extends Connection<I, A> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -58,10 +59,10 @@ public class SystemConnections {
 	private String moduleName;
 
 	@OneToOne(cascade = CascadeType.ALL)
-	private InterfaceInfo interfaceInfo = new InterfaceInfo();
+	private I interfaceInfo;
 
 	@OneToOne(cascade = CascadeType.ALL)
-	private AccessInfo accessInfo = new AccessInfo();
+	private A accessInfo;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Map<String, String> extra;
