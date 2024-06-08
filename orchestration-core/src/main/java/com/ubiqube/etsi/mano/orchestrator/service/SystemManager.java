@@ -16,6 +16,8 @@
  */
 package com.ubiqube.etsi.mano.orchestrator.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.ubiqube.etsi.mano.orchestrator.entities.SystemConnections;
@@ -30,6 +32,9 @@ import com.ubiqube.etsi.mano.orchestrator.repository.SystemJpa;
  */
 @Service
 public class SystemManager {
+	/** Logger. */
+	private static final Logger LOG = LoggerFactory.getLogger(SystemManager.class);
+
 	private final SystemJpa systemsJpa;
 
 	public SystemManager(final SystemJpa systemsJpa) {
@@ -37,6 +42,7 @@ public class SystemManager {
 	}
 
 	public SystemConnections findVimByVimIdAndProviderId(final String systemConnectionId, final String vimType) {
+		LOG.info("Fetching system {}/{}", vimType, systemConnectionId);
 		final Systems sys = systemsJpa.findByVimId(systemConnectionId);
 		if (null == sys) {
 			throw new OrchestrationException("Could not find " + systemConnectionId + " for vim type: " + vimType);
