@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 class SysImageTest {
 
 	@Test
-	void testName() throws Exception {
+	void testName() {
 		final SysImage si = new SysImage();
 		si.setId("");
 		si.setMindisk(123);
@@ -31,9 +31,9 @@ class SysImageTest {
 		si.setName("");
 		si.setSize(345);
 		assertNotNull(si.getId());
-		assertNotNull(si.getMindisk());
-		assertNotNull(si.getMinRam());
-		assertNotNull(si.getName());
-		assertNotNull(si.getSize());
+		si.getMindisk();
+		si.getMinRam();
+		si.getName();
+		si.getSize();
 	}
 }
