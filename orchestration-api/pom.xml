@@ -25,7 +25,6 @@
 		<dependency>
 			<groupId>com.ubiqube.mano</groupId>
 			<artifactId>mano-db-vim</artifactId>
-			<version>${version.small-db}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
