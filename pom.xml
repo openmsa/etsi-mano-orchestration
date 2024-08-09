@@ -16,7 +16,7 @@
 		<module>orchestration-core</module>
 	</modules>
 	<scm>
-		<developerConnection>scm:git:https://github.com/openmsa/etsi-mano-orchestration.git</developerConnection>
+		<developerConnection>scm:git:ssh://git@github.com/openmsa/etsi-mano-orchestration.git</developerConnection>
 	  <tag>HEAD</tag>
   </scm>
 	<distributionManagement>
