@@ -24,19 +24,19 @@ import com.ubiqube.etsi.mano.orchestrator.context.SimplifiedContextImpl;
 import com.ubiqube.etsi.mano.orchestrator.uow.ContextUow;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class DexecutorTask<P> extends Task<UnitOfWorkV3<P>, String> {
 	/** Serial. */
 	private static final long serialVersionUID = 1L;
-	@Nonnull
+	@NonNull
 	private final transient UnitOfWorkV3<P> uaow;
-	@Nonnull
+	@NonNull
 	private final transient Function<Context3d, String> function;
-	@Nonnull
+	@NonNull
 	private transient OrchExecutionListener<P> listener;
-	@Nonnull
+	@NonNull
 	private transient Context3dNetFlow<P> context;
 
 	public DexecutorTask(final OrchExecutionListener<P> listener, final UnitOfWorkV3<P> uaow, final Context3dNetFlow<P> context, final boolean create) {

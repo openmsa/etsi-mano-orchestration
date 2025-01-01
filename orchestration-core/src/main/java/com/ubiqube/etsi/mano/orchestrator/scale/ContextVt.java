@@ -23,8 +23,8 @@ import com.ubiqube.etsi.mano.orchestrator.SystemBuilder;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,7 +45,7 @@ import lombok.Setter;
 public class ContextVt<U> implements VirtualTaskV3<U> {
 
 	private String vimConnectionId;
-	@Nonnull
+	@NonNull
 	private String name;
 
 	private String alias;

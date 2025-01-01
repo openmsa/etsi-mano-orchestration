@@ -25,7 +25,7 @@ import org.jgrapht.event.GraphVertexChangeEvent;
 import com.ubiqube.etsi.mano.orchestrator.Edge2d;
 import com.ubiqube.etsi.mano.orchestrator.Vertex2d;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  *

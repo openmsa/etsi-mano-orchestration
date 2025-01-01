@@ -18,7 +18,7 @@ package com.ubiqube.etsi.mano.orchestrator.vt;
 
 import com.ubiqube.etsi.mano.orchestrator.Relation;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * An edge specialized in Virtual tasks.
@@ -27,11 +27,11 @@ import jakarta.annotation.Nonnull;
  * @param <U> Task parameters.
  */
 public class VirtualTaskConnectivityV3<U> {
-	@Nonnull
+	@NonNull
 	private VirtualTaskV3<U> source;
-	@Nonnull
+	@NonNull
 	private VirtualTaskV3<U> target;
-	@Nonnull
+	@NonNull
 	private Relation relation;
 
 	public VirtualTaskConnectivityV3() {

@@ -18,7 +18,7 @@ package com.ubiqube.etsi.mano.orchestrator.nodes;
 
 import java.util.Objects;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Represent an edge between 2 vertexes.
@@ -26,9 +26,9 @@ import jakarta.annotation.Nonnull;
  * @param <U>
  */
 public class ConnectivityEdge<U> {
-	@Nonnull
+	@NonNull
 	private U source;
-	@Nonnull
+	@NonNull
 	private U target;
 
 	public ConnectivityEdge() {

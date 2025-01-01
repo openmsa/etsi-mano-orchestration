@@ -22,7 +22,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.ubiqube.etsi.mano.orchestrator.entities.Systems;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface SystemJpa extends CrudRepository<Systems, UUID> {
 	@Nullable

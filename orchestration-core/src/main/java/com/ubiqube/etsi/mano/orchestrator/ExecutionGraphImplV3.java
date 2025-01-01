@@ -36,7 +36,7 @@ import com.ubiqube.etsi.mano.orchestrator.uow.ContextUow;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 /**
  *
@@ -45,9 +45,9 @@ import jakarta.annotation.Nonnull;
  * @param <U>
  */
 public class ExecutionGraphImplV3<U> implements ExecutionGraph {
-	@Nonnull
+	@NonNull
 	private final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g;
-	@Nonnull
+	@NonNull
 	private final List<ContextUow<U>> global = new ArrayList<>();
 
 	public ExecutionGraphImplV3(final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> g) {

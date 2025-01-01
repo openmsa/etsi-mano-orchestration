@@ -25,7 +25,7 @@ import com.github.dexecutor.core.task.Task;
 import com.github.dexecutor.core.task.TaskProvider;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 /**
  *
@@ -35,9 +35,9 @@ import jakarta.annotation.Nonnull;
 public class CreateTaskProvider<U> implements TaskProvider<UnitOfWorkV3<U>, String> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CreateTaskProvider.class);
-	@Nonnull
+	@NonNull
 	private final Context3dNetFlow<U> context;
-	@Nonnull
+	@NonNull
 	private final OrchExecutionListener<U> listener;
 
 	public CreateTaskProvider(final Context3dNetFlow<U> context, final OrchExecutionListener<U> listener) {

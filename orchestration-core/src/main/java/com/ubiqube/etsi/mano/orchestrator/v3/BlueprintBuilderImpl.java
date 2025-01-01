@@ -36,7 +36,7 @@ import com.ubiqube.etsi.mano.orchestrator.scale.ScalingEngine;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 /**
  *
@@ -46,9 +46,9 @@ import jakarta.annotation.Nonnull;
 @Service
 public class BlueprintBuilderImpl implements BlueprintBuilder {
 	private static final Logger LOG = LoggerFactory.getLogger(BlueprintBuilderImpl.class);
-	@Nonnull
+	@NonNull
 	private final ScalingEngine se = new ScalingEngine();
-	@Nonnull
+	@NonNull
 	private final PlanMerger pMerge = new PlanMerger();
 
 	@Override

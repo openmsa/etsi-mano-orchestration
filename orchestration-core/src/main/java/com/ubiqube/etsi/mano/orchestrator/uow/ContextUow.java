@@ -20,11 +20,11 @@ import com.ubiqube.etsi.mano.orchestrator.Context3d;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class ContextUow<U> implements UnitOfWorkV3<U> {
-	@Nonnull
+	@NonNull
 	private final VirtualTaskV3<U> vt;
 	private String resource;
 

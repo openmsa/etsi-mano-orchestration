@@ -20,7 +20,7 @@ import java.util.Objects;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import lombok.Getter;
 
 /**

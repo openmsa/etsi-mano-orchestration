@@ -20,7 +20,7 @@ import java.util.List;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Context 3D old a traditional workflow context, but organized in a tree. Main

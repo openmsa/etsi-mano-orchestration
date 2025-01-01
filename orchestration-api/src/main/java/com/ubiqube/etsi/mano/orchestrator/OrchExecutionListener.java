@@ -18,7 +18,7 @@ package com.ubiqube.etsi.mano.orchestrator;
 
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Execution callback, called every start/stop/error of tasks.

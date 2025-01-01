@@ -42,8 +42,8 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskVertexListenerV3;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  *
@@ -54,10 +54,10 @@ public class PlanMultiplier<U> {
 	private static final String ADD_VT = "Add VT {}";
 	private static final Logger LOG = LoggerFactory.getLogger(PlanMultiplier.class);
 
-	@Nonnull
+	@NonNull
 	private final List<SclableResources<U>> scaleResources;
 	private final Function<U, VirtualTaskV3<U>> converter;
-	@Nonnull
+	@NonNull
 	private final List<ContextHolder> liveItems;
 
 	public PlanMultiplier(final List<SclableResources<U>> scaleResources, final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems) {

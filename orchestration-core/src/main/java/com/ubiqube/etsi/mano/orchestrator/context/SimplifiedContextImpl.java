@@ -27,13 +27,13 @@ import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 import com.ubiqube.etsi.mano.orchestrator.nodes.Node;
 import com.ubiqube.etsi.mano.orchestrator.uow.UnitOfWorkV3;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class SimplifiedContextImpl<U> implements Context3d {
-	@Nonnull
+	@NonNull
 	private final Context3dNetFlow<U> flow;
-	@Nonnull
+	@NonNull
 	private final UnitOfWorkV3<U> actual;
 
 	public SimplifiedContextImpl(final UnitOfWorkV3<U> actual, final ListenableGraph<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> d) {

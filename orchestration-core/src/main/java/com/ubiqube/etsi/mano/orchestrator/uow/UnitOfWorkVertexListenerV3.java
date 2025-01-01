@@ -24,7 +24,7 @@ import org.jgrapht.event.GraphVertexChangeEvent;
 
 import com.ubiqube.etsi.mano.orchestrator.nodes.ConnectivityEdge;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class UnitOfWorkVertexListenerV3<U> implements GraphListener<UnitOfWorkV3<U>, ConnectivityEdge<UnitOfWorkV3<U>>> {
 
