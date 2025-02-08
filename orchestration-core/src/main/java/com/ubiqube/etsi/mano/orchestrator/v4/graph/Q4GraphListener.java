@@ -1,4 +1,4 @@
-package com.ubiqube.etsi.mano.orchestrator.v4;
+package com.ubiqube.etsi.mano.orchestrator.v4.graph;
 
 import java.util.Objects;
 
@@ -6,7 +6,7 @@ import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphListener;
 import org.jgrapht.event.GraphVertexChangeEvent;
 
-import com.ubiqube.etsi.mano.orchestrator.v4.graph.Q4Edge;
+import com.ubiqube.etsi.mano.orchestrator.v4.Q4Task;
 
 public class Q4GraphListener implements GraphListener<Q4Task, Q4Edge> {
 

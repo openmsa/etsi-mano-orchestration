@@ -13,6 +13,7 @@ import com.github.dexecutor.core.ExecutionConfig;
 import com.github.dexecutor.core.task.ExecutionResult;
 import com.github.dexecutor.core.task.ExecutionResults;
 import com.ubiqube.etsi.mano.orchestrator.v4.graph.Q4Edge;
+import com.ubiqube.etsi.mano.orchestrator.v4.graph.Q4GraphListener;
 
 public class Q4WorkflowImpl implements Q4Workflow {
 	private final ListenableGraph<Q4Task, Q4Edge> graph;
