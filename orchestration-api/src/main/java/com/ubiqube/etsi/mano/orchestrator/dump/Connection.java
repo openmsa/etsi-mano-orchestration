@@ -20,12 +20,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Represents a connection between two vertices.
+ */
 @AllArgsConstructor
 @Getter
 @Setter
 public class Connection {
 
+	/**
+	 * The source vertex of the connection.
+	 */
 	private String source;
 
+	/**
+	 * The target vertex of the connection.
+	 */
 	private String target;
 }

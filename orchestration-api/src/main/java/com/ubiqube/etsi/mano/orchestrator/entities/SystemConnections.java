@@ -46,18 +46,36 @@ public class SystemConnections<I extends InterfaceInfo, A extends AccessInfo> ex
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Identifier of the VIM.
+	 */
 	private String vimId;
 
+	/**
+	 * Type of the VIM.
+	 */
 	private String vimType;
 
+	/**
+	 * Name of the module.
+	 */
 	private String moduleName;
 
+	/**
+	 * Information about the interface.
+	 */
 	@OneToOne(cascade = CascadeType.ALL, targetEntity = InterfaceInfo.class)
 	private I interfaceInfo;
 
+	/**
+	 * Information about the access.
+	 */
 	@OneToOne(cascade = CascadeType.ALL, targetEntity = AccessInfo.class)
 	private A accessInfo;
 
+	/**
+	 * Additional properties.
+	 */
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Map<String, String> extra;
 

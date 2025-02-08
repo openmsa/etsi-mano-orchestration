@@ -29,6 +29,8 @@ import java.util.function.Function;
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.DirectedAcyclicGraph;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,13 +44,11 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskConnectivityV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskVertexListenerV3;
 
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
 /**
+ * The PlanMultiplier class is responsible for multiplying a given plan by the specified scalable resources.
+ * It creates a new graph based on the input plan and scalable resources.
  *
- * @author Olivier Vignaud
- *
+ * @param <U> The type of the scalable resources.
  */
 public class PlanMultiplier<U> {
 	private static final String ADD_VT = "Add VT {}";
@@ -60,6 +60,13 @@ public class PlanMultiplier<U> {
 	@NonNull
 	private final List<ContextHolder> liveItems;
 
+	/**
+	 * Constructs a new PlanMultiplier.
+	 *
+	 * @param scaleResources The list of scalable resources.
+	 * @param converter      The function to convert scalable resources to virtual tasks.
+	 * @param liveItems      The list of live items.
+	 */
 	public PlanMultiplier(final List<SclableResources<U>> scaleResources, final Function<U, VirtualTaskV3<U>> converter, final List<ContextHolder> liveItems) {
 		this.scaleResources = scaleResources;
 		this.converter = converter;
@@ -67,248 +74,271 @@ public class PlanMultiplier<U> {
 	}
 
 	/**
-	 * Take a plan as input and multiply it by the given {@link SclableResources}.
+	 * Multiplies the given plan by the specified scalable resources.
 	 *
-	 * @param plan A 2D plan of the connected resources.
-	 * @param sr   A SclableResources.
+	 * @param plan The 2D plan of the connected resources.
+	 * @param sr   The scalable resources.
 	 * @return The new graph.
 	 */
 	public ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> multiply(final ListenableGraph<Vertex2d, Edge2d> plan, final SclableResources<U> sr) {
 		final Set<ContextHolder> cache = new HashSet<>();
-		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d = new DefaultListenableGraph(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
-		d.addGraphListener(new VirtualTaskVertexListenerV3<>());
-		final Map<String, VirtualTaskV3<U>> hash = new HashMap<>();
-		/**
-		 * Have = 1 , want = 2 => +1 have = 1 , want = 0 => -1
-		 */
-		final int max = Math.max(sr.getHave(), sr.getWant());
+		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> graph = new DefaultListenableGraph(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
+		graph.addGraphListener(new VirtualTaskVertexListenerV3<>());
+		final Map<String, VirtualTaskV3<U>> vertexMap = new HashMap<>();
+		final int maxIterations = Math.max(sr.getHave(), sr.getWant());
 		LOG.debug("SR: {}", sr);
-		for (int i = 0; i < max; i++) {
+
+		for (int i = 0; i < maxIterations; i++) {
 			final boolean delete = i >= sr.getWant();
-			final int ii = i;
-			plan.edgeSet().forEach(x -> {
-				final String uniqIdSrc = getUniqId(x.getSource(), ii);
-				final VirtualTaskV3<U> src = hash.computeIfAbsent(uniqIdSrc, y -> createVertex(d, delete, ii, x.getSource(), uniqIdSrc, cache));
-				final String uniqIdDst = getUniqId(x.getTarget(), ii);
-				final VirtualTaskV3<U> dst = hash.computeIfAbsent(uniqIdDst, y -> createVertex(d, delete, ii, x.getTarget(), uniqIdDst, cache));
-				Optional.ofNullable(d.addEdge(src, dst)).ifPresent(y -> y.setRelation(x.getRelation()));
-			});
-			plan.vertexSet().forEach(x -> {
-				final String uniqIdSrc = getUniqId(x, ii);
-				hash.computeIfAbsent(uniqIdSrc, y -> createVertex(d, delete, ii, x, uniqIdSrc, cache));
-			});
+			final int iteration = i;
+			processEdges(plan, graph, vertexMap, delete, iteration, cache);
+			processVertices(plan, graph, vertexMap, delete, iteration, cache);
 		}
-		collectOrphan(d, plan, max, cache);
-		return d;
-	}
 
-	private void collectOrphan(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d, final ListenableGraph<Vertex2d, Edge2d> plan, final int i, final Set<ContextHolder> cache) {
-		final List<Vertex2d> res = plan.vertexSet().stream()
-				.filter(x -> match(x, liveItems))
-				.toList();
-		final List<Vertex2d> should = res.stream().filter(x -> isNotIn(x, d)).toList();
-		should.stream().forEach(x -> createVertex(d, true, i, x, UUID.randomUUID().toString(), cache));
-		LOG.debug("{}", should);
-	}
-
-	private static <U> boolean isNotIn(final Vertex2d v, final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d) {
-		return d.vertexSet().stream()
-				.filter(x -> x.getType() == v.getType())
-				.noneMatch(x -> x.getName().equals(v.getName()));
+		collectOrphan(graph, plan, maxIterations, cache);
+		return graph;
 	}
 
 	/**
-	 * Match a given vertex2d in live instances.
+	 * Processes the edges of the plan and adds them to the graph.
 	 *
-	 * @param v         The given vertex2d to match among live instances.
-	 * @param liveItems A list of live instances.
-	 * @return True or false.
+	 * @param plan       The 2D plan of the connected resources.
+	 * @param graph      The graph to add the edges to.
+	 * @param vertexMap  The map of vertex IDs to virtual tasks.
+	 * @param delete     Whether to delete the vertices.
+	 * @param iteration  The current iteration.
+	 * @param cache      The cache of context holders.
 	 */
-	private static boolean match(final Vertex2d v, final List<ContextHolder> liveItems) {
+	private void processEdges(final ListenableGraph<Vertex2d, Edge2d> plan, final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> graph,
+			final Map<String, VirtualTaskV3<U>> vertexMap, final boolean delete, final int iteration, final Set<ContextHolder> cache) {
+		plan.edgeSet().forEach(edge -> {
+			final String srcId = getUniqId(edge.getSource(), iteration);
+			final VirtualTaskV3<U> srcVertex = vertexMap.computeIfAbsent(srcId, id -> createVertex(graph, delete, iteration, edge.getSource(), srcId, cache));
+			final String dstId = getUniqId(edge.getTarget(), iteration);
+			final VirtualTaskV3<U> dstVertex = vertexMap.computeIfAbsent(dstId, id -> createVertex(graph, delete, iteration, edge.getTarget(), dstId, cache));
+			Optional.ofNullable(graph.addEdge(srcVertex, dstVertex)).ifPresent(e -> e.setRelation(edge.getRelation()));
+		});
+	}
+
+	/**
+	 * Processes the vertices of the plan and adds them to the graph.
+	 *
+	 * @param plan       The 2D plan of the connected resources.
+	 * @param graph      The graph to add the vertices to.
+	 * @param vertexMap  The map of vertex IDs to virtual tasks.
+	 * @param delete     Whether to delete the vertices.
+	 * @param iteration  The current iteration.
+	 * @param cache      The cache of context holders.
+	 */
+	private void processVertices(final ListenableGraph<Vertex2d, Edge2d> plan, final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> graph,
+			final Map<String, VirtualTaskV3<U>> vertexMap, final boolean delete, final int iteration, final Set<ContextHolder> cache) {
+		plan.vertexSet().forEach(vertex -> {
+			final String vertexId = getUniqId(vertex, iteration);
+			vertexMap.computeIfAbsent(vertexId, id -> createVertex(graph, delete, iteration, vertex, vertexId, cache));
+		});
+	}
+
+	/**
+	 * Collects orphan vertices and adds them to the graph.
+	 *
+	 * @param graph         The graph to add the orphan vertices to.
+	 * @param plan          The 2D plan of the connected resources.
+	 * @param maxIterations The maximum number of iterations.
+	 * @param cache         The cache of context holders.
+	 */
+	private void collectOrphan(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> graph, final ListenableGraph<Vertex2d, Edge2d> plan, final int maxIterations, final Set<ContextHolder> cache) {
+		final List<Vertex2d> liveVertices = plan.vertexSet().stream()
+				.filter(vertex -> match(vertex, liveItems))
+				.toList();
+		final List<Vertex2d> orphanVertices = liveVertices.stream().filter(vertex -> isNotIn(vertex, graph)).toList();
+		orphanVertices.forEach(vertex -> createVertex(graph, true, maxIterations, vertex, UUID.randomUUID().toString(), cache));
+		LOG.debug("{}", orphanVertices);
+	}
+
+	/**
+	 * Checks if a vertex is not in the graph.
+	 *
+	 * @param vertex The vertex to check.
+	 * @param graph  The graph to check against.
+	 * @return True if the vertex is not in the graph, false otherwise.
+	 */
+	private static <U> boolean isNotIn(final Vertex2d vertex, final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> graph) {
+		return graph.vertexSet().stream()
+				.filter(v -> v.getType() == vertex.getType())
+				.noneMatch(v -> v.getName().equals(vertex.getName()));
+	}
+
+	/**
+	 * Matches a vertex against a list of live items.
+	 *
+	 * @param vertex    The vertex to match.
+	 * @param liveItems The list of live items.
+	 * @return True if the vertex matches any live item, false otherwise.
+	 */
+	private static boolean match(final Vertex2d vertex, final List<ContextHolder> liveItems) {
 		return liveItems.stream()
-				.filter(x -> x.getType() == v.getType())
-				.anyMatch(x -> x.getName().equals(v.getName()));
+				.filter(item -> item.getType() == vertex.getType())
+				.anyMatch(item -> item.getName().equals(vertex.getName()));
 	}
 
 	/**
+	 * Creates a vertex and adds it to the graph.
 	 *
-	 * @param d
-	 * @param delete
-	 * @param ii
-	 * @param x
-	 * @param uniqIdDst
-	 * @param cache
-	 * @return
+	 * @param graph     The graph to add the vertex to.
+	 * @param delete    Whether to delete the vertex.
+	 * @param iteration The current iteration.
+	 * @param vertex    The vertex to create.
+	 * @param vertexId  The ID of the vertex.
+	 * @param cache     The cache of context holders.
+	 * @return The created virtual task.
 	 */
-	private VirtualTaskV3<U> createVertex(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> d,
-			final boolean delete, final int ii, final Vertex2d x, final String uniqIdDst, final Set<ContextHolder> cache) {
-		final SclableResources<U> templSr = findTemplate(scaleResources, x);
-		final VirtualTaskV3<U> t = createTask(templSr, uniqIdDst, x, ii, delete, cache);
-		LOG.debug(ADD_VT, t.getAlias());
-		d.addVertex(t);
-		return t;
+	private VirtualTaskV3<U> createVertex(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> graph,
+			final boolean delete, final int iteration, final Vertex2d vertex, final String vertexId, final Set<ContextHolder> cache) {
+		final SclableResources<U> templateResource = findTemplate(scaleResources, vertex);
+		final VirtualTaskV3<U> task = createTask(templateResource, vertexId, vertex, iteration, delete, cache);
+		LOG.debug(ADD_VT, task.getAlias());
+		graph.addVertex(task);
+		return task;
 	}
 
 	/**
-	 * Find the corresponding scale resource for a given Vertex2D.
+	 * Finds the template resource for a given vertex.
 	 *
-	 * @param <U>
-	 * @param plan   The plan.
-	 * @param target The desired vertex2D.
-	 * @return A ScalableResources matching the Vertext2d. Throw an exception if not
-	 *         found.
+	 * @param resources The list of scalable resources.
+	 * @param target    The target vertex.
+	 * @return The matching scalable resource.
 	 */
-	private static <U> SclableResources<U> findTemplate(final List<SclableResources<U>> plan, final Vertex2d target) {
-		final List<SclableResources<U>> l = plan.stream()
-				.filter(x -> x.getType() == target.getType())
-				.filter(x -> x.getName().equals(target.getName()))
+	private static <U> SclableResources<U> findTemplate(final List<SclableResources<U>> resources, final Vertex2d target) {
+		final List<SclableResources<U>> matchingResources = resources.stream()
+				.filter(resource -> resource.getType() == target.getType())
+				.filter(resource -> resource.getName().equals(target.getName()))
 				.toList();
-		if (l.size() > 1) {
+		if (matchingResources.size() > 1) {
 			throw new OrchestrationException("Multiple match for vertex " + target);
 		}
-		if (l.isEmpty()) {
+		if (matchingResources.isEmpty()) {
 			throw new OrchestrationException("No match for vertex " + target);
 		}
-		LOG.trace("Found {}", l.get(0));
-		return l.get(0);
+		LOG.trace("Found {}", matchingResources.get(0));
+		return matchingResources.get(0);
 	}
 
 	/**
-	 * Create Task When :
+	 * Creates a task for a given vertex.
 	 *
-	 * <ul>
-	 * <li>A live instance exist and delete is enable => Create Task</li>
-	 * <li>A live instance exist and delete is disable => Create Context dummy
-	 * task</li>
-	 * <li>A live instance does not exist and delete is enable => Create dummy
-	 * task</li>
-	 * <li>A live instance does not exist and delete is disable => Create Task</li>
-	 * </ul>
-	 *
-	 * @param sr
-	 * @param converter
-	 * @param liveItems
-	 * @param uniqIdSrc
-	 * @param xVertex
-	 * @param ii
-	 * @param delete
-	 * @param cache
-	 * @param vimConnectionId
-	 * @return
+	 * @param resource  The scalable resource.
+	 * @param vertexId  The ID of the vertex.
+	 * @param vertex    The vertex to create the task for.
+	 * @param iteration The current iteration.
+	 * @param delete    Whether to delete the task.
+	 * @param cache     The cache of context holders.
+	 * @return The created virtual task.
 	 */
-	private VirtualTaskV3<U> createTask(final SclableResources<U> sr, final String uniqIdSrc, final Vertex2d x, final int ii, final boolean delete, final Set<ContextHolder> cache) {
-		final Optional<ContextHolder> ctx = findInContext(liveItems, x, ii);
-		/**
-		 * /!\ Create task is cloning the task and assign a new ToscaId to it, witch
-		 * later is used for re mapping DB tasks to WF task. Once you have created a
-		 * task, you must use it's toscaId
-		 */
-		VirtualTaskV3<U> t = createTask(uniqIdSrc, x, ii, delete, sr.getTemplateParameter());
-		if (ctx.isPresent()) {
-			final ContextHolder liveInstance = ctx.get();
+	private VirtualTaskV3<U> createTask(final SclableResources<U> resource, final String vertexId, final Vertex2d vertex, final int iteration, final boolean delete, final Set<ContextHolder> cache) {
+		final Optional<ContextHolder> context = findInContext(liveItems, vertex, iteration);
+		VirtualTaskV3<U> task = createTask(vertexId, vertex, iteration, delete, resource.getTemplateParameter());
+		if (context.isPresent()) {
+			final ContextHolder liveInstance = context.get();
 			cache.add(liveInstance);
 			if (!delete) {
-				return createContext(uniqIdSrc, x, ii, delete, t.getTemplateParameters(), liveInstance.getResourceId(), t.getType(), liveInstance.getVimConnectionId());
+				return createContext(vertexId, vertex, iteration, delete, task.getTemplateParameters(), liveInstance.getResourceId(), task.getType(), liveInstance.getVimConnectionId());
 			}
-			t.setVimResourceId(liveInstance.getResourceId());
-			t.setVimConnectionId(liveInstance.getVimConnectionId());
-			t.setRemovedLiveInstanceId(Objects.requireNonNull(liveInstance.getLiveInstanceId()));
+			task.setVimResourceId(liveInstance.getResourceId());
+			task.setVimConnectionId(liveInstance.getVimConnectionId());
+			task.setRemovedLiveInstanceId(Objects.requireNonNull(liveInstance.getLiveInstanceId()));
 		} else {
 			if (delete) {
-				if ((sr.getHave() != 0) || (sr.getWant() != 0)) {
-					LOG.warn("Deleting {} but not found in context.", uniqIdSrc);
+				if ((resource.getHave() != 0) || (resource.getWant() != 0)) {
+					LOG.warn("Deleting {} but not found in context.", vertexId);
 				}
-				t = createContext(uniqIdSrc, x, ii, delete, t.getTemplateParameters(), null, t.getType(), null);
+				task = createContext(vertexId, vertex, iteration, delete, task.getTemplateParameters(), null, task.getType(), null);
 			}
-			LOG.trace("creating task: {}/{}", x.getType().getSimpleName(), x.getName());
+			LOG.trace("creating task: {}/{}", vertex.getType().getSimpleName(), vertex.getName());
 		}
-		return t;
+		return task;
 	}
 
 	/**
-	 * Create a Virtual task from a resourceId.
+	 * Creates a context for a given vertex.
 	 *
-	 * @param <U>
-	 * @param uniqIdSrc
-	 * @param source
-	 * @param i
-	 * @param delete
-	 * @param u
-	 * @param resourceId
-	 * @param class1
-	 * @param vimConnectionId
-	 * @return A {@link ContextVt} instance
+	 * @param vertexId       The ID of the vertex.
+	 * @param vertex         The vertex to create the context for.
+	 * @param iteration      The current iteration.
+	 * @param delete         Whether to delete the context.
+	 * @param parameters     The template parameters.
+	 * @param resourceId     The resource ID.
+	 * @param type           The type of the node.
+	 * @param vimConnectionId The VIM connection ID.
+	 * @return The created virtual task.
 	 */
-	@SuppressWarnings("unchecked")
-	private static <U> VirtualTaskV3<U> createContext(final String uniqIdSrc, final Vertex2d source, final int i, final boolean delete,
-			final U u, @Nullable final String resourceId, final Class<? extends Node> class1, @Nullable final String vimConnectionId) {
+	private static <U> VirtualTaskV3<U> createContext(final String vertexId, final Vertex2d vertex, final int iteration, final boolean delete,
+			final U parameters, @Nullable final String resourceId, final Class<? extends Node> type, @Nullable final String vimConnectionId) {
 		return (VirtualTaskV3<U>) ContextVt.builder()
-				.alias(uniqIdSrc)
+				.alias(vertexId)
 				.delete(delete)
-				.name(source.getName())
-				.rank(i)
-				.templateParameters(u)
+				.name(vertex.getName())
+				.rank(iteration)
+				.templateParameters(parameters)
 				.vimResourceId(resourceId)
 				.vimConnectionId(vimConnectionId)
-				.parent(class1)
+				.parent(type)
 				.build();
 	}
 
 	/**
-	 * Find resource (Vertex2d) in a list of live items, using rank.
+	 * Finds a context holder for a given vertex and iteration.
 	 *
-	 * @param liveItems Live items.
-	 * @param source    The vertex to search.
-	 * @param i         The rank.
-	 * @return An optional {@link ContextHolder}, Throw an exception if multiple
-	 *         match.
+	 * @param liveItems The list of live items.
+	 * @param vertex    The vertex to find the context holder for.
+	 * @param iteration The current iteration.
+	 * @return The matching context holder.
 	 */
-	private static Optional<ContextHolder> findInContext(final List<ContextHolder> liveItems, final Vertex2d source, final int i) {
-		final List<ContextHolder> lst = liveItems.stream()
-				.filter(x -> x.getType() == source.getType())
-				.filter(x -> x.getName().equals(source.getName()))
-				.filter(x -> x.getRank() == i)
+	private static Optional<ContextHolder> findInContext(final List<ContextHolder> liveItems, final Vertex2d vertex, final int iteration) {
+		final List<ContextHolder> matchingItems = liveItems.stream()
+				.filter(item -> item.getType() == vertex.getType())
+				.filter(item -> item.getName().equals(vertex.getName()))
+				.filter(item -> item.getRank() == iteration)
 				.toList();
-		if (lst.size() > 1) {
-			LOG.warn("List is more than 1 for {}-{}", source.getType().getSimpleName(), source.getName());
+		if (matchingItems.size() > 1) {
+			LOG.warn("List is more than 1 for {}-{}", vertex.getType().getSimpleName(), vertex.getName());
 		}
-		return Optional.ofNullable(lst).filter(x -> !lst.isEmpty()).map(x -> x.get(0));
+		return Optional.ofNullable(matchingItems).filter(list -> !list.isEmpty()).map(list -> list.get(0));
 	}
 
 	/**
-	 * Create an unique id using vertex name and rank.
+	 * Generates a unique ID for a given vertex and iteration.
 	 *
-	 * @param source The vertex.
-	 * @param i      The rank.
-	 * @return The unique name.
+	 * @param vertex    The vertex to generate the ID for.
+	 * @param iteration The current iteration.
+	 * @return The generated unique ID.
 	 */
-	private static String getUniqId(final Vertex2d source, final int i) {
-		final StringBuilder sb = new StringBuilder(source.getName());
-		if (null != source.getParent()) {
-			sb.append("-").append(source.getParent());
+	private static String getUniqId(final Vertex2d vertex, final int iteration) {
+		final StringBuilder sb = new StringBuilder(vertex.getName());
+		if (vertex.getParent() != null) {
+			sb.append("-").append(vertex.getParent());
 		}
-		sb.append("-").append(source.getType().getSimpleName());
-		sb.append("-").append(String.format("%04d", i));
+		sb.append("-").append(vertex.getType().getSimpleName());
+		sb.append("-").append(String.format("%04d", iteration));
 		return sb.toString();
 	}
 
 	/**
-	 * Create a task from a given vertex.
+	 * Creates a task for a given vertex.
 	 *
-	 * @param uniqId The task id.
-	 * @param source The source vertex.
-	 * @param i      The rank.
-	 * @param delete True if vertex have to be deleted.
-	 * @param params Parameters for vertex creation.
-	 * @return The newly created task.
+	 * @param vertexId   The ID of the vertex.
+	 * @param vertex     The vertex to create the task for.
+	 * @param iteration  The current iteration.
+	 * @param delete     Whether to delete the task.
+	 * @param parameters The template parameters.
+	 * @return The created virtual task.
 	 */
-	private VirtualTaskV3<U> createTask(final String uniqId, final Vertex2d source, final int i, final boolean delete, final U params) {
-		final VirtualTaskV3<U> vt = converter.apply(params);
-		vt.setRank(i);
-		vt.setName(source.getName());
-		vt.setAlias(uniqId);
-		vt.setDelete(delete);
-		return vt;
+	private VirtualTaskV3<U> createTask(final String vertexId, final Vertex2d vertex, final int iteration, final boolean delete, final U parameters) {
+		final VirtualTaskV3<U> task = converter.apply(parameters);
+		task.setRank(iteration);
+		task.setName(vertex.getName());
+		task.setAlias(vertexId);
+		task.setDelete(delete);
+		return task;
 	}
 
 }

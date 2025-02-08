@@ -20,16 +20,50 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Represents a vertex in the orchestration graph.
+ */
 @Getter
 @Setter
 @Builder
 public class Vertex {
+	/**
+	 * The unique identifier of the vertex.
+	 */
 	private String id;
+
+	/**
+	 * The name of the vertex.
+	 */
 	private String name;
+
+	/**
+	 * The VIM connection ID associated with the vertex.
+	 */
 	private String vimConnectionId;
+
+	/**
+	 * The VIM resource ID associated with the vertex.
+	 */
 	private String vimResourceId;
+
+	/**
+	 * The type of the vertex.
+	 */
 	private String type;
+
+	/**
+	 * The alias of the vertex.
+	 */
 	private String alias;
+
+	/**
+	 * The rank of the vertex.
+	 */
 	private int rank;
+
+	/**
+	 * The status of the vertex.
+	 */
 	private String status;
 }

@@ -22,11 +22,20 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Represents the result of an execution containing vertices and connections.
+ */
 @Getter
 @Setter
 @AllArgsConstructor
 public class ExecutionResult {
+	/**
+	 * List of vertices involved in the execution result.
+	 */
 	private List<Vertex> vertex;
 
+	/**
+	 * List of connections involved in the execution result.
+	 */
 	private List<Connection> links;
 }

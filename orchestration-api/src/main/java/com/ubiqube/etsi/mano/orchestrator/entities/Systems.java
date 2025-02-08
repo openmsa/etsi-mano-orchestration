@@ -35,6 +35,10 @@ import lombok.Setter;
  * @author Olivier Vignaud {@literal <ovi@ubiqube.com>}
  *
  */
+
+/**
+ * Represents a system entity with a unique identifier, name, VIM origin, VIM ID, and a set of subsystem connections.
+ */
 @Getter
 @Setter
 @Entity
@@ -52,6 +56,11 @@ public class Systems {
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<SystemConnections> subSystems;
 
+	/**
+	 * Adds a subsystem connection to the set of subsystem connections.
+	 *
+	 * @param sc the subsystem connection to add
+	 */
 	public void add(final SystemConnections sc) {
 		if (null == subSystems) {
 			subSystems = new LinkedHashSet<>();
