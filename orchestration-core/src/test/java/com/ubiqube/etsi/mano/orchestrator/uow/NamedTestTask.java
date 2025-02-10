@@ -42,7 +42,7 @@ public class NamedTestTask implements VirtualTaskV3<Object> {
 
 	@Override
 	public String getVimConnectionId() {
-		throw new IllegalArgumentException();
+		return "";
 	}
 
 	@Override
