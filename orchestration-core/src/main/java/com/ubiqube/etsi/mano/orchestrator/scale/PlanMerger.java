@@ -36,9 +36,10 @@ import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskV3;
 import com.ubiqube.etsi.mano.orchestrator.vt.VirtualTaskVertexListenerV3;
 
 /**
- * This class is responsible for merging multiple orchestration plans into a single plan.
- * It provides methods to merge graphs and handle different types of relationships between tasks.
- * 
+ * This class is responsible for merging multiple orchestration plans into a
+ * single plan. It provides methods to merge graphs and handle different types
+ * of relationships between tasks.
+ *
  * @param <U> the type of the units of work
  */
 public class PlanMerger {
@@ -47,7 +48,7 @@ public class PlanMerger {
 	/**
 	 * Merges multiple orchestration plans into a single plan.
 	 *
-	 * @param g the base graph
+	 * @param g     the base graph
 	 * @param plans the list of plans to merge
 	 * @return the merged plan
 	 */
@@ -65,7 +66,7 @@ public class PlanMerger {
 	 * @return the empty graph
 	 */
 	private <U> ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> createEmptyGraph() {
-		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> graph = new DefaultListenableGraph<>(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
+		final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> graph = new DefaultListenableGraph(new DirectedAcyclicGraph<>(VirtualTaskConnectivityV3.class));
 		graph.addGraphListener(new VirtualTaskVertexListenerV3<>());
 		return graph;
 	}
@@ -73,7 +74,7 @@ public class PlanMerger {
 	/**
 	 * Adds the vertices and edges from the given plans to the merged graph.
 	 *
-	 * @param plans the list of plans
+	 * @param plans       the list of plans
 	 * @param mergedGraph the merged graph
 	 */
 	private <U> void addPlansToGraph(final List<ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>>> plans, final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> mergedGraph) {
@@ -84,7 +85,7 @@ public class PlanMerger {
 	/**
 	 * Connects the edges from the base graph to the merged graph.
 	 *
-	 * @param baseGraph the base graph
+	 * @param baseGraph   the base graph
 	 * @param mergedGraph the merged graph
 	 */
 	private <U> void connectGraphEdges(final ListenableGraph<Vertex2d, Edge2d> baseGraph, final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> mergedGraph) {
@@ -99,32 +100,32 @@ public class PlanMerger {
 	 * Handles the connection of an edge based on its relation type.
 	 *
 	 * @param mergedGraph the merged graph
-	 * @param edge the edge to connect
-	 * @param sources the source vertices
-	 * @param targets the target vertices
+	 * @param edge        the edge to connect
+	 * @param sources     the source vertices
+	 * @param targets     the target vertices
 	 */
 	private <U> void handleEdgeConnection(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> mergedGraph, final Edge2d edge, final List<VirtualTaskV3<U>> sources, final List<VirtualTaskV3<U>> targets) {
 		switch (edge.getRelation()) {
-			case ONE_TO_MANY:
-				makeOneToMany(mergedGraph, sources, targets);
-				break;
-			case ONE_TO_ONE:
-				makeOneToOne(mergedGraph, edge, sources, targets);
-				break;
-			default:
-				if (sources.size() == 1 && targets.size() == 1) {
-					mergedGraph.addEdge(sources.get(0), targets.get(0));
-				} else {
-					logEdgeConnectionWarning(edge, sources, targets);
-				}
-				break;
+		case ONE_TO_MANY:
+			makeOneToMany(mergedGraph, sources, targets);
+			break;
+		case ONE_TO_ONE:
+			makeOneToOne(mergedGraph, edge, sources, targets);
+			break;
+		default:
+			if ((sources.size() == 1) && (targets.size() == 1)) {
+				mergedGraph.addEdge(sources.get(0), targets.get(0));
+			} else {
+				logEdgeConnectionWarning(edge, sources, targets);
+			}
+			break;
 		}
 	}
 
 	/**
 	 * Logs a warning if the edge connection cannot be made.
 	 *
-	 * @param edge the edge
+	 * @param edge    the edge
 	 * @param sources the source vertices
 	 * @param targets the target vertices
 	 */
@@ -137,7 +138,7 @@ public class PlanMerger {
 	/**
 	 * Exports the graph to a DOT file if debug logging is enabled.
 	 *
-	 * @param graph the graph to export
+	 * @param graph    the graph to export
 	 * @param filename the filename to export to
 	 */
 	private <U> void exportGraphIfDebugEnabled(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> graph, final String filename) {
@@ -149,7 +150,7 @@ public class PlanMerger {
 	/**
 	 * Exports the graph to a DOT file.
 	 *
-	 * @param graph the graph to export
+	 * @param graph    the graph to export
 	 * @param filename the filename to export to
 	 */
 	private static <U> void exportGraph(final ListenableGraph<VirtualTaskV3<U>, VirtualTaskConnectivityV3<U>> graph, final String filename) {
@@ -164,8 +165,8 @@ public class PlanMerger {
 	/**
 	 * Creates a one-to-one relationship between the source and target vertices.
 	 *
-	 * @param graph the graph
-	 * @param edge the edge
+	 * @param graph   the graph
+	 * @param edge    the edge
 	 * @param sources the source vertices
 	 * @param targets the target vertices
 	 */
@@ -173,17 +174,16 @@ public class PlanMerger {
 		sources.forEach(source -> {
 			final Optional<VirtualTaskV3<U>> target = findMatchingTarget(source, edge, targets);
 			target.ifPresentOrElse(
-				t -> graph.addEdge(source, t),
-				() -> LOG.warn("One to one of ({} / {} ) => Could not find: {} in {}", namedVertex(edge.getSource()), namedVertex(edge.getTarget()), source, targets)
-			);
+					t -> graph.addEdge(source, t),
+					() -> LOG.warn("One to one of ({} / {} ) => Could not find: {} in {}", namedVertex(edge.getSource()), namedVertex(edge.getTarget()), source, targets));
 		});
 	}
 
 	/**
 	 * Finds a matching target vertex for the given source vertex.
 	 *
-	 * @param source the source vertex
-	 * @param edge the edge
+	 * @param source  the source vertex
+	 * @param edge    the edge
 	 * @param targets the target vertices
 	 * @return the matching target vertex, if found
 	 */
@@ -198,7 +198,7 @@ public class PlanMerger {
 	/**
 	 * Creates a one-to-many relationship between the source and target vertices.
 	 *
-	 * @param graph the graph
+	 * @param graph   the graph
 	 * @param sources the source vertices
 	 * @param targets the target vertices
 	 */
@@ -212,11 +212,12 @@ public class PlanMerger {
 	}
 
 	/**
-	 * Gets all vertices from the graph that match the given name and type, excluding the specified vertices.
+	 * Gets all vertices from the graph that match the given name and type,
+	 * excluding the specified vertices.
 	 *
-	 * @param graph the graph
-	 * @param name the name to match
-	 * @param type the type to match
+	 * @param graph   the graph
+	 * @param name    the name to match
+	 * @param type    the type to match
 	 * @param exclude the vertices to exclude
 	 * @return the matching vertices
 	 */
