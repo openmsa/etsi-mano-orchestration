@@ -25,7 +25,7 @@ public class Q4WorkflowImpl implements Q4Workflow {
 
 	@Override
 	public Q4Results run(final ExecutorService executorService) {
-		Q4TaskProvider taskProvider = new Q4TaskProvider(null);
+		Q4TaskProviderImpl taskProvider = new Q4TaskProviderImpl(null);
 		DexecutorConfig<Q4Task, String> config = new DexecutorConfig<>(executorService, taskProvider);
 		final DefaultDexecutor<Q4Task, String> executor = new DefaultDexecutor<>(config);
 		addRoot(executor);

@@ -55,7 +55,7 @@ class Q4WorkflowImplTest {
 
 	@Test
 	void testProvider() {
-		Q4TaskProvider provider = new Q4TaskProvider(null);
+		Q4TaskProviderImpl provider = new Q4TaskProviderImpl(null);
 		Q4Task task = new Q4TestTask("task1");
 		provider.provideTask(task);
 	}
